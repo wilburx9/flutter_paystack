@@ -46,6 +46,14 @@ class Charge {
 
   Map<String, String> get additionalParameters => _additionalParameters;
 
+
+  String get accessCode => _accessCode;
+
+  set accessCode(String value) {
+    _beforeLocalSet(value);
+    _accessCode = value;
+  }
+
   String get plan => _plan;
 
   set plan(String value) {

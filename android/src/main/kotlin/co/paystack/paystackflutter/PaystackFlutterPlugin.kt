@@ -1,9 +1,10 @@
 package co.paystack.paystackflutter
 
+import android.provider.Settings
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
 class PaystackFlutterPlugin(): MethodCallHandler {
@@ -16,10 +17,16 @@ class PaystackFlutterPlugin(): MethodCallHandler {
   }
 
   override fun onMethodCall(call: MethodCall, result: Result): Unit {
-    if (call.method.equals("getPlatformVersion")) {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
+    when(call.method) {
+       "getPlatformVersion" -> {
+           result.success("Android ${android.os.Build.VERSION.RELEASE}")
+        }
+        "getDeviceId" -> {
+            result.success("androidsdk_" + Settings.Secure.getString(App.appContext.contentResolver,
+                    Settings.Secure.ANDROID_ID))
+        }
+        else -> result.notImplemented()
     }
+
   }
 }
