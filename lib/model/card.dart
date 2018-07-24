@@ -101,10 +101,19 @@ class PaymentCard {
     this.type = number;
   }
 
+  /// Validates the CVC or CVV of the card
+  /// Returns true if the cvc is valid
+  bool isValid() {
+    return cvc != null && number != null && expiryMonth != null && expiryYear
+        != null && validNumber() && CardUtils.validExpiryDate(expiryMonth, expiryYear)
+        && validCVC();
+
+  }
+
   /// Validates the CVC or CVV of a card.
   /// Returns true if CVC is valid and false otherwise
   bool validCVC() {
-    if (cvc == null || cvc.trim().isNotEmpty) return false;
+    if (cvc == null || cvc.trim().isEmpty) return false;
 
     var cvcValue = cvc.trim();
     bool validLength =
@@ -168,12 +177,6 @@ class PaymentCard {
     return sum % 10 == 0;
   }
 
-  /// Checks if the card has expired.
-  /// Returns true if the card has expired; false otherwise
-  bool validExpiryDate() {
-    return !(expiryMonth == null || expiryYear == null) &&
-        CardUtils.isNotExpired(expiryYear, expiryMonth);
-  }
 }
 
 abstract class CardType {

@@ -2,7 +2,7 @@ import 'package:paystack_flutter/api/model/api_response.dart';
 import 'package:paystack_flutter/utils/string_utils.dart';
 
 class TransactionApiResponse extends ApiResponse {
-  String response;
+  String reference;
   String trans;
   String auth;
   String otpMessage;
@@ -13,7 +13,7 @@ class TransactionApiResponse extends ApiResponse {
   }
 
   TransactionApiResponse.fromMap(Map<String, dynamic> map) {
-    response = map['reference'];
+    reference = map['reference'];
     trans = map['trans'];
     auth = map['auth'];
     otpMessage = map['otpmessage'];
@@ -22,7 +22,7 @@ class TransactionApiResponse extends ApiResponse {
   }
 
   bool hasValidReferenceAndTrans() {
-    return (response != null) && (trans != null);
+    return (reference != null) && (trans != null);
   }
 
   bool hasValidUrl() {

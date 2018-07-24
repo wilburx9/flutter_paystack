@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:paystack_flutter/model/card.dart';
+import 'package:paystack_flutter/my_strings.dart';
+
 class CardUtils {
   static bool isWholeNumberPositive(String value) {
     if(value == null) {
@@ -50,4 +54,13 @@ class CardUtils {
     }
     return year;
   }
+
+
+  /// Checks if the card has expired.
+  /// Returns true if the card has expired; false otherwise
+  static bool validExpiryDate(int expiryMonth, int expiryYear) {
+    return !(expiryMonth == null || expiryYear == null) &&
+        isNotExpired(expiryYear, expiryMonth);
+  }
+
 }
