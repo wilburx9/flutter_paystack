@@ -3,8 +3,8 @@ import 'package:paystack_flutter/api/request/base_request_body.dart';
 class ValidateRequestBody extends BaseRequestBody {
   String _fieldTrans = 'trans';
   String _fieldToken = 'token';
-  String _trans;
-  String _token;
+  String trans;
+  String token;
 
   ValidateRequestBody() {
     this.setDeviceId();
@@ -12,7 +12,7 @@ class ValidateRequestBody extends BaseRequestBody {
 
   @override
   Map<String, String> paramsMap() {
-    Map<String, String> params = {_fieldTrans: _trans, _fieldToken: _token};
+    Map<String, String> params = {_fieldTrans: trans, _fieldToken: token};
     if (device != null) {
       params[fieldDevice] = device;
     }

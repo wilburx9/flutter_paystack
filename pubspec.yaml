@@ -7,6 +7,7 @@ homepage:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^0.11.3+16
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
@@ -18,9 +19,17 @@ flutter:
     pluginClass: PaystackFlutterPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
-  # assets:
-  #  - images/a_dot_burr.jpeg
-  #  - images/a_dot_ham.jpeg
+  assets:
+   - assets/images/calender.png
+   - assets/images/card_cvv.png
+   - assets/images/visa.png
+   - assets/images/jcb.png
+   - assets/images/verve.png
+   - assets/images/discover.png
+   - assets/images/american_express.png
+   - assets/images/dinners_club.png
+   - assets/images/mastercard.png
+
   #
   # For details regarding assets in packages, see
   # https://flutter.io/assets-and-images/#from-packages
