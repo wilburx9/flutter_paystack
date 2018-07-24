@@ -1,8 +1,5 @@
-import 'package:flutter/services.dart';
-import 'package:paystack_flutter/paystack_sdk.dart';
 
 class StringUtils {
-  static const MethodChannel channel = const MethodChannel('paystack_flutter');
 
   static bool isEmpty(String value) {
     return value == null || value.length < 1 || value.toLowerCase == "null";
