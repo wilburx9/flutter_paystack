@@ -1,4 +1,4 @@
-import 'package:paystack_flutter/model/card.dart';
+import 'package:paystack_flutter/src/model/card.dart';
 
 class AuthSingleton {
   var responseMap = {

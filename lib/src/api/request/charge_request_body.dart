@@ -1,5 +1,5 @@
-import 'package:paystack_flutter/api/request/base_request_body.dart';
-import 'package:paystack_flutter/model/charge.dart';
+import 'package:paystack_flutter/src/api/request/base_request_body.dart';
+import 'package:paystack_flutter/src/model/charge.dart';
 
 class ChargeRequestBody extends BaseRequestBody {
   static const String fieldClientData = "clientdata";

@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:paystack_flutter/TransactionCallback.dart';
-import 'package:paystack_flutter/api/model/transaction_api_response.dart';
-import 'package:paystack_flutter/api/request/charge_request_body.dart';
-import 'package:paystack_flutter/api/request/validate_request_body.dart';
-import 'package:paystack_flutter/api/service/api_service.dart';
-import 'package:paystack_flutter/model/card.dart';
-import 'package:paystack_flutter/model/charge.dart';
-import 'package:paystack_flutter/singletons.dart';
-import 'package:paystack_flutter/transaction.dart';
+import 'package:paystack_flutter/src/paystack.dart';
+import 'package:paystack_flutter/src/api/model/transaction_api_response.dart';
+import 'package:paystack_flutter/src/api/request/charge_request_body.dart';
+import 'package:paystack_flutter/src/api/request/validate_request_body.dart';
+import 'package:paystack_flutter/src/api/service/api_service.dart';
+import 'package:paystack_flutter/src/model/card.dart';
+import 'package:paystack_flutter/src/model/charge.dart';
+import 'package:paystack_flutter/src/singletons.dart';
+import 'package:paystack_flutter/src/transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:paystack_flutter/ui/card_input_ui.dart';
+import 'package:paystack_flutter/src/ui/card_input_ui.dart';
 
 class TransactionManager {
   static bool processing = false;

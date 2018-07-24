@@ -1,5 +1,5 @@
-import 'package:paystack_flutter/api/model/api_response.dart';
-import 'package:paystack_flutter/utils/string_utils.dart';
+import 'package:paystack_flutter/src/api/model/api_response.dart';
+import 'package:paystack_flutter/src/utils/string_utils.dart';
 
 class TransactionApiResponse extends ApiResponse {
   String reference;

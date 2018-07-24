@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:paystack_flutter/model/card.dart' hide CardType;
-import 'package:paystack_flutter/my_strings.dart';
-import 'package:paystack_flutter/singletons.dart';
-import 'package:paystack_flutter/utils/card_utils.dart';
-import 'input_formatters.dart';
+import 'package:paystack_flutter/src/model/card.dart' hide CardType;
+import 'package:paystack_flutter/src/my_strings.dart';
+import 'package:paystack_flutter/src/singletons.dart';
+import 'package:paystack_flutter/src/utils/card_utils.dart';
+import 'package:paystack_flutter/src/ui/input_formatters.dart';
 
 class CardInputUI extends StatefulWidget {
   final PaymentCard currentCard;
