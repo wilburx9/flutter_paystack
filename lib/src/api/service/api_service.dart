@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:paystack_flutter/api/model/transaction_api_response.dart';
+import 'package:paystack_flutter/src/api/model/transaction_api_response.dart';
 
 class ApiService {
   static const baseUrl = 'https://standard.paystack.co';

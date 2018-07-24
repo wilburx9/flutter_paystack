@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:paystack_flutter/model/card.dart';
-import 'package:paystack_flutter/my_strings.dart';
+import 'package:paystack_flutter/src/model/card.dart';
+import 'package:paystack_flutter/src/my_strings.dart';
 
 class CardUtils {
   static bool isWholeNumberPositive(String value) {

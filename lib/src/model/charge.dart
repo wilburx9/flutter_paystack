@@ -1,5 +1,5 @@
-import 'package:paystack_flutter/model/card.dart';
-import 'package:paystack_flutter/utils/string_utils.dart';
+import 'package:paystack_flutter/src/model/card.dart';
+import 'package:paystack_flutter/src/utils/string_utils.dart';
 
 class Charge {
   PaymentCard card;

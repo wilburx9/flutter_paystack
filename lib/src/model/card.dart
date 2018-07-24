@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
-import 'package:paystack_flutter/my_strings.dart';
-import 'package:paystack_flutter/utils/card_utils.dart';
-import 'package:paystack_flutter/utils/string_utils.dart';
+import 'package:paystack_flutter/src/my_strings.dart';
+import 'package:paystack_flutter/src/utils/card_utils.dart';
+import 'package:paystack_flutter/src/utils/string_utils.dart';
 
 /// The class for the Payment Card model. Has utility methods for validating
 /// the card.
