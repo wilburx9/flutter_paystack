@@ -10,6 +10,7 @@ import 'package:paystack_flutter/src/model/charge.dart';
 import 'package:paystack_flutter/src/singletons.dart';
 import 'package:paystack_flutter/src/transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:paystack_flutter/src/ui/pin_input_ui.dart';
 import 'package:paystack_flutter/src/ui/card_input_ui.dart';
 
 class TransactionManager {
@@ -30,7 +31,7 @@ class TransactionManager {
   _handleServerResponse(Future<TransactionApiResponse> future) {
     future
         .then((TransactionApiResponse apiResponse) =>
-        _handleApiResponse(apiResponse))
+            _handleApiResponse(apiResponse))
         .catchError((e) => _notifyProcessingError(e));
   }
 
@@ -38,11 +39,11 @@ class TransactionManager {
     assert(_context != null, 'context must not be null');
     assert(_charge != null, 'charge must not be null');
     assert(
-    _charge.card != null,
-    'please add a card to the charge before '
+        _charge.card != null,
+        'please add a card to the charge before '
         'calling chargeCard');
     assert(_transactionCallback != null,
-    'transactionCallback must not be ' 'null');
+        'transactionCallback must not be ' 'null');
   }
 
   _initiate() {
@@ -108,13 +109,13 @@ class TransactionManager {
 
   _reQueryChargeOnServer() {
     Future<TransactionApiResponse> future =
-    _apiService.reQueryTransaction(_transaction.id);
+        _apiService.reQueryTransaction(_transaction.id);
     _handleServerResponse(future);
   }
 
   _initiateChargeOnServer() {
     Future<TransactionApiResponse> future =
-    _apiService.charge(_chargeRequestBody.paramsMap());
+        _apiService.charge(_chargeRequestBody.paramsMap());
     _handleServerResponse(future);
   }
 
@@ -177,7 +178,8 @@ class TransactionManager {
 
     if (status == '0'.toLowerCase() || status == 'error') {
       if (apiResponse.message.toLowerCase() ==
-          'Invalid Data Sent'.toLowerCase() && _invalidDataSentRetries < 0) {
+              'Invalid Data Sent'.toLowerCase() &&
+          _invalidDataSentRetries < 0) {
         _invalidDataSentRetries++;
         _sendChargeToServer();
         return;
@@ -210,25 +212,71 @@ class TransactionManager {
   }
 
   _getCardInfoFrmUI(CardSingleton si) async {
-    PaymentCard result =
-    await Navigator.of(_context).push(new MaterialPageRoute<PaymentCard>(
+    PaymentCard card =
+        await Navigator.of(_context).push(new MaterialPageRoute<PaymentCard>(
       builder: (BuildContext context) {
         return new CardInputUI(si.card);
       },
     ));
 
-    if (result == null || !result.isValid()) {
+    _cardSingleton.card = card;
+
+    if (card == null || !card.isValid()) {
       _notifyProcessingError(Exception('Invalid card parameters'));
     } else {
-      _charge.card = result;
+      _charge.card = card;
       chargeCard();
     }
   }
 
-  // TODO: Get PIN, OTP and AUTH from UI
-  _getPinFrmUI() {}
+  _getPinFrmUI() async {
+    String pin =
+        await Navigator.of(_context).push(new MaterialPageRoute<String>(
+      builder: (BuildContext context) {
+        return new PinInputUI(
+            randomize: true,
+            title: 'Enter Card PIN',
+            pinLength: 4,
+            subHeading: 'To confirm you\'re the owner of this card, please '
+                'enter your card pin',
+            showIndicatorPlaceholder: true,
+            indicatorPadding: 10.0);
+      },
+    ));
 
-  _getOtpFrmUI() {}
+    _pinSingleton.pin = pin;
+    if (pin != null && pin.length == 4) {
+      _chargeRequestBody.addPin(pin);
+      _sendChargeToServer();
+    } else {
+      _notifyProcessingError(Exception("PIN must be exactly 4 digits"));
+    }
+  }
 
+  _getOtpFrmUI() async {
+    // TODO: Handle cases of OTP being more than 10 characters
+    String otp =
+        await Navigator.of(_context).push(new MaterialPageRoute<String>(
+      builder: (BuildContext context) {
+        return new PinInputUI(
+            randomize: false,
+            title: 'Enter OTP',
+            pinLength: 10,
+            subHeading: 'Please enter OTP',
+            showIndicatorPlaceholder: false,
+            indicatorPadding: 0.0);
+      },
+    ));
+
+    _otpSingleton.otp = otp;
+    if (otp != null) {
+      _validateRequestBody.token = otp;
+      _validate();
+    } else {
+      _notifyProcessingError(Exception("You did not provide an OTP"));
+    }
+  }
+
+  // TODO: AUTH from UI
   _getAuthFrmUI() {}
 }
