@@ -27,8 +27,8 @@ class TransactionApiResponse extends ApiResponse {
 
   bool hasValidUrl() {
     return otpMessage != null &&
-        StringUtils.isHttpUrl(otpMessage) &&
-        StringUtils.isHttpsUrl(otpMessage);
+        (StringUtils.isHttpUrl(otpMessage) ||
+        StringUtils.isHttpsUrl(otpMessage));
   }
 
   bool hasValidOtpMessage() {
