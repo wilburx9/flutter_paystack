@@ -5,7 +5,6 @@ import 'package:paystack_flutter/src/utils/string_utils.dart';
 
 /// The class for the Payment Card model. Has utility methods for validating
 /// the card.
-/// TODO: Add doc for initialization
 class PaymentCard {
   // List of supported card types
   final List<CardType> cardTypes = [
@@ -22,7 +21,7 @@ class PaymentCard {
   String name;
 
   /// Card number
-  String number;
+  String _number;
 
   /// Card CVV or CVC
   String cvc;
@@ -46,7 +45,7 @@ class PaymentCard {
   String addressLine4;
 
   /// Postal code of the bank address
-  String addressPostCode;
+  String addressPostalCode;
 
   /// Country of the bank
   String addressCountry;
@@ -57,57 +56,63 @@ class PaymentCard {
 
   String last4Digits;
 
-  set type(String value) {
-    //if type is empty and the number isn't empty
-    if (value != null && value.isNotEmpty && number.isNotEmpty) {
+  set type(String value) => _type = value;
+
+  String get number => _number;
+
+  String get type {
+    // If type is empty and the number isn't empty
+    if (StringUtils.isEmpty(_type) && !StringUtils.isEmpty(number)) {
       for (var cardType in cardTypes) {
         if (cardType.hasMatch(number)) {
-          value = cardType.toString();
-          break;
+          return cardType.toString();
         }
       }
+      return CardType.unknown;
     }
-    _type = value;
+    return _type;
+  }
+
+  set number(String value) {
+    _number = CardUtils.getCleanedNumber(value);
   }
 
   PaymentCard(
-      {@required this.number,
+      {@required String number,
       @required this.cvc,
       @required this.expiryMonth,
       @required this.expiryYear,
-      this.name,
-      this.addressLine1,
-      this.addressLine2,
-      this.addressLine3,
-      this.addressLine4,
-      this.addressPostCode,
-      this.addressCountry,
-      this.country}) {
-    assert(name == null || name.isNotEmpty, 'Card name ${Strings.emptyStr}');
-    assert(addressLine1 == null || addressLine1.isNotEmpty,
-        'addressLine1 ${Strings.emptyStr}');
-    assert(addressLine2 == null || addressLine2.isNotEmpty,
-        'addressLine2 ${Strings.emptyStr}');
-    assert(addressLine3 == null || addressLine3.isNotEmpty,
-        'addressLine3 ${Strings.emptyStr}');
-    assert(addressLine4 == null || addressLine4.isNotEmpty,
-        'addressLine4 ${Strings.emptyStr}');
-    assert(addressCountry == null || addressCountry.isNotEmpty,
-        'addressCountry ${Strings.emptyStr}');
-    assert(addressPostCode == null || addressPostCode.isNotEmpty,
-        'addressPostCode ${Strings.emptyStr}');
-    assert(
-        country == null || country.isNotEmpty, 'country ${Strings.emptyStr}');
-    this.type = number;
+      String name,
+      String addressLine1,
+      String addressLine2,
+      String addressLine3,
+      String addressLine4,
+      String addressPostCode,
+      String addressCountry,
+      String country}) {
+    this.number = CardUtils.getCleanedNumber(number);
+    this.name = StringUtils.nullify(name);
+    this.addressLine1 = StringUtils.nullify(addressLine1);
+    this.addressLine2 = StringUtils.nullify(addressLine2);
+    this.addressLine3 = StringUtils.nullify(addressLine3);
+    this.addressLine4 = StringUtils.nullify(addressLine4);
+    this.addressCountry = StringUtils.nullify(addressCountry);
+    this.addressPostalCode = StringUtils.nullify(addressPostalCode);
+
+    this.country = StringUtils.nullify(country);
+    this.type = type;
   }
 
   /// Validates the CVC or CVV of the card
   /// Returns true if the cvc is valid
   bool isValid() {
-    return cvc != null && number != null && expiryMonth != null && expiryYear
-        != null && validNumber() && CardUtils.validExpiryDate(expiryMonth, expiryYear)
-        && validCVC();
-
+    return cvc != null &&
+        number != null &&
+        expiryMonth != null &&
+        expiryYear != null &&
+        validNumber() &&
+        CardUtils.validExpiryDate(expiryMonth, expiryYear) &&
+        validCVC();
   }
 
   /// Validates the CVC or CVV of a card.
@@ -176,7 +181,6 @@ class PaymentCard {
 
     return sum % 10 == 0;
   }
-
 }
 
 abstract class CardType {

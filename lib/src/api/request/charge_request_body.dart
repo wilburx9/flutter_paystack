@@ -1,5 +1,8 @@
 import 'package:paystack_flutter/src/api/request/base_request_body.dart';
 import 'package:paystack_flutter/src/model/charge.dart';
+import 'package:paystack_flutter/paystack_sdk.dart';
+import 'package:paystack_flutter/src/utils/card_utils.dart';
+import 'package:paystack_flutter/src/utils/crypto.dart';
 
 class ChargeRequestBody extends BaseRequestBody {
   static const String fieldClientData = "clientdata";
@@ -33,13 +36,11 @@ class ChargeRequestBody extends BaseRequestBody {
   String _plan;
   Map<String, String> _additionalParameters;
 
-  // TODO: Get Crypto.encrypt value
-  // TODO: Get PaystackSdk.getPublicKey() Public Key
   ChargeRequestBody(Charge charge) {
     this.setDeviceId();
-    this._clientData = '';
+    this.setClientData(charge);
     this._last4 = charge.card.last4Digits;
-    this._publicKey = '';
+    this._publicKey = PaystackSdk.publicKey;
     this._email = charge.email;
     this._amount = charge.amount.toString();
     this._reference = charge.reference;
@@ -55,9 +56,14 @@ class ChargeRequestBody extends BaseRequestBody {
     this._additionalParameters = charge.additionalParameters;
   }
 
-  // TODO:Crypto.encrypt(pin)  Encrypt pin and return
-  addPin(String pin) {
-    this._handle = '';
+  setClientData(Charge charge) async {
+    String clientData = await Crypto.encrypt(
+        CardUtils.concatenateCardFields(charge.card));
+    this._clientData = clientData;
+  }
+
+  addPin(String pin) async {
+    this._handle = await Crypto.encrypt(pin);
   }
 
   _getBearer(Bearer bearer) {

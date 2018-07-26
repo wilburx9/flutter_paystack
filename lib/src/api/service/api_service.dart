@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:paystack_flutter/src/api/model/transaction_api_response.dart';
+import 'package:paystack_flutter/src/platform_info.dart';
 
 class ApiService {
   static const baseUrl = 'https://standard.paystack.co';
   Map<String, String> headers;
 
-  // TODO: Get sdk int and version code when PaystackSDK is initialized
   ApiService() {
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    headers['User-Agent'] = '';
-    headers['X-Paystack-Build'] = '';
+    headers['User-Agent'] = PlatformInfo().userAgent;
+    headers['X-Paystack-Build'] = PlatformInfo().paystackBuild;
     headers['Accept'] = 'application/json';
   }
 

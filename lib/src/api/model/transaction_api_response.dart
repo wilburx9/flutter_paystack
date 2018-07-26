@@ -13,12 +13,12 @@ class TransactionApiResponse extends ApiResponse {
   }
 
   TransactionApiResponse.fromMap(Map<String, dynamic> map) {
-    reference = map['reference'];
-    trans = map['trans'];
-    auth = map['auth'];
-    otpMessage = map['otpmessage'];
-    status = map['status'];
-    message = map['message'];
+    reference = map.containsKey('reference') ? map['reference'] : null;
+    trans = map.containsKey('trans') ? map['trans'] : null;
+    auth = map.containsKey('auth') ? map['auth'] : null;
+    otpMessage = map.containsKey('otpmessage') ? map['otpmessage'] : null;
+    status = map.containsKey('status') ? map['status'] : null;
+    message = map.containsKey('message') ? map['message'] : null;
   }
 
   bool hasValidReferenceAndTrans() {
@@ -28,7 +28,7 @@ class TransactionApiResponse extends ApiResponse {
   bool hasValidUrl() {
     return otpMessage != null &&
         (StringUtils.isHttpUrl(otpMessage) ||
-        StringUtils.isHttpsUrl(otpMessage));
+            StringUtils.isHttpsUrl(otpMessage));
   }
 
   bool hasValidOtpMessage() {
