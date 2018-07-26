@@ -18,4 +18,8 @@ class Utils {
     }
     return publicKey;
   }
+
+  static validatePlatformSpecificInfo() {
+
+  }
 }

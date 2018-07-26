@@ -12,6 +12,7 @@ import 'package:paystack_flutter/src/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:paystack_flutter/src/ui/pin_input_ui.dart';
 import 'package:paystack_flutter/src/ui/card_input_ui.dart';
+import 'package:paystack_flutter/src/utils/utils.dart';
 
 class TransactionManager {
   static bool processing = false;
@@ -278,5 +279,9 @@ class TransactionManager {
   }
 
   // TODO: AUTH from UI
-  _getAuthFrmUI() {}
+  _getAuthFrmUI() async {
+    String result = await Utils.channel
+        .invokeMethod('getAuthorization', {"authUrl": _authSingleton.url});
+    //var apiResponse = TransactionApiResponse.fromMap(result);
+  }
 }

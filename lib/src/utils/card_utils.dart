@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:paystack_flutter/src/model/card.dart';
 import 'package:paystack_flutter/src/my_strings.dart';
+import 'package:paystack_flutter/src/utils/string_utils.dart';
+
+const cardConcatenateValue = '*';
 
 class CardUtils {
   static bool isWholeNumberPositive(String value) {
-    if(value == null) {
+    if (value == null) {
       return false;
     }
 
     for (var i = 0; i < value.length; ++i) {
-      if(!((value.codeUnitAt(i) ^ 0x30) <= 9)) {
+      if (!((value.codeUnitAt(i) ^ 0x30) <= 9)) {
         return false;
       }
     }
@@ -27,7 +30,7 @@ class CardUtils {
         convertYearTo4Digits(year) == now.year && (month < now.month + 1);
   }
 
-  static bool isValidMonth(int month){
+  static bool isValidMonth(int month) {
     return (month > 0) && (month < 13);
   }
 
@@ -55,6 +58,10 @@ class CardUtils {
     return year;
   }
 
+  static String getCleanedNumber(String text) {
+    RegExp regExp = new RegExp(r"[^0-9]");
+    return text.replaceAll(regExp, '');
+  }
 
   /// Checks if the card has expired.
   /// Returns true if the card has expired; false otherwise
@@ -63,4 +70,37 @@ class CardUtils {
         isNotExpired(expiryYear, expiryMonth);
   }
 
+  static String concatenateCardFields(PaymentCard card) {
+    if (card == null) {
+      throw new Exception("Card cannot be null");
+    }
+
+    String number = StringUtils.nullify(card.number);
+    String cvc = StringUtils.nullify(card.cvc);
+    int expiryMonth = card.expiryMonth;
+    int expiryYear = card.expiryYear;
+
+    String cardString;
+    var cardFields = [
+      number,
+      cvc,
+      expiryMonth.toString(),
+      expiryYear.toString()
+    ];
+
+    if (!StringUtils.isEmpty(number)) {
+      for (int i = 0; i < cardFields.length; i++) {
+        if (i == 0 && cardFields.length > 1) {
+          cardString = '${cardFields[i]}$cardConcatenateValue';
+        } else if (i == cardFields.length - 1) {
+          cardString += cardFields[i];
+        } else {
+          cardString = '$cardString${cardFields[i]}$cardConcatenateValue';
+        }
+      }
+      return cardString;
+    } else {
+      throw new Exception('Invalid card details: Card number is empty or null');
+    }
+  }
 }
