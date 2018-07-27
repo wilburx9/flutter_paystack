@@ -3,9 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:paystack_flutter/src/model/card.dart' hide CardType;
+import 'package:paystack_flutter/src/model/card.dart';
 import 'package:paystack_flutter/src/my_strings.dart';
-import 'package:paystack_flutter/src/singletons.dart';
 import 'package:paystack_flutter/src/utils/card_utils.dart';
 import 'package:paystack_flutter/src/ui/input_formatters.dart';
 
@@ -19,10 +18,9 @@ class CardInputUI extends StatefulWidget {
 }
 
 class _CardInputUIState extends State<CardInputUI> {
-  var _scaffoldKey = new GlobalKey<ScaffoldState>();
   var _formKey = new GlobalKey<FormState>();
   TextEditingController numberController;
-  var _card = Card();
+  var _card = PaymentCard(number: null, cvc: null, expiryMonth: null, expiryYear: null);
   var _autoValidate = false;
 
   @override
@@ -32,117 +30,106 @@ class _CardInputUIState extends State<CardInputUI> {
         text: widget.currentCard != null && widget.currentCard.number != null
             ? widget.currentCard.number
             : null);
-    _card.type = CardType.Others;
+    _card.type = CardType.unknown;
     numberController.addListener(_getCardTypeFrmNumber);
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        key: _scaffoldKey,
-        appBar: new AppBar(
-          backgroundColor: Colors.lightBlue[900],
-          title: new Text('Card Details'),
-        ),
-        body: new Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: new Form(
-              key: _formKey,
-              autovalidate: _autoValidate,
-              child: new ListView(
-                children: <Widget>[
-                  new SizedBox(
-                    height: 20.0,
+    return new Container(
+      child: new Form(
+          key: _formKey,
+          autovalidate: _autoValidate,
+          child: new SingleChildScrollView(
+            child: new ListBody(
+              children: <Widget>[
+                new TextFormField(
+                  autofocus: true,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    WhitelistingTextInputFormatter.digitsOnly,
+                    new LengthLimitingTextInputFormatter(19),
+                    new CardNumberInputFormatter()
+                  ],
+                  controller: numberController,
+                  decoration: new InputDecoration(
+                    border: const UnderlineInputBorder(),
+                    icon: getCardIcon(),
+                    hintText: 'What number is written on card?',
+                    labelText: 'Number',
                   ),
-                  new Text('Please provide valid card details'),
-                  new SizedBox(
-                    height: 20.0,
-                  ),
-                  new TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      WhitelistingTextInputFormatter.digitsOnly,
-                      new LengthLimitingTextInputFormatter(19),
-                      new CardNumberInputFormatter()
-                    ],
-                    controller: numberController,
-                    decoration: new InputDecoration(
-                      border: const UnderlineInputBorder(),
-                      icon: getCardIcon(_card.type),
-                      hintText: 'What number is written on card?',
-                      labelText: 'Number',
+                  onSaved: (String value) {
+                    _card.number = CardUtils.getCleanedNumber(value);
+                  },
+                  validator: validateCardNum,
+                ),
+                new SizedBox(
+                  height: 30.0,
+                ),
+                new TextFormField(
+                  initialValue: widget.currentCard != null &&
+                      widget.currentCard.cvc != null
+                      ? widget.currentCard.cvc.toString()
+                      : null,
+                  inputFormatters: [
+                    WhitelistingTextInputFormatter.digitsOnly,
+                    new LengthLimitingTextInputFormatter(4),
+                  ],
+                  decoration: new InputDecoration(
+                    border: const UnderlineInputBorder(),
+                    icon: new Image.asset(
+                      'assets/images/card_cvv.png',
+                      width: 30.0,
+                      color: Colors.grey[600],
                     ),
-                    onSaved: (String value) {
-                      _card.number = getCleanedNumber(value);
-                    },
-                    validator: validateCardNum,
+                    hintText: 'Number behind the card',
+                    labelText: 'CVC',
                   ),
-                  new SizedBox(
-                    height: 30.0,
-                  ),
-                  new TextFormField(
-                    initialValue: widget.currentCard != null &&
-                            widget.currentCard.cvc != null
-                        ? widget.currentCard.cvc
-                        : null,
-                    inputFormatters: [
-                      WhitelistingTextInputFormatter.digitsOnly,
-                      new LengthLimitingTextInputFormatter(4),
-                    ],
-                    decoration: new InputDecoration(
-                      border: const UnderlineInputBorder(),
-                      icon: new Image.asset(
-                        'assets/images/card_cvv.png',
-                        width: 30.0,
-                        color: Colors.grey[600],
-                      ),
-                      hintText: 'Number behind the card',
-                      labelText: 'CVC',
+                  validator: validateCVC,
+                  keyboardType: TextInputType.number,
+                  onSaved: (value) {
+                    _card.cvc = value;
+                  },
+                ),
+                new SizedBox(
+                  height: 30.0,
+                ),
+                new TextFormField(
+                  inputFormatters: [
+                    WhitelistingTextInputFormatter.digitsOnly,
+                    new LengthLimitingTextInputFormatter(4),
+                    new CardMonthInputFormatter()
+                  ],
+                  initialValue: _getInitialExpiryMonth(widget.currentCard),
+                  decoration: new InputDecoration(
+                    border: const UnderlineInputBorder(),
+                    icon: new Image.asset(
+                      'assets/images/calender.png',
+                      width: 30.0,
+                      color: Colors.grey[600],
                     ),
-                    validator: validateCVC,
-                    keyboardType: TextInputType.number,
-                    onSaved: (value) {
-                      _card.cvc = int.parse(value);
-                    },
+                    hintText: 'MM/YY',
+                    labelText: 'Expiry Date',
                   ),
-                  new SizedBox(
-                    height: 30.0,
-                  ),
-                  new TextFormField(
-                    inputFormatters: [
-                      WhitelistingTextInputFormatter.digitsOnly,
-                      new LengthLimitingTextInputFormatter(4),
-                      new CardMonthInputFormatter()
-                    ],
-                    initialValue: _getInitialExpiryMonth(widget.currentCard),
-                    decoration: new InputDecoration(
-                      border: const UnderlineInputBorder(),
-                      icon: new Image.asset(
-                        'assets/images/calender.png',
-                        width: 30.0,
-                        color: Colors.grey[600],
-                      ),
-                      hintText: 'MM/YY',
-                      labelText: 'Expiry Date',
-                    ),
-                    validator: validateDate,
-                    keyboardType: TextInputType.number,
-                    onSaved: (value) {
-                      List<int> expiryDate = getExpiryDate(value);
-                      _card.month = expiryDate[0];
-                      _card.year = expiryDate[1];
-                    },
-                  ),
-                  new SizedBox(
-                    height: 50.0,
-                  ),
-                  new Container(
-                    alignment: Alignment.center,
-                    child: _getActionButtons(),
-                  )
-                ],
-              )),
-        ));
+                  validator: validateDate,
+                  keyboardType: TextInputType.number,
+                  onSaved: (value) {
+                    List<int> expiryDate = getExpiryDate(value);
+                    _card.expiryMonth = expiryDate[0];
+                    _card.expiryYear = expiryDate[1];
+                  },
+                ),
+                new SizedBox(
+                  height: 50.0,
+                ),
+                new Container(
+                  alignment: Alignment.center,
+                  child: _getActionButtons(),
+                )
+              ],
+            ),
+          )),
+    );
   }
 
   @override
@@ -154,8 +141,8 @@ class _CardInputUIState extends State<CardInputUI> {
   }
 
   void _getCardTypeFrmNumber() {
-    String input = getCleanedNumber(numberController.text);
-    CardType cardType = getCardTypeFrmNumber(input);
+    String input = CardUtils.getCleanedNumber(numberController.text);
+    String cardType =_card.getTypeForIIN(input);
     setState(() {
       this._card.type = cardType;
     });
@@ -167,14 +154,13 @@ class _CardInputUIState extends State<CardInputUI> {
       setState(() {
         _autoValidate = true; // Start validating on every change.
       });
-      _showInSnackBar('Please fix the errors in red before proceeding.');
     } else {
       form.save();
       var paymentCard = PaymentCard(
           number: _card.number,
           cvc: _card.cvc.toString(),
-          expiryMonth: _card.month,
-          expiryYear: _card.year);
+          expiryMonth: _card.expiryMonth,
+          expiryYear: _card.expiryYear);
       Navigator.pop(context, paymentCard);
     }
   }
@@ -184,7 +170,7 @@ class _CardInputUIState extends State<CardInputUI> {
   }
 
   Widget _getActionButtons() {
-    if (Platform.isAndroid) {
+    if (Platform.isIOS) {
       return new Column(
         children: <Widget>[
           new CupertinoButton(
@@ -211,24 +197,9 @@ class _CardInputUIState extends State<CardInputUI> {
         borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
       );
       const padding =
-          const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0);
-      return new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0);
+      return new Column(
         children: <Widget>[
-          new FlatButton(
-            onPressed: _cancelInputs,
-            color: Colors.red,
-            shape: border,
-            padding: padding,
-            textColor: Colors.white,
-            child: new Text(
-              Strings.cancel.toUpperCase(),
-              style: const TextStyle(fontSize: 17.0),
-            ),
-          ),
-          new SizedBox(
-            height: 20.0,
-          ),
           new FlatButton(
             onPressed: _validateInputs,
             color: Colors.lightBlue[900],
@@ -240,31 +211,30 @@ class _CardInputUIState extends State<CardInputUI> {
               style: const TextStyle(fontSize: 17.0),
             ),
           ),
+          new SizedBox(
+            height: 20.0,
+          ),
+          new FlatButton(
+            onPressed: _cancelInputs,
+            color: Colors.red,
+            shape: border,
+            padding: padding,
+            textColor: Colors.white,
+            child: new Text(
+              Strings.cancel.toUpperCase(),
+              style: const TextStyle(fontSize: 17.0),
+            ),
+          ),
         ],
       );
     }
   }
 
-  void _showInSnackBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(value),
-      duration: new Duration(seconds: 3),
-    ));
-  }
 
   String validateCVC(String value) {
     if (value == null || value.trim().isEmpty) return Strings.fieldReq;
 
-    var cvcValue = value.trim();
-    bool validLength = ((_card.type == CardType.Others &&
-            cvcValue.length >= 3 &&
-            cvcValue.length <= 4) ||
-        (CardType.AmericanExpress == _card.type && cvcValue.length == 4) ||
-        (CardType.AmericanExpress != _card.type && cvcValue.length == 3));
-    bool validCVC =
-        !(!CardUtils.isWholeNumberPositive(cvcValue) || !validLength);
-
-    return validCVC ? null : 'CVV is invalid';
+    return _card.validCVC(value) ? null : 'CVV is invalid';
   }
 
   String validateDate(String value) {
@@ -306,85 +276,46 @@ class _CardInputUIState extends State<CardInputUI> {
     return null;
   }
 
-  /// With the card number with Luhn Algorithm
-  /// https://en.wikipedia.org/wiki/Luhn_algorithm
+
   String validateCardNum(String input) {
     if (input.isEmpty) {
       return Strings.fieldReq;
     }
 
-    input = getCleanedNumber(input);
+    input = CardUtils.getCleanedNumber(input);
 
-    if (input.length < 8) {
-      return Strings.numberIsInvalid;
-    }
-
-    int sum = 0;
-    int length = input.trim().length;
-    for (var i = 0; i < length; i++) {
-      // get digits in reverse order
-      var source = input[length - i - 1];
-
-      // Check if character is digit before parsing it
-      if (!((input.codeUnitAt(i) ^ 0x30) <= 9)) {
-        return Strings.numberIsInvalid;
-      }
-      int digit = int.parse(source);
-
-      // if it's odd, multiply by 2
-      if (i % 2 == 1) {
-        digit *= 2;
-      }
-      sum += digit > 9 ? (digit - 9) : digit;
-    }
-
-    if (sum % 10 == 0) {
-      return null;
-    }
-
-    return Strings.numberIsInvalid;
+    return _card.validNumber(input)? null : Strings.numberIsInvalid;
   }
 
-  String getCleanedNumber(String text) {
-    RegExp regExp = new RegExp(r"[^0-9]");
-    return text.replaceAll(regExp, '');
-  }
 
-  Widget getCardIcon(CardType cardType) {
+  Widget getCardIcon() {
     String img = "";
     Icon icon;
-    switch (cardType) {
-      case CardType.Master:
+    switch (_card.type) {
+      case CardType.masterCard:
         img = 'mastercard.png';
         break;
-      case CardType.Visa:
+      case CardType.visa:
         img = 'visa.png';
         break;
-      case CardType.Verve:
+      case CardType.verve:
         img = 'verve.png';
         break;
-      case CardType.AmericanExpress:
+      case CardType.americanExpress:
         img = 'american_express.png';
         break;
-      case CardType.Discover:
+      case CardType.discover:
         img = 'discover.png';
         break;
-      case CardType.DinersClub:
+      case CardType.dinersClub:
         img = 'dinners_club.png';
         break;
-      case CardType.Jcb:
+      case CardType.jcb:
         img = 'jcb.png';
         break;
-      case CardType.Others:
+      case CardType.unknown:
         icon = new Icon(
           Icons.credit_card,
-          size: 30.0,
-          color: Colors.grey[600],
-        );
-        break;
-      case CardType.Invalid:
-        icon = new Icon(
-          Icons.warning,
           size: 30.0,
           color: Colors.grey[600],
         );
@@ -402,74 +333,12 @@ class _CardInputUIState extends State<CardInputUI> {
     return widget;
   }
 
-  CardType getCardTypeFrmNumber(String input) {
-    CardType cardType;
-    if (input.startsWith(new RegExp(
-        r'((5[1-5])|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720))'))) {
-      cardType = CardType.Master;
-    } else if (input.startsWith(new RegExp(r'[4]'))) {
-      cardType = CardType.Visa;
-    } else if (input
-        .startsWith(new RegExp(r'((506(0|1))|(507(8|9))|(6500))'))) {
-      cardType = CardType.Verve;
-    } else if (input.startsWith(new RegExp(r'((34)|(37))'))) {
-      cardType = CardType.AmericanExpress;
-    } else if (input.startsWith(new RegExp(r'((6[45])|(6011))'))) {
-      cardType = CardType.Discover;
-    } else if (input
-        .startsWith(new RegExp(r'((30[0-5])|(3[89])|(36)|(3095))'))) {
-      cardType = CardType.DinersClub;
-    } else if (input.startsWith(new RegExp(r'(352[89]|35[3-8][0-9])'))) {
-      cardType = CardType.Jcb;
-    } else if (input.length <= 8) {
-      cardType = CardType.Others;
-    } else {
-      cardType = CardType.Invalid;
-    }
-    return cardType;
-  }
-
   static List<int> getExpiryDate(String value) {
     var split = value.split(new RegExp(r'(\/)'));
     return [int.parse(split[0]), int.parse(split[1])];
   }
 
   String _getInitialExpiryMonth(PaymentCard card) {
-    if (card == null) {
-      return null;
-    }
-    if (card.expiryYear == null || card.expiryMonth == null) {
-      return null;
-    } else {
-      return '${card.expiryMonth}/${card.expiryYear}';
-    }
-  }
-}
-
-enum CardType {
-  Master,
-  Visa,
-  Verve,
-  Discover,
-  AmericanExpress,
-  DinersClub,
-  Jcb,
-  Others,
-  Invalid
-}
-
-class Card {
-  CardType type;
-  String number;
-  String name;
-  int month;
-  int year;
-  int cvc;
-
-  Card({this.type, this.number, this.name, this.month, this.year, this.cvc});
-
-  @override
-  String toString() {
-    return '[Type: $type, Number: $number, Name: $name, Month: $month, Year: $year, CVC: $cvc]';
+    return null;
   }
 }
