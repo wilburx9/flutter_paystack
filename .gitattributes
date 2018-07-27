@@ -1,0 +1,2 @@
+# .gitattributes file
+main.dart filter=updatePaystackKey
