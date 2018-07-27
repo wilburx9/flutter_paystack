@@ -231,19 +231,25 @@ class TransactionManager {
   }
 
   _getPinFrmUI() async {
-    String pin =
-        await Navigator.of(_context).push(new MaterialPageRoute<String>(
-      builder: (BuildContext context) {
-        return new PinInputUI(
-            randomize: true,
-            title: 'Enter Card PIN',
-            pinLength: 4,
-            subHeading: 'To confirm you\'re the owner of this card, please '
-                'enter your card pin',
-            showIndicatorPlaceholder: true,
-            indicatorPadding: 10.0);
-      },
-    ));
+    String pin = await showDialog(
+        context: _context,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: new Text(
+              'To confirm you\'re the owner of this card, please '
+                  'enter your card pin.',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18.0,
+              ),
+            ),
+            content: new PinInputUI(
+                randomize: true,
+                pinLength: 4,
+                showIndicatorPlaceholder: true,
+                indicatorPadding: 10.0),
+          );
+        });
 
     _pinSingleton.pin = pin;
     if (pin != null && pin.length == 4) {
@@ -255,19 +261,26 @@ class TransactionManager {
   }
 
   _getOtpFrmUI() async {
-    // TODO: Handle cases of OTP being more than 10 characters
-    String otp =
-        await Navigator.of(_context).push(new MaterialPageRoute<String>(
-      builder: (BuildContext context) {
-        return new PinInputUI(
-            randomize: false,
-            title: 'Enter OTP',
-            pinLength: 10,
-            subHeading: 'Please enter OTP',
-            showIndicatorPlaceholder: false,
-            indicatorPadding: 0.0);
-      },
-    ));
+    // TODO: Handle cases of OTP being more than 10 characters. It will
+    // automatically keep increasing the length of the max characters just as
+    // the official Android version of Paystack is doing it. For now, we'll
+    // make the max characters 20. God help us! LOL
+
+    String otp = await showDialog(
+        context: _context,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: new Text(
+              'Please enter OTP',
+              textAlign: TextAlign.center,
+            ),
+            content: new PinInputUI(
+                randomize: false,
+                pinLength: 20,
+                showIndicatorPlaceholder: false,
+                indicatorPadding: 0.0),
+          );
+        });
 
     _otpSingleton.otp = otp;
     if (otp != null) {
