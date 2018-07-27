@@ -1,6 +1,7 @@
 import 'package:paystack_flutter/src/model/charge.dart';
 import 'package:paystack_flutter/src/transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:paystack_flutter/src/exceptions.dart';
 import 'package:paystack_flutter/src/transaction_manager.dart';
 import 'package:paystack_flutter/src/utils/utils.dart';
 
@@ -29,7 +30,7 @@ class Paystack {
     if (publicKey == null ||
         publicKey.length < 1 ||
         !publicKey.startsWith("pk_")) {
-      throw new Exception(
+      throw new AuthenticationException(
           'Invalid public key. To create a token, you must use a valid public key.\nEnsure that you have set a public key.\nCheck http://paystack.co for more');
     }
   }

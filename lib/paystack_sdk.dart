@@ -6,10 +6,14 @@ import 'package:paystack_flutter/src/paystack.dart';
 import 'package:paystack_flutter/src/utils/utils.dart';
 import 'package:paystack_flutter/src/platform_info.dart';
 import 'package:flutter/services.dart';
+import 'package:paystack_flutter/src/exceptions.dart';
 
+// Expose the following files
 export 'package:paystack_flutter/src/model/card.dart';
-export 'package:paystack_flutter/src/paystack.dart';
+export 'package:paystack_flutter/src/paystack.dart' hide Paystack;
 export 'package:paystack_flutter/src/model/charge.dart';
+export 'package:paystack_flutter/src/transaction.dart';
+export 'package:paystack_flutter/src/exceptions.dart' hide PaystackException;
 
 class PaystackSdk {
   static bool _sdkInitialized;
@@ -37,7 +41,7 @@ class PaystackSdk {
         ..paystackBuild = paystackBuild
         ..deviceId = deviceId;
     } on PlatformException catch (e) {
-      throw Exception(
+      throw PaystackException(
           'An error occured while initializing Paystck: ${e.toString()}');
     }
 
