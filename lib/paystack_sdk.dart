@@ -83,7 +83,7 @@ class PaystackSdk {
   }
 
   static chargeCard(BuildContext context,
-      {Charge charge, TransactionCallback transactionCallback}) {
+      {@required Charge charge, TransactionCallback transactionCallback}) {
     assert(context != null, 'context must not be null');
 
     _performChecks();
