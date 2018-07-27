@@ -1,10 +1,8 @@
 import 'package:paystack_flutter/src/model/card.dart';
 
 class AuthSingleton {
-  var responseMap = {
-    'status': 'requery',
-    'message': 'Reaffirm Transaction Status on Server'
-  };
+  var responseMap =
+      '{\"status\":\"requery\",\"message\":\"Reaffirm Transaction Status on Server\"}';
   var url = '';
 
   static final AuthSingleton _singleton = AuthSingleton._internal();
@@ -15,7 +13,6 @@ class AuthSingleton {
 
   AuthSingleton._internal();
 }
-
 
 class CardSingleton {
   PaymentCard card;
@@ -29,7 +26,6 @@ class CardSingleton {
   CardSingleton._internal();
 }
 
-
 class OtpSingleton {
   var otp = '';
   var otpMessage = '';
@@ -41,7 +37,6 @@ class OtpSingleton {
 
   OtpSingleton._internal();
 }
-
 
 class PinSingleton {
   var pin = '';
