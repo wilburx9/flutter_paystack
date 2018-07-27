@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:paystack_flutter/src/model/charge.dart';
@@ -87,11 +86,6 @@ class PaystackSdk {
     paystack.chargeCard(context, charge, transactionCallback);
   }
 
-  static Future<String> get platformVersion async {
-    final String version =
-        await Utils.channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
 }
 
 /// Callback for when the SDK has been initialized
