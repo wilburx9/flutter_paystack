@@ -49,6 +49,7 @@ class PaymentCard {
 
   /// Country of the bank
   String addressCountry;
+
   String country;
 
   /// Type of card
