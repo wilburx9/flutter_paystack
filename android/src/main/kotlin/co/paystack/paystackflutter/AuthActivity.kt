@@ -18,8 +18,6 @@ class AuthActivity : Activity() {
     private var responseJson: String? = null
     private lateinit var webUrl: String
 
-    companion object {
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
