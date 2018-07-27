@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:paystack_flutter/src/exceptions.dart';
 import 'package:paystack_flutter/src/paystack.dart';
 import 'package:paystack_flutter/src/api/model/transaction_api_response.dart';
 import 'package:paystack_flutter/src/api/request/charge_request_body.dart';
@@ -49,8 +50,7 @@ class TransactionManager {
 
   _initiate() {
     if (TransactionManager.processing) {
-      throw Exception('A transaction is currently processing, please wait '
-          'till it concludes before attempting a new charge.');
+      throw ProcessingException();
     }
     _setProcessingOn();
     _apiService = ApiService();
@@ -70,7 +70,9 @@ class TransactionManager {
       }
     } catch (e) {
       print(e.toString());
-      _setProcessingOff();
+      if(!(e is ProcessingException)) {
+        _setProcessingOff();
+      }
       _transactionCallback.onError(e, _transaction);
     }
   }
@@ -188,15 +190,15 @@ class TransactionManager {
 
       if (apiResponse.message.toLowerCase() ==
           'Access code has expired'.toLowerCase()) {
-        _notifyProcessingError(Exception(apiResponse.message));
+        _notifyProcessingError(ExpiredAccessCodeException(apiResponse.message));
         return;
       }
 
-      _notifyProcessingError(Exception(apiResponse.message));
+      _notifyProcessingError(ChargeException(apiResponse.message));
       return;
     }
 
-    _notifyProcessingError(Exception('Unknown server response'));
+    _notifyProcessingError(PaystackException('Unknown server response'));
   }
 
   _notifyProcessingError(Exception e) {
@@ -223,7 +225,7 @@ class TransactionManager {
     _cardSingleton.card = card;
 
     if (card == null || !card.isValid()) {
-      _notifyProcessingError(Exception('Invalid card parameters'));
+      _notifyProcessingError(CardException('Invalid card parameters'));
     } else {
       _charge.card = card;
       chargeCard();
@@ -256,7 +258,7 @@ class TransactionManager {
       _chargeRequestBody.addPin(pin);
       _sendChargeToServer();
     } else {
-      _notifyProcessingError(Exception("PIN must be exactly 4 digits"));
+      _notifyProcessingError(PaystackException("PIN must be exactly 4 digits"));
     }
   }
 
@@ -287,7 +289,7 @@ class TransactionManager {
       _validateRequestBody.token = otp;
       _validate();
     } else {
-      _notifyProcessingError(Exception("You did not provide an OTP"));
+      _notifyProcessingError(PaystackException("You did not provide an OTP"));
     }
   }
 

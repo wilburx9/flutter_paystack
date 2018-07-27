@@ -1,4 +1,5 @@
 import 'package:paystack_flutter/src/model/card.dart';
+import 'package:paystack_flutter/src/exceptions.dart';
 import 'package:paystack_flutter/src/utils/string_utils.dart';
 
 class Charge {
@@ -20,18 +21,26 @@ class Charge {
   bool _remoteStarted = false;
 
   _beforeLocalSet(String fieldName) {
-    assert(
-        !_remoteStarted,
-        'You cannot set $fieldName after specifying an '
-        'access code');
+    assert(() {
+      if (_remoteStarted) {
+        throw new ChargeException(
+            'You cannot set $fieldName after specifying an '
+            'access code');
+      }
+      return true;
+    }());
     _localStarted = true;
   }
 
   _beforeRemoteSet() {
-    assert(
-        !_localStarted,
-        'You can not set access code when providing '
-        'transaction parameters');
+    assert(() {
+      if (_localStarted) {
+        throw new ChargeException(
+            'You can not set access code when providing '
+                'transaction parameters in app');
+      }
+      return true;
+    }());
     _remoteStarted = true;
   }
 
@@ -46,11 +55,10 @@ class Charge {
 
   Map<String, String> get additionalParameters => _additionalParameters;
 
-
   String get accessCode => _accessCode;
 
   set accessCode(String value) {
-    _beforeLocalSet(value);
+    _beforeRemoteSet();
     _accessCode = value;
   }
 
@@ -133,7 +141,7 @@ class Charge {
   set email(String value) {
     _beforeLocalSet('email');
     if (!StringUtils.isValidEmail(value)) {
-      throw '$value is not a valid email';
+      throw InvalidEmailException(value);
     }
     _email = email;
   }
@@ -143,7 +151,7 @@ class Charge {
   set amount(int value) {
     _beforeLocalSet('amount');
     if (amount <= 0)
-      throw '$value is not a valid amount. only positive non-zero values are allowed.';
+      throw InvalidAmountException(value);
     _amount = value;
   }
 }

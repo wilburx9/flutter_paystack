@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:paystack_flutter/src/exceptions.dart';
 import 'package:paystack_flutter/src/model/card.dart';
-import 'package:paystack_flutter/src/my_strings.dart';
 import 'package:paystack_flutter/src/utils/string_utils.dart';
 
 const cardConcatenateValue = '*';
@@ -72,7 +71,7 @@ class CardUtils {
 
   static String concatenateCardFields(PaymentCard card) {
     if (card == null) {
-      throw new Exception("Card cannot be null");
+      throw new CardException("Card cannot be null");
     }
 
     String number = StringUtils.nullify(card.number);
@@ -100,7 +99,7 @@ class CardUtils {
       }
       return cardString;
     } else {
-      throw new Exception('Invalid card details: Card number is empty or null');
+      throw new CardException('Invalid card details: Card number is empty or null');
     }
   }
 }
