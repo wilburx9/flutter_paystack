@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:paystack_flutter/src/paystack.dart';
 import 'package:paystack_flutter/src/api/model/transaction_api_response.dart';
 import 'package:paystack_flutter/src/api/request/charge_request_body.dart';
@@ -261,7 +261,7 @@ class TransactionManager {
   }
 
   _getOtpFrmUI() async {
-    // TODO: Handle cases of OTP being more than 10 characters. It will
+    // Handle cases of OTP being more than 10 characters. It will
     // automatically keep increasing the length of the max characters just as
     // the official Android version of Paystack is doing it. For now, we'll
     // make the max characters 20. God help us! LOL
@@ -291,10 +291,19 @@ class TransactionManager {
     }
   }
 
-  // TODO: AUTH from UI
   _getAuthFrmUI() async {
     String result = await Utils.channel
         .invokeMethod('getAuthorization', {"authUrl": _authSingleton.url});
-    //var apiResponse = TransactionApiResponse.fromMap(result);
+
+    _authSingleton.responseMap = result;
+    TransactionApiResponse apiResponse;
+    try{
+      Map<String, dynamic> responseMap = json.decode(result);
+      apiResponse = TransactionApiResponse.fromMap(responseMap);
+    } catch (e) {
+      print('Error occured during authentication. Error ${e.toString()}');
+      apiResponse = TransactionApiResponse.unknownServerResponse();
+    }
+    _handleApiResponse(apiResponse);
   }
 }
