@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:paystack_flutter/src/model/charge.dart';
@@ -15,46 +17,53 @@ export 'package:paystack_flutter/src/transaction.dart';
 export 'package:paystack_flutter/src/exceptions.dart' hide PaystackException;
 
 class PaystackSdk {
-  static bool _sdkInitialized;
+  static bool _sdkInitialized = false;
   static String _publicKey;
 
-  static _initialize(
-      String publicKey, OnSdkInitialized onSdkInitialized) async {
+
+  PaystackSdk._();
+
+  static Future<PaystackSdk> initialize({@required String publicKey}) async {
+    assert(() {
+      if (publicKey == null || publicKey.isEmpty) {
+        throw new PaystackException(
+            'publicKey cannot be null or empty');
+      }
+      return true;
+    }());
     //do all the init work here
 
-    //check if initialize callback is set and sdk is actually initialized
-    if (onSdkInitialized != null && sdkInitialized) {
-      onSdkInitialized();
-      return;
+    var completer = Completer<PaystackSdk>();
+
+    //check if sdk is actually initialized
+    if (sdkInitialized) {
+      completer.complete(PaystackSdk._());
+    } else {
+      _publicKey = publicKey;
+
+      // Using cascade notation to build the platform specific info
+      try {
+        String userAgent = await Utils.channel.invokeMethod('getUserAgent');
+        String paystackBuild =
+            await Utils.channel.invokeMethod('getVersionCode');
+        String deviceId = await Utils.channel.invokeMethod('getDeviceId');
+        var platformInfo = PlatformInfo()
+          ..userAgent = userAgent
+          ..paystackBuild = paystackBuild
+          ..deviceId = deviceId;
+
+        print('Platform Info ${platformInfo.toString()}');
+
+        _sdkInitialized = true;
+        completer.complete(PaystackSdk._());
+
+      } on PlatformException catch (e) {
+        print('An error occured while initializing Paystck: ${e.toString()}');
+        completer.completeError(e);
+      }
+
     }
-
-    _publicKey = publicKey;
-
-    // Using cascade notation to build the platform specific info
-    try {
-      String userAgent = await Utils.channel.invokeMethod('getUserAgent');
-      String paystackBuild = await Utils.channel.invokeMethod('getVersionCode');
-      String deviceId = await Utils.channel.invokeMethod('getDeviceId');
-      PlatformInfo()
-        ..userAgent = userAgent
-        ..paystackBuild = paystackBuild
-        ..deviceId = deviceId;
-    } on PlatformException catch (e) {
-      throw PaystackException(
-          'An error occured while initializing Paystck: ${e.toString()}');
-    }
-
-    _sdkInitialized = true;
-    if (onSdkInitialized != null) {
-      onSdkInitialized();
-    }
-  }
-
-  PaystackSdk.initialize(
-      {@required String publicKey, OnSdkInitialized onSdkInitialized}) {
-    assert(publicKey != null && publicKey.isNotEmpty,
-        'publicKey cannot be null or empty');
-    _initialize(publicKey, onSdkInitialized);
+    return completer.future;
   }
 
   static bool get sdkInitialized => _sdkInitialized;
@@ -85,8 +94,4 @@ class PaystackSdk {
     // Create token
     paystack.chargeCard(context, charge, transactionCallback);
   }
-
 }
-
-/// Callback for when the SDK has been initialized
-typedef void OnSdkInitialized();
