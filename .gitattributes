@@ -1,3 +1,2 @@
 # .gitattributes file
 main.dart filter=updatePaystackKey
-main.dart filter=updateHerokuUrl
