@@ -386,7 +386,7 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
       }
       if (paystackPublicKey == null ||
           !paystackPublicKey.isNotEmpty ||
-          paystackPublicKey == '{YOUR_PAYSTACK_PUBLIC_KEY}') {
+          paystackPublicKey == '12345678890000000') {
         throw new UnimplementedError(
             'Please set a public key before running the sample');
       }
