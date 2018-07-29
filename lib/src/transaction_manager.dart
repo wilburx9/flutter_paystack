@@ -301,7 +301,7 @@ class TransactionManager {
     try {
       Map<String, dynamic> responseMap = json.decode(result);
       apiResponse = TransactionApiResponse.fromMap(responseMap);
-      print('API response = $apiResponse');
+      print('API response = $responseMap');
     } catch (e) {
       print('Error occured during authentication. Error ${e.toString()}');
       apiResponse = TransactionApiResponse.unknownServerResponse();

@@ -60,6 +60,8 @@ class Paystack {
   }
 }
 
+
+// TODO: Use typedef
 abstract class TransactionCallback {
   onSuccess(Transaction transaction);
 
