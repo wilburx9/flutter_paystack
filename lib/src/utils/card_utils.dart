@@ -58,6 +58,9 @@ class CardUtils {
   }
 
   static String getCleanedNumber(String text) {
+    if (text == null) {
+      return '';
+    }
     RegExp regExp = new RegExp(r"[^0-9]");
     return text.replaceAll(regExp, '');
   }

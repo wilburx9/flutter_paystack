@@ -43,6 +43,11 @@ class PaystackFlutterPlugin(val appContext: Context, val authDelegate: AuthDeleg
             "getAuthorization" -> {
                 authDelegate.handleAuthorization(result, call)
             }
+            "getEncryptedData" -> {
+                val encryptedData = Crypto.encrypt(call.argument<String>("stringData"))
+                result.success(encryptedData)
+            }
+
             else -> result.notImplemented()
         }
 

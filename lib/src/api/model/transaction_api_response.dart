@@ -26,9 +26,12 @@ class TransactionApiResponse extends ApiResponse {
   }
 
   bool hasValidUrl() {
-    return otpMessage != null &&
-        (StringUtils.isHttpUrl(otpMessage) ||
-            StringUtils.isHttpsUrl(otpMessage));
+    print('Valid URL? Message = $otpMessage');
+    if (otpMessage == null || otpMessage.length == 0) {
+      return false;
+    }
+
+    return RegExp(r'^https?://', caseSensitive: false).hasMatch(otpMessage);
   }
 
   bool hasValidOtpMessage() {

@@ -27,7 +27,7 @@ class ExpiredAccessCodeException extends PaystackException {
 }
 
 class InvalidAmountException extends PaystackException {
-  int amount;
+  int amount = 0;
 
   InvalidAmountException(this.amount)
       : super('$amount is not a valid '

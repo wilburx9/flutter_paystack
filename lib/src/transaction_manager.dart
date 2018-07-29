@@ -8,7 +8,6 @@ import 'package:paystack_flutter/src/api/request/validate_request_body.dart';
 import 'package:paystack_flutter/src/api/service/api_service.dart';
 import 'package:paystack_flutter/src/model/card.dart';
 import 'package:paystack_flutter/src/model/charge.dart';
-import 'package:paystack_flutter/src/singletons.dart';
 import 'package:paystack_flutter/src/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:paystack_flutter/src/ui/pin_input_ui.dart';
@@ -21,10 +20,6 @@ class TransactionManager {
   final BuildContext _context;
   final Transaction _transaction = Transaction();
   final TransactionCallback _transactionCallback;
-  final CardSingleton _cardSingleton = CardSingleton();
-  final PinSingleton _pinSingleton = PinSingleton();
-  final OtpSingleton _otpSingleton = OtpSingleton();
-  final AuthSingleton _authSingleton = AuthSingleton();
   ChargeRequestBody _chargeRequestBody;
   ValidateRequestBody _validateRequestBody;
   ApiService _apiService;
@@ -48,29 +43,39 @@ class TransactionManager {
         'transactionCallback must not be ' 'null');
   }
 
-  _initiate() {
+  _initiate() async {
+    print("Started _initiate");
     if (TransactionManager.processing) {
       throw ProcessingException();
     }
     _setProcessingOn();
+    print('Tansaction Manager: _initiate: 1');
     _apiService = ApiService();
-    _chargeRequestBody = ChargeRequestBody(_charge);
+    print('Tansaction Manager: _initiate: 2');
+    _chargeRequestBody = await ChargeRequestBody.getChargeRequestBody(_charge);
+    print('Tansaction Manager: _initiate: 3');
     _validateRequestBody = ValidateRequestBody();
+    print('Tansaction Manager: _initiate: 4');
   }
 
-  chargeCard() {
+  chargeCard() async {
+    print("chargeCard Entered");
     try {
+      print('chargeCard Started If');
       if (_charge.card == null || !_charge.card.isValid()) {
-        final si = CardSingleton();
-        si.card = _charge.card;
-        _getCardInfoFrmUI(si);
+        print('chargeCard True');
+        _getCardInfoFrmUI(_charge.card);
       } else {
-        _initiate();
+        print("chargeCard Is Flase");
+        await _initiate();
+        print("chargeCard IS False 2");
         _sendChargeToServer();
       }
+      print("chargeCard End If");
     } catch (e) {
-      print(e.toString());
-      if(!(e is ProcessingException)) {
+      print(
+          'Something went wrong while charging card. Reason: ${e.toString()}');
+      if (!(e is ProcessingException)) {
         _setProcessingOff();
       }
       _transactionCallback.onError(e, _transaction);
@@ -78,10 +83,12 @@ class TransactionManager {
   }
 
   _sendChargeToServer() {
+    print('Started _sendChargeToServer');
     try {
       _initiateChargeOnServer();
     } catch (e) {
-      print(e.toString());
+      print('Something went wrong while sending charge to server. '
+          'Reason: ${e.toString()}');
       _notifyProcessingError(e);
     }
   }
@@ -90,7 +97,7 @@ class TransactionManager {
     try {
       _validateChargeOnServer();
     } catch (e) {
-      print(e.toString());
+      print('Something went wrong while validating. Reason ${e.toString()}');
       _notifyProcessingError(e);
     }
   }
@@ -99,7 +106,7 @@ class TransactionManager {
     try {
       _reQueryChargeOnServer();
     } catch (e) {
-      print(e);
+      print('Something went wrong while reQuering ${e.toString()}');
       _notifyProcessingError(e);
     }
   }
@@ -130,6 +137,7 @@ class TransactionManager {
     _transaction.loadFromResponse(apiResponse);
 
     var status = apiResponse.status.toLowerCase();
+
     if (status == '1' || status == 'success') {
       _setProcessingOff();
       _transactionCallback.onSuccess(_transaction);
@@ -144,8 +152,7 @@ class TransactionManager {
     if (status == '3' && apiResponse.hasValidReferenceAndTrans()) {
       _transactionCallback.beforeValidate(_transaction);
       _validateRequestBody.trans = apiResponse.trans;
-      _otpSingleton.otpMessage = apiResponse.message;
-      _getOtpFrmUI();
+      _getOtpFrmUI(apiResponse.message);
       return;
     }
 
@@ -158,14 +165,16 @@ class TransactionManager {
         return;
       }
 
+
       if (apiResponse.hasValidAuth() &&
           apiResponse.auth.toLowerCase() == '3DS'.toLowerCase() &&
           apiResponse.hasValidUrl()) {
         _transactionCallback.beforeValidate(_transaction);
-        _authSingleton.url = apiResponse.otpMessage;
-        _getAuthFrmUI();
+        _getAuthFrmUI(apiResponse.otpMessage);
         return;
       }
+
+      print('Gotten Here ----------- 3');
 
       if (apiResponse.hasValidAuth() &&
           (apiResponse.auth.toLowerCase() == 'otp'.toLowerCase() ||
@@ -173,12 +182,11 @@ class TransactionManager {
           apiResponse.hasValidOtpMessage()) {
         _transactionCallback.beforeValidate(_transaction);
         _validateRequestBody.trans = _transaction.id;
-        _otpSingleton.otpMessage = apiResponse.otpMessage;
-        _getOtpFrmUI();
+        _getOtpFrmUI(apiResponse.otpMessage);
         return;
       }
     }
-
+    print('Gotten Here ----------- 4');
     if (status == '0'.toLowerCase() || status == 'error') {
       if (apiResponse.message.toLowerCase() ==
               'Invalid Data Sent'.toLowerCase() &&
@@ -187,6 +195,7 @@ class TransactionManager {
         _sendChargeToServer();
         return;
       }
+      print('Gotten Here ----------- 5');
 
       if (apiResponse.message.toLowerCase() ==
           'Access code has expired'.toLowerCase()) {
@@ -194,14 +203,16 @@ class TransactionManager {
         return;
       }
 
+      print('Gotten Here ----------- 6');
       _notifyProcessingError(ChargeException(apiResponse.message));
       return;
     }
 
+    print('Gotten Here ----------- 7');
     _notifyProcessingError(PaystackException('Unknown server response'));
   }
 
-  _notifyProcessingError(Exception e) {
+  _notifyProcessingError(Object e) {
     _setProcessingOff();
     _transactionCallback.onError(e, _transaction);
   }
@@ -214,77 +225,66 @@ class TransactionManager {
     TransactionManager.processing = true;
   }
 
-  _getCardInfoFrmUI(CardSingleton si) async {
-    PaymentCard card =
-        await Navigator.of(_context).push(new MaterialPageRoute<PaymentCard>(
-      builder: (BuildContext context) {
-        return new CardInputUI(si.card);
-      },
-    ));
+  _getCardInfoFrmUI(PaymentCard currentCard) async {
+    PaymentCard newCard = await Navigator.push(
+        _context,
+        new MaterialPageRoute<PaymentCard>(
+          builder: (BuildContext context) => CardInputUI(currentCard),
+          fullscreenDialog: true,
+        ));
 
-    _cardSingleton.card = card;
-
-    if (card == null || !card.isValid()) {
+    if (newCard == null || !newCard.isValid()) {
       _notifyProcessingError(CardException('Invalid card parameters'));
     } else {
-      _charge.card = card;
+      _charge.card = newCard;
       chargeCard();
     }
   }
 
   _getPinFrmUI() async {
-    String pin = await showDialog(
-        context: _context,
-        builder: (BuildContext context) {
-          return new AlertDialog(
-            title: new Text(
-              'To confirm you\'re the owner of this card, please '
-                  'enter your card pin.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18.0,
-              ),
-            ),
-            content: new PinInputUI(
+    String pin = await Navigator.push(
+        _context,
+        new MaterialPageRoute<String>(
+          builder: (BuildContext context) => new PinInputUI(
                 randomize: true,
                 pinLength: 4,
                 showIndicatorPlaceholder: true,
-                indicatorPadding: 10.0),
-          );
-        });
+                indicatorPadding: 10.0,
+                title: 'PIN',
+                subHeader: 'To confirm you\'re the owner of this card, please '
+                    'enter your card pin.',
+              ),
+          fullscreenDialog: true,
+        ));
 
-    _pinSingleton.pin = pin;
     if (pin != null && pin.length == 4) {
-      _chargeRequestBody.addPin(pin);
+      await _chargeRequestBody.addPin(pin);
       _sendChargeToServer();
     } else {
       _notifyProcessingError(PaystackException("PIN must be exactly 4 digits"));
     }
   }
 
-  _getOtpFrmUI() async {
+  _getOtpFrmUI(String message) async {
     // Handle cases of OTP being more than 10 characters. It will
     // automatically keep increasing the length of the max characters just as
     // the official Android version of Paystack is doing it. For now, we'll
     // make the max characters 20. God help us! LOL
 
-    String otp = await showDialog(
-        context: _context,
-        builder: (BuildContext context) {
-          return new AlertDialog(
-            title: new Text(
-              'Please enter OTP',
-              textAlign: TextAlign.center,
-            ),
-            content: new PinInputUI(
-                randomize: false,
-                pinLength: 20,
-                showIndicatorPlaceholder: false,
-                indicatorPadding: 0.0),
-          );
-        });
+    String otp = await Navigator.push(
+        _context,
+        new MaterialPageRoute<String>(
+          builder: (BuildContext context) => new PinInputUI(
+            randomize: false,
+            pinLength: 20,
+            showIndicatorPlaceholder: false,
+            indicatorPadding: 0.0,
+            title: 'OTP',
+            subHeader: message,
+          ),
+          fullscreenDialog: true,
+        ));
 
-    _otpSingleton.otp = otp;
     if (otp != null) {
       _validateRequestBody.token = otp;
       _validate();
@@ -293,15 +293,15 @@ class TransactionManager {
     }
   }
 
-  _getAuthFrmUI() async {
+  _getAuthFrmUI(String url) async {
+    print('Want to get authorization from');
     String result = await Utils.channel
-        .invokeMethod('getAuthorization', {"authUrl": _authSingleton.url});
-
-    _authSingleton.responseMap = result;
+        .invokeMethod('getAuthorization', {"authUrl": url});
     TransactionApiResponse apiResponse;
-    try{
+    try {
       Map<String, dynamic> responseMap = json.decode(result);
       apiResponse = TransactionApiResponse.fromMap(responseMap);
+      print('API response = $apiResponse');
     } catch (e) {
       print('Error occured during authentication. Error ${e.toString()}');
       apiResponse = TransactionApiResponse.unknownServerResponse();

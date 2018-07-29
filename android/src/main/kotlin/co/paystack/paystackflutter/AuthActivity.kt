@@ -2,10 +2,8 @@ package co.paystack.paystackflutter
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.WindowManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -15,26 +13,24 @@ const val API_URL = "https://standard.paystack.co/"
 
 class AuthActivity : Activity() {
 
+    private val si = AuthSingleton.instance
     private var responseJson: String? = null
-    private lateinit var webUrl: String
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.co_paystack_android____activity_auth)
-        webUrl = intent.getStringExtra(AuthDelegate.WEB_URL)
         title = "Authorize your card"
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setup()
     }
 
     fun handleResponse() {
         if (responseJson == null) {
-            responseJson = AuthDelegate.DEFAULT_RESPONSE
+            responseJson = "{\"status\":\"requery\",\"message\":\"Reaffirm Transaction Status on Server\"}"
         }
-        val intent = Intent()
-        intent.putExtra(AuthDelegate.WEB_RESPONSE, responseJson)
-        setResult(Activity.RESULT_OK, intent)
+        synchronized(si) {
+            si.responseJson = responseJson!!
+            (si as Object).notify()
+        }
         finish()
     }
 
@@ -64,7 +60,7 @@ class AuthActivity : Activity() {
 
         class JIFactory {
 
-            val ji: AuthResponseJI
+            internal val ji: AuthResponseJI
                 get() = if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     AuthResponse17JI()
                 } else {
@@ -88,7 +84,7 @@ class AuthActivity : Activity() {
             }
         }
 
-        webView!!.loadUrl(webUrl)
+        webView!!.loadUrl(si.url)
     }
 
     public override fun onDestroy() {
@@ -97,6 +93,7 @@ class AuthActivity : Activity() {
             webView!!.stopLoading()
             webView!!.removeJavascriptInterface("INTERFACE")
         }
+        handleResponse()
     }
 
 }

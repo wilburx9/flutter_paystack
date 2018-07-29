@@ -41,18 +41,17 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
   var _scaffoldKey = GlobalKey<ScaffoldState>();
   var _formKey = GlobalKey<FormState>();
   var _autoValidate = false;
-  var whiteText = const TextStyle(color: Colors.white);
   var _localInProgress = false;
   var _remoteInProgress = false;
-  Charge charge;
+  Charge _charge;
   Transaction _transaction;
   String _reference = 'No transaction yet';
   String _error = '';
   String _backendMessage = '';
   String cardNumber;
   String cvv;
-  int expiryMonth;
-  int expiryYear;
+  int expiryMonth = 0;
+  int expiryYear = 0;
 
   @override
   void initState() {
@@ -76,7 +75,7 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
       appBar: appBar,
       body: new Container(
         color: new Color(0xFF1C3A4B),
-        child: new Column(
+        child: new ListView(
           children: <Widget>[
             new Container(
               color: Colors.grey[50],
@@ -195,7 +194,7 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
                                   height: 10.0,
                                 ),
                                 _getPlatformButton(
-                                    'Charge Card (Init From App)', false),
+                                    'Charge Card (Init From App)', true),
                               ],
                             ),
                     ],
@@ -220,14 +219,14 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
                       new SizedBox(height: 20.0),
                       new Text(
                         _error,
-                        style: whiteText,
+                        style: new TextStyle(color: Colors.red[400]),
                       ),
                       new SizedBox(
                         height: 20.0,
                       ),
                       new Text(
                         _backendMessage,
-                        style: whiteText,
+                        style: const TextStyle(color: Colors.white),
                       )
                     ],
                   ),
@@ -291,17 +290,15 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
       return;
     }
     print("IsLocal: $isLocal");
-    charge = Charge();
-    charge.card = _getCardFromUI();
-
-    // TODO: Show Progress bar
+    _charge = Charge();
+    _charge.card = _getCardFromUI();
 
     if (isLocal) {
       setState(() => _localInProgress = true);
       // Set transaction params directly in app (note that these params
       // are only used if an access_code is not set. In debug mode,
       // setting them after setting an access code would throw an exception
-      charge
+      _charge
         ..amount = 2000
         ..email = 'faradaywilly@gmail.com'
         ..reference = _getReference()
@@ -317,7 +314,8 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
 
   _chargeCard() {
     _transaction = null;
-    PaystackSdk.chargeCard(context, charge: charge, transactionCallback: this);
+    print('Sending charge with ${_charge.amount}');
+    PaystackSdk.chargeCard(context, charge: _charge, transactionCallback: this);
   }
 
   // This is called only before requesting OTP
@@ -330,25 +328,25 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
   }
 
   @override
-  onError(Exception exception, Transaction transaction) {
+  onError(Object e, Transaction transaction) {
     // If an access code has expired, simply ask your server for a new one
     // and restart the charge instead of displaying error
     this._transaction = transaction;
-    if (exception is ExpiredAccessCodeException) {
+    if (e is ExpiredAccessCodeException) {
       _startAfreshCharge(false);
-      // TODO: Check the sense in calling _chargeCard()
+      _chargeCard();
       return;
     }
 
     if (transaction.reference != null) {
       _showSnackBar('${this._transaction.reference} concluded with error: '
-          '${exception.toString()}');
+          '${e.toString()}');
       _error = '${this._transaction.reference} concluded with error: '
-          '${exception.toString()}';
+          '${e.toString()}';
       _verifyOnServer();
     } else {
-      _showSnackBar(exception.toString());
-      _error = '${exception.toString()}';
+      _showSnackBar(e.toString());
+      _error = '${e.toString()}';
     }
 
     setState(() {
@@ -382,9 +380,7 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
 
   _validateSetupParams() {
     assert(() {
-      if (backendUrl == null ||
-          !backendUrl.isNotEmpty ||
-          backendUrl == '{YOUR_HEROKU_URL}') {
+      if (backendUrl == null || !backendUrl.isNotEmpty) {
         throw new UnimplementedError(
             'Please set a backend url before running the sample');
       }
@@ -447,7 +443,7 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
     try {
       http.Response response = await http.get(url);
       var body = response.body;
-      charge.accessCode = body;
+      _charge.accessCode = body;
       print('Access Code Response Body = $body');
       _chargeCard();
     } catch (e) {
@@ -461,8 +457,7 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
   }
 
   void _verifyOnServer() async {
-    _showSnackBar('Verying ${_transaction.reference}');
-    String url = '$backendUrl//verify/${_transaction.reference}';
+    String url = '$backendUrl/verify/${_transaction.reference}';
     try {
       http.Response response = await http.get(url);
       var body = response.body;

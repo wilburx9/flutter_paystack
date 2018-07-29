@@ -52,6 +52,8 @@ class Paystack {
 
       transactionManager.chargeCard();
     } catch (e) {
+      print('Something went wrong while charging card in Paystack class. '
+          'Reason ${e.toString()}');
       assert(transactionCallback != null);
       transactionCallback.onError(e, null);
     }
@@ -63,5 +65,5 @@ abstract class TransactionCallback {
 
   beforeValidate(Transaction transaction);
 
-  onError(Exception exception, Transaction transaction);
+  onError(Object e, Transaction transaction);
 }

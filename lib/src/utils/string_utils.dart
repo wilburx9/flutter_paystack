@@ -15,19 +15,6 @@ class StringUtils {
     return regExp.hasMatch(email);
   }
 
-  /// Return true if the url is an http: url.
-  static bool isHttpUrl(String url) {
-    return (null != url) &&
-        (url.length > 6) &&
-        url.substring(0, 7).toLowerCase == 'http://';
-  }
-
-  /// Return true if the url is an https: url.
-  static bool isHttpsUrl(String url) {
-    return (null != url) &&
-        (url.length > 7) &&
-        url.substring(0, 8).toLowerCase == "https://";
-  }
 
   ///  Method to nullify an empty String.
   ///  [value] - A string we want to be sure to keep null if empty

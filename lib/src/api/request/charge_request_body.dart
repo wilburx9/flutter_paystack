@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:paystack_flutter/src/api/request/base_request_body.dart';
 import 'package:paystack_flutter/src/model/charge.dart';
 import 'package:paystack_flutter/paystack_sdk.dart';
@@ -36,16 +38,18 @@ class ChargeRequestBody extends BaseRequestBody {
   String _plan;
   Map<String, String> _additionalParameters;
 
-  ChargeRequestBody(Charge charge) {
+  ChargeRequestBody._(Charge charge, String clientData) {
+    print('Email = ${charge.email}');
     this.setDeviceId();
-    this.setClientData(charge);
+    this._clientData = clientData;
     this._last4 = charge.card.last4Digits;
     this._publicKey = PaystackSdk.publicKey;
     this._email = charge.email;
     this._amount = charge.amount.toString();
     this._reference = charge.reference;
     this._subAccount = charge.subAccount;
-    this._transactionCharge = charge.transactionCharge > 0
+    this._transactionCharge =
+    charge.transactionCharge != null && charge.transactionCharge > 0
         ? charge.transactionCharge.toString()
         : null;
     this._bearer = charge.bearer != null ? _getBearer(charge.bearer) : null;
@@ -56,10 +60,9 @@ class ChargeRequestBody extends BaseRequestBody {
     this._additionalParameters = charge.additionalParameters;
   }
 
-  setClientData(Charge charge) async {
-    String clientData = await Crypto.encrypt(
-        CardUtils.concatenateCardFields(charge.card));
-    this._clientData = clientData;
+  static Future<ChargeRequestBody> getChargeRequestBody(Charge charge) async {
+    return Crypto.encrypt(CardUtils.concatenateCardFields(charge.card)).then(
+            (clientData) => ChargeRequestBody._(charge, clientData));
   }
 
   addPin(String pin) async {
@@ -87,7 +90,7 @@ class ChargeRequestBody extends BaseRequestBody {
     params[fieldClientData] = _clientData;
     params[fieldLast4] = _last4;
     if (_accessCode != null) {
-      params[_accessCode] = _accessCode;
+      params[fieldAccessCode] = _accessCode;
     }
     if (_email != null) {
       params[fieldEmail] = _email;

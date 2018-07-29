@@ -6,12 +6,12 @@ class Charge {
   PaymentCard card;
   String _email;
   String _accessCode;
-  int _amount = -1;
-  Map<String, dynamic> _metadata = {};
-  List<Map<String, dynamic>> _customFields = [];
+  int _amount = 0;
+  Map<String, dynamic> _metadata;
+  List<Map<String, dynamic>> _customFields;
   bool _hasMeta = false;
-  Map<String, String> _additionalParameters = {};
-  int _transactionCharge;
+  Map<String, String> _additionalParameters;
+  int _transactionCharge = 0;
   String _subAccount;
   String _reference;
   Bearer _bearer;
@@ -35,9 +35,8 @@ class Charge {
   _beforeRemoteSet() {
     assert(() {
       if (_localStarted) {
-        throw new ChargeException(
-            'You can not set access code when providing '
-                'transaction parameters in app');
+        throw new ChargeException('You can not set access code when providing '
+            'transaction parameters in app');
       }
       return true;
     }());
@@ -45,6 +44,10 @@ class Charge {
   }
 
   Charge() {
+    this._metadata = {};
+    this._amount = -1;
+    this._additionalParameters = {};
+    this._customFields = [];
     this._metadata['custom_fields'] = this._customFields;
   }
 
@@ -143,15 +146,16 @@ class Charge {
     if (!StringUtils.isValidEmail(value)) {
       throw InvalidEmailException(value);
     }
-    _email = email;
+    _email = value;
   }
 
   int get amount => _amount;
 
   set amount(int value) {
     _beforeLocalSet('amount');
-    if (amount <= 0)
+    if (value <= 0) {
       throw InvalidAmountException(value);
+    }
     _amount = value;
   }
 }

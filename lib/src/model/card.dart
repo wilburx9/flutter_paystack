@@ -27,10 +27,10 @@ class PaymentCard {
   String cvc;
 
   /// Expiry month
-  int expiryMonth;
+  int expiryMonth = 0;
 
   /// Expiry year
-  int expiryYear;
+  int expiryYear = 0;
 
   /// Bank Address line 1
   String addressLine1;
@@ -55,11 +55,12 @@ class PaymentCard {
   /// Type of card
   String _type;
 
-  String last4Digits;
+  String _last4Digits;
 
   set type(String value) => _type = value;
 
   String get number => _number;
+  String get last4Digits => _last4Digits;
 
   String get type {
     // If type is empty and the number isn't empty
@@ -91,6 +92,14 @@ class PaymentCard {
 
   set number(String value) {
     _number = CardUtils.getCleanedNumber(value);
+    if (number.length == 4) {
+      _last4Digits = number;
+    } else if (number.length > 4) {
+      _last4Digits = number.substring(number.length - 4);
+    } else {
+      // whatever is appropriate in this case
+      _last4Digits = number;
+    }
   }
 
   PaymentCard(

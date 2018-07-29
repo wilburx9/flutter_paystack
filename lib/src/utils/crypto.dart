@@ -7,10 +7,12 @@ class Crypto {
     var completer = Completer<String>();
 
     try {
-      String result =
-          await Utils.channel.invokeMethod('getEncryptedData', data);
+      String result = await Utils.channel
+          .invokeMethod('getEncryptedData', {"stringData": data});
+      print('Encryption Successful. Result: $result');
       completer.complete(result);
     } on PlatformException catch (e) {
+      print('Encryption Failed. Reason: $e');
       completer.completeError(e);
     }
 
