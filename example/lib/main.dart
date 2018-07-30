@@ -37,7 +37,7 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => new _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> implements TransactionCallback {
+class _HomePageState extends State<HomePage> {
   var _scaffoldKey = GlobalKey<ScaffoldState>();
   var _formKey = GlobalKey<FormState>();
   var _autoValidate = false;
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
                                 decoration: const InputDecoration(
                                     border: const UnderlineInputBorder(),
                                     labelText: 'CVV'),
-                                onSaved: (String value) => cvv = value,
+                                onSaved: (value) => assignVariable(value),
                                 validator: (String value) =>
                                     value.isEmpty ? fieldIsReq : null,
                               ))
@@ -315,20 +315,22 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
   _chargeCard() {
     _transaction = null;
     print('Sending charge with ${_charge.amount}');
-    PaystackSdk.chargeCard(context, charge: _charge, transactionCallback: this);
+    PaystackSdk.chargeCard(context,
+        charge: _charge,
+        beforeValidate: (transaction) => handleBeforeValidate(transaction),
+        onSuccess: (transaction) => handleOnSuccess(transaction),
+        onError: (error, transaction) => handleOnError(error, transaction));
   }
 
   // This is called only before requesting OTP
   // Save reference so you may send to server if error occurs with OTP
-  @override
-  beforeValidate(Transaction transaction) {
+  handleBeforeValidate(Transaction transaction) {
     this._transaction = transaction;
     _showSnackBar(_transaction.reference);
     setState(() => _updateReference());
   }
 
-  @override
-  onError(Object e, Transaction transaction) {
+  handleOnError(Object e, Transaction transaction) {
     // If an access code has expired, simply ask your server for a new one
     // and restart the charge instead of displaying error
     this._transaction = transaction;
@@ -357,8 +359,7 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
   }
 
   // This is called only after transaction is successful
-  @override
-  onSuccess(Transaction transaction) {
+  handleOnSuccess(Transaction transaction) {
     setState(() {
       _localInProgress = false;
       _remoteInProgress = false;
@@ -473,6 +474,11 @@ class _HomePageState extends State<HomePage> implements TransactionCallback {
         _remoteInProgress = false;
       });
     }
+  }
+
+  assignVariable(String value) {
+    print('CVV legth $value');
+    cvv = value;
   }
 }
 

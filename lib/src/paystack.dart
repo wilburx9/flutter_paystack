@@ -36,36 +36,38 @@ class Paystack {
   }
 
   chargeCard(BuildContext context, Charge charge,
-      TransactionCallback transactionCallback) {
-    _chargeCard(context, charge, _publicKey, transactionCallback);
+      {@required OnTransactionChange<Transaction> beforeValidate,
+      @required OnTransactionChange<Transaction> onSuccess,
+      @required OnTransactionError<Object, Transaction> onError}) {
+    _chargeCard(
+        context, charge, _publicKey, beforeValidate, onSuccess, onError);
   }
 
-  _chargeCard(BuildContext context, Charge charge, String publicKey,
-      TransactionCallback transactionCallback) {
+  _chargeCard(
+      BuildContext context,
+      Charge charge,
+      String publicKey,
+      OnTransactionChange<Transaction> beforeValidate,
+      OnTransactionChange<Transaction> onSuccess,
+      OnTransactionError<Object, Transaction> onError) {
     //check for the needed data, if absent, send an exception through the tokenCallback;
     try {
       //validate public key
       _validatePublicKey(publicKey);
 
-      TransactionManager transactionManager =
-          new TransactionManager(charge, transactionCallback, context);
+      TransactionManager transactionManager = new TransactionManager(
+          charge, context, beforeValidate, onSuccess, onError);
 
       transactionManager.chargeCard();
     } catch (e) {
       print('Something went wrong while charging card in Paystack class. '
           'Reason ${e.toString()}');
-      assert(transactionCallback != null);
-      transactionCallback.onError(e, null);
+      assert(onError != null);
+      onError(e, null);
     }
   }
 }
 
-
-// TODO: Use typedef
-abstract class TransactionCallback {
-  onSuccess(Transaction transaction);
-
-  beforeValidate(Transaction transaction);
-
-  onError(Object e, Transaction transaction);
-}
+typedef void OnTransactionChange<Transaction>(Transaction transaction);
+typedef void  OnTransactionError<Object, Transaction>(
+    Object e, Transaction transaction);

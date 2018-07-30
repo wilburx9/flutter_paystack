@@ -19,7 +19,9 @@ class TransactionManager {
   final Charge _charge;
   final BuildContext _context;
   final Transaction _transaction = Transaction();
-  final TransactionCallback _transactionCallback;
+  final OnTransactionChange<Transaction> _onSuccess;
+  final OnTransactionChange<Transaction> _beforeValidate;
+  final OnTransactionError<Object, Transaction> _onError;
   ChargeRequestBody _chargeRequestBody;
   ValidateRequestBody _validateRequestBody;
   ApiService _apiService;
@@ -32,15 +34,20 @@ class TransactionManager {
         .catchError((e) => _notifyProcessingError(e));
   }
 
-  TransactionManager(this._charge, this._transactionCallback, this._context) {
+  TransactionManager(this._charge, this._context, this._beforeValidate,
+      this._onSuccess, this._onError) {
     assert(_context != null, 'context must not be null');
     assert(_charge != null, 'charge must not be null');
     assert(
         _charge.card != null,
         'please add a card to the charge before '
         'calling chargeCard');
-    assert(_transactionCallback != null,
-        'transactionCallback must not be ' 'null');
+    assert(_beforeValidate != null,
+        'beforeValidate must not be null');
+    assert(_onSuccess != null,
+    'onSuccess must not be null');
+    assert(_onError != null,
+    'onError must not be null');
   }
 
   _initiate() async {
@@ -78,7 +85,7 @@ class TransactionManager {
       if (!(e is ProcessingException)) {
         _setProcessingOff();
       }
-      _transactionCallback.onError(e, _transaction);
+      _onError(e, _transaction);
     }
   }
 
@@ -140,7 +147,7 @@ class TransactionManager {
 
     if (status == '1' || status == 'success') {
       _setProcessingOff();
-      _transactionCallback.onSuccess(_transaction);
+      _onSuccess(_transaction);
       return;
     }
 
@@ -150,7 +157,7 @@ class TransactionManager {
     }
 
     if (status == '3' && apiResponse.hasValidReferenceAndTrans()) {
-      _transactionCallback.beforeValidate(_transaction);
+      _beforeValidate(_transaction);
       _validateRequestBody.trans = apiResponse.trans;
       _getOtpFrmUI(apiResponse.message);
       return;
@@ -158,18 +165,17 @@ class TransactionManager {
 
     if (_transaction.hasStartedOnServer()) {
       if (status == 'requery'.toLowerCase()) {
-        _transactionCallback.beforeValidate(_transaction);
+        _beforeValidate(_transaction);
         new Timer(const Duration(seconds: 5), () {
           _reQuery();
         });
         return;
       }
 
-
       if (apiResponse.hasValidAuth() &&
           apiResponse.auth.toLowerCase() == '3DS'.toLowerCase() &&
           apiResponse.hasValidUrl()) {
-        _transactionCallback.beforeValidate(_transaction);
+        _beforeValidate(_transaction);
         _getAuthFrmUI(apiResponse.otpMessage);
         return;
       }
@@ -180,7 +186,7 @@ class TransactionManager {
           (apiResponse.auth.toLowerCase() == 'otp'.toLowerCase() ||
               apiResponse.auth.toLowerCase() == 'phone') &&
           apiResponse.hasValidOtpMessage()) {
-        _transactionCallback.beforeValidate(_transaction);
+        _beforeValidate(_transaction);
         _validateRequestBody.trans = _transaction.id;
         _getOtpFrmUI(apiResponse.otpMessage);
         return;
@@ -214,7 +220,7 @@ class TransactionManager {
 
   _notifyProcessingError(Object e) {
     _setProcessingOff();
-    _transactionCallback.onError(e, _transaction);
+    _onError(e, _transaction);
   }
 
   _setProcessingOff() {
@@ -275,13 +281,13 @@ class TransactionManager {
         _context,
         new MaterialPageRoute<String>(
           builder: (BuildContext context) => new PinInputUI(
-            randomize: false,
-            pinLength: 20,
-            showIndicatorPlaceholder: false,
-            indicatorPadding: 0.0,
-            title: 'OTP',
-            subHeader: message,
-          ),
+                randomize: false,
+                pinLength: 20,
+                showIndicatorPlaceholder: false,
+                indicatorPadding: 0.0,
+                title: 'OTP',
+                subHeader: message,
+              ),
           fullscreenDialog: true,
         ));
 
@@ -295,8 +301,8 @@ class TransactionManager {
 
   _getAuthFrmUI(String url) async {
     print('Want to get authorization from');
-    String result = await Utils.channel
-        .invokeMethod('getAuthorization', {"authUrl": url});
+    String result =
+        await Utils.channel.invokeMethod('getAuthorization', {"authUrl": url});
     TransactionApiResponse apiResponse;
     try {
       Map<String, dynamic> responseMap = json.decode(result);

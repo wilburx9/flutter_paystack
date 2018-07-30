@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/paystack.dart';
+import 'package:flutter_paystack/src/transaction.dart';
 import 'package:flutter_paystack/src/utils/utils.dart';
 import 'package:flutter_paystack/src/platform_info.dart';
 import 'package:flutter/services.dart';
@@ -20,14 +21,12 @@ class PaystackSdk {
   static bool _sdkInitialized = false;
   static String _publicKey;
 
-
   PaystackSdk._();
 
   static Future<PaystackSdk> initialize({@required String publicKey}) async {
     assert(() {
       if (publicKey == null || publicKey.isEmpty) {
-        throw new PaystackException(
-            'publicKey cannot be null or empty');
+        throw new PaystackException('publicKey cannot be null or empty');
       }
       return true;
     }());
@@ -56,12 +55,10 @@ class PaystackSdk {
 
         _sdkInitialized = true;
         completer.complete(PaystackSdk._());
-
       } on PlatformException catch (e) {
         print('An error occured while initializing Paystck: ${e.toString()}');
         completer.completeError(e);
       }
-
     }
     return completer.future;
   }
@@ -83,7 +80,10 @@ class PaystackSdk {
   }
 
   static chargeCard(BuildContext context,
-      {@required Charge charge, TransactionCallback transactionCallback}) {
+      {@required Charge charge,
+      @required OnTransactionChange<Transaction> beforeValidate,
+      @required OnTransactionChange<Transaction> onSuccess,
+      @required OnTransactionError<Object, Transaction> onError}) {
     assert(context != null, 'context must not be null');
 
     _performChecks();
@@ -92,6 +92,7 @@ class PaystackSdk {
     Paystack paystack = Paystack.withPublicKey(publicKey);
 
     // Create token
-    paystack.chargeCard(context, charge, transactionCallback);
+    paystack.chargeCard(context, charge,
+        beforeValidate: beforeValidate, onSuccess: onSuccess, onError: onError);
   }
 }
