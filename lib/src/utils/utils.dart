@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_paystack/src/exceptions.dart';
-import 'package:flutter_paystack/paystack_plugin.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 
 class Utils {
   static const MethodChannel channel = const MethodChannel('flutter_paystack');

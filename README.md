@@ -10,7 +10,7 @@ To use this plugin, add `flutter_paystack` as a [dependency in your pubspec.yaml
 Then initialize the plugin preferably in the `initState` of your widget.
 
 ``` dart
-import 'package:flutter_paystack/paystack_plugin.dart'
+import 'package:flutter_paystack/flutter_paystack.dart'
 
 class PaymentPage extends StatefulWidget {
   @override

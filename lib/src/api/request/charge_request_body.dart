@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_paystack/src/api/request/base_request_body.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/paystack_plugin.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutter_paystack/src/utils/card_utils.dart';
 import 'package:flutter_paystack/src/utils/crypto.dart';
 

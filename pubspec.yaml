@@ -8,6 +8,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.11.3+16
+  meta: ^1.1.5
 
 flutter:
   plugin:

@@ -1,5 +1,4 @@
 import 'package:meta/meta.dart';
-import 'package:flutter_paystack/src/my_strings.dart';
 import 'package:flutter_paystack/src/utils/card_utils.dart';
 import 'package:flutter_paystack/src/utils/string_utils.dart';
 
