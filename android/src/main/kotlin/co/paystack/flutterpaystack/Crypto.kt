@@ -1,4 +1,4 @@
-package co.paystack.paystackflutter
+package co.paystack.flutterpaystack
 
 import android.util.Base64
 

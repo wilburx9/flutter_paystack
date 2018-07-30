@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/paystack_sdk.dart';
+import 'package:flutter_paystack/paystack_plugin.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _validateSetupParams();
-    PaystackSdk.initialize(publicKey: paystackPublicKey);
+    PaystackPlugin.initialize(publicKey: paystackPublicKey);
     super.initState();
   }
 
@@ -315,7 +315,7 @@ class _HomePageState extends State<HomePage> {
   _chargeCard() {
     _transaction = null;
 
-    PaystackSdk.chargeCard(context,
+    PaystackPlugin.chargeCard(context,
         charge: _charge,
         beforeValidate: (transaction) => handleBeforeValidate(transaction),
         onSuccess: (transaction) => handleOnSuccess(transaction),

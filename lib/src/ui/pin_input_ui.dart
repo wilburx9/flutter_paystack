@@ -44,18 +44,13 @@ class _PinInputUIState extends State<PinInputUI> {
   Widget build(BuildContext context) {
     List<Widget> buttons = _getButtonsChildren();
     return WillPopScope(
-        child: new Scaffold(
-          appBar: new AppBar(
-            title: new Text(widget.title),
-          ),
-          body: new Container(
-            padding: const EdgeInsets.all(30.0),
+        child: new AlertDialog(
+          title: new Text(widget.title),
+          content: new Container(
+            padding: const EdgeInsets.all(10.0),
             child: SingleChildScrollView(
               child: new ListBody(
                 children: <Widget>[
-                  new SizedBox(
-                    height: 20.0,
-                  ),
                   new Text(
                     widget.subHeader,
                     textAlign: TextAlign.center,

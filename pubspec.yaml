@@ -1,5 +1,5 @@
 name: flutter_paystack
-description: A Flutter plugin for Paystack Payment Gateway.
+description: A Flutter plugin for making payments via Paystack Payment Gateway. Completely supports Android and iOS.
 version: 0.5.0
 author: Wilberforce Uwadiegwu <faradaywilly@gmail.com>
 homepage: https://github.com/wilburt/flutter_paystack
@@ -14,19 +14,19 @@ flutter:
     androidPackage: co.paystack.flutterpaystack
     pluginClass: FlutterPaystackPlugin
 
+  assets:
+   - assets/images/calender.png
+   - assets/images/card_cvv.png
+   - assets/images/visa.png
+   - assets/images/jcb.png
+   - assets/images/verve.png
+   - assets/images/discover.png
+   - assets/images/american_express.png
+   - assets/images/dinners_club.png
+   - assets/images/mastercard.png
+
 
 
 environment:
   sdk: ">=2.0.0-dev.58.0 <3.0.0"
   flutter: ">=0.5.1 <2.0.0"
-
-assets:
- - assets/images/calender.png
- - assets/images/card_cvv.png
- - assets/images/visa.png
- - assets/images/jcb.png
- - assets/images/verve.png
- - assets/images/discover.png
- - assets/images/american_express.png
- - assets/images/dinners_club.png
- - assets/images/mastercard.png

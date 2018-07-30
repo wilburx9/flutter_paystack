@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import co.paystack.paystackflutter.AuthSingleton
 import kotlinx.android.synthetic.main.co_paystack_android____activity_auth.*
 
 /**

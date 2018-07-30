@@ -42,16 +42,12 @@ class TransactionManager {
         _charge.card != null,
         'please add a card to the charge before '
         'calling chargeCard');
-    assert(_beforeValidate != null,
-        'beforeValidate must not be null');
-    assert(_onSuccess != null,
-    'onSuccess must not be null');
-    assert(_onError != null,
-    'onError must not be null');
+    assert(_beforeValidate != null, 'beforeValidate must not be null');
+    assert(_onSuccess != null, 'onSuccess must not be null');
+    assert(_onError != null, 'onError must not be null');
   }
 
   _initiate() async {
-
     if (TransactionManager.processing) {
       throw ProcessingException();
     }
@@ -63,7 +59,6 @@ class TransactionManager {
   }
 
   chargeCard() async {
-
     try {
       if (_charge.card == null || !_charge.card.isValid()) {
         _getCardInfoFrmUI(_charge.card);
@@ -71,9 +66,7 @@ class TransactionManager {
         await _initiate();
         _sendChargeToServer();
       }
-
     } catch (e) {
-
       if (!(e is ProcessingException)) {
         _setProcessingOff();
       }
@@ -82,11 +75,9 @@ class TransactionManager {
   }
 
   _sendChargeToServer() {
-
     try {
       _initiateChargeOnServer();
     } catch (e) {
-
       _notifyProcessingError(e);
     }
   }
@@ -95,7 +86,6 @@ class TransactionManager {
     try {
       _validateChargeOnServer();
     } catch (e) {
-
       _notifyProcessingError(e);
     }
   }
@@ -104,7 +94,6 @@ class TransactionManager {
     try {
       _reQueryChargeOnServer();
     } catch (e) {
-
       _notifyProcessingError(e);
     }
   }
@@ -171,7 +160,6 @@ class TransactionManager {
         return;
       }
 
-
       if (apiResponse.hasValidAuth() &&
           (apiResponse.auth.toLowerCase() == 'otp'.toLowerCase() ||
               apiResponse.auth.toLowerCase() == 'phone') &&
@@ -192,18 +180,15 @@ class TransactionManager {
         return;
       }
 
-
       if (apiResponse.message.toLowerCase() ==
           'Access code has expired'.toLowerCase()) {
         _notifyProcessingError(ExpiredAccessCodeException(apiResponse.message));
         return;
       }
 
-
       _notifyProcessingError(ChargeException(apiResponse.message));
       return;
     }
-
 
     _notifyProcessingError(PaystackException('Unknown server response'));
   }
@@ -222,12 +207,9 @@ class TransactionManager {
   }
 
   _getCardInfoFrmUI(PaymentCard currentCard) async {
-    PaymentCard newCard = await Navigator.push(
-        _context,
-        new MaterialPageRoute<PaymentCard>(
-          builder: (BuildContext context) => CardInputUI(currentCard),
-          fullscreenDialog: true,
-        ));
+    PaymentCard newCard = await showDialog<PaymentCard>(
+        context: _context,
+        builder: (BuildContext context) => CardInputUI(currentCard));
 
     if (newCard == null || !newCard.isValid()) {
       _notifyProcessingError(CardException('Invalid card parameters'));
@@ -238,20 +220,17 @@ class TransactionManager {
   }
 
   _getPinFrmUI() async {
-    String pin = await Navigator.push(
-        _context,
-        new MaterialPageRoute<String>(
-          builder: (BuildContext context) => new PinInputUI(
-                randomize: true,
-                pinLength: 4,
-                showIndicatorPlaceholder: true,
-                indicatorPadding: 10.0,
-                title: 'PIN',
-                subHeader: 'To confirm you\'re the owner of this card, please '
-                    'enter your card pin.',
-              ),
-          fullscreenDialog: true,
-        ));
+    String pin = await showDialog<String>(
+        context: _context,
+        builder: (BuildContext context) => new PinInputUI(
+              randomize: true,
+              pinLength: 4,
+              showIndicatorPlaceholder: true,
+              indicatorPadding: 10.0,
+              title: 'PIN',
+              subHeader: 'To confirm you\'re the owner of this card, please '
+                  'enter your card pin.',
+            ));
 
     if (pin != null && pin.length == 4) {
       await _chargeRequestBody.addPin(pin);
@@ -267,19 +246,16 @@ class TransactionManager {
     // the official Android version of Paystack is doing it. For now, we'll
     // make the max characters 20. God help us! LOL
 
-    String otp = await Navigator.push(
-        _context,
-        new MaterialPageRoute<String>(
-          builder: (BuildContext context) => new PinInputUI(
-                randomize: false,
-                pinLength: 20,
-                showIndicatorPlaceholder: false,
-                indicatorPadding: 0.0,
-                title: 'OTP',
-                subHeader: message,
-              ),
-          fullscreenDialog: true,
-        ));
+    String otp = await showDialog<String>(
+        context: _context,
+        builder: (BuildContext context) => new PinInputUI(
+              randomize: false,
+              pinLength: 20,
+              showIndicatorPlaceholder: false,
+              indicatorPadding: 0.0,
+              title: 'OTP',
+              subHeader: message,
+            ));
 
     if (otp != null) {
       _validateRequestBody.token = otp;
@@ -290,16 +266,13 @@ class TransactionManager {
   }
 
   _getAuthFrmUI(String url) async {
-
     String result =
         await Utils.channel.invokeMethod('getAuthorization', {"authUrl": url});
     TransactionApiResponse apiResponse;
     try {
       Map<String, dynamic> responseMap = json.decode(result);
       apiResponse = TransactionApiResponse.fromMap(responseMap);
-
     } catch (e) {
-
       apiResponse = TransactionApiResponse.unknownServerResponse();
     }
     _handleApiResponse(apiResponse);

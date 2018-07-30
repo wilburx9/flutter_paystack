@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_paystack/src/api/request/base_request_body.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/paystack_sdk.dart';
+import 'package:flutter_paystack/paystack_plugin.dart';
 import 'package:flutter_paystack/src/utils/card_utils.dart';
 import 'package:flutter_paystack/src/utils/crypto.dart';
 
@@ -42,7 +42,7 @@ class ChargeRequestBody extends BaseRequestBody {
     this.setDeviceId();
     this._clientData = clientData;
     this._last4 = charge.card.last4Digits;
-    this._publicKey = PaystackSdk.publicKey;
+    this._publicKey = PaystackPlugin.publicKey;
     this._email = charge.email;
     this._amount = charge.amount.toString();
     this._reference = charge.reference;

@@ -39,140 +39,121 @@ class _CardInputUIState extends State<CardInputUI> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        key: _scaffoldKey,
-        appBar: new AppBar(
-          title: new Text('Card Details'),
-        ),
-        body: new Container(
-          padding: const EdgeInsets.all(30.0),
-          child: new Form(
-              key: _formKey,
-              onWillPop: _onWillPop,
-              autovalidate: true,
-              child: new SingleChildScrollView(
-                child: new ListBody(
-                  children: <Widget>[
-                    new SizedBox(
-                      height: 30.0,
+    return new AlertDialog(
+      key: _scaffoldKey,
+      title: new Text('Card Details'),
+      content: new Container(
+        child: new Form(
+            key: _formKey,
+            onWillPop: _onWillPop,
+            autovalidate: true,
+            child: new SingleChildScrollView(
+              child: new ListBody(
+                children: <Widget>[
+                  new Text(
+                    'Please provide valid card details',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  new SizedBox(
+                    height: 20.0,
+                  ),
+                  new TextFormField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      WhitelistingTextInputFormatter.digitsOnly,
+                      new LengthLimitingTextInputFormatter(19),
+                      new CardNumberInputFormatter()
+                    ],
+                    controller: numberController,
+                    decoration: new InputDecoration(
+                      border: const UnderlineInputBorder(),
+                      icon: getCardIcon(),
+                      hintText: 'What number is written on card?',
+                      labelText: 'Number',
                     ),
-                    new Text(
-                      'Please provide valid card details',
-                      style: const TextStyle(fontSize: 18.0),
-                    ),
-                    new SizedBox(
-                      height: 20.0,
-                    ),
-                    new TextFormField(
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        new LengthLimitingTextInputFormatter(19),
-                        new CardNumberInputFormatter()
-                      ],
-                      controller: numberController,
-                      decoration: new InputDecoration(
-                        border: const UnderlineInputBorder(),
-                        icon: getCardIcon(),
-                        hintText: 'What number is written on card?',
-                        labelText: 'Number',
+                    onSaved: (String value) {
+                      _card.number = CardUtils.getCleanedNumber(value);
+                    },
+                    validator: validateCardNum,
+                  ),
+                  new SizedBox(
+                    height: 30.0,
+                  ),
+                  new TextFormField(
+                    initialValue: widget.currentCard != null &&
+                            widget.currentCard.cvc != null
+                        ? widget.currentCard.cvc.toString()
+                        : null,
+                    inputFormatters: [
+                      WhitelistingTextInputFormatter.digitsOnly,
+                      new LengthLimitingTextInputFormatter(4),
+                    ],
+                    decoration: new InputDecoration(
+                      border: const UnderlineInputBorder(),
+                      icon: new Image.asset(
+                        'assets/images/card_cvv.png',
+                        width: 30.0,
+                        color: Colors.grey[600],
+                        package: 'flutter_paystack',
                       ),
-                      onSaved: (String value) {
-                        _card.number = CardUtils.getCleanedNumber(value);
-                      },
-                      validator: validateCardNum,
+                      hintText: 'Number behind the card',
+                      labelText: 'CVC',
                     ),
-                    new SizedBox(
-                      height: 30.0,
-                    ),
-                    new TextFormField(
-                      initialValue: widget.currentCard != null &&
-                              widget.currentCard.cvc != null
-                          ? widget.currentCard.cvc.toString()
-                          : null,
-                      inputFormatters: [
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        new LengthLimitingTextInputFormatter(4),
-                      ],
-                      decoration: new InputDecoration(
-                        border: const UnderlineInputBorder(),
-                        icon: new Image.asset(
-                          'assets/images/card_cvv.png',
-                          width: 30.0,
-                          color: Colors.grey[600],
-                          package: 'flutter_paystack',
-                        ),
-                        hintText: 'Number behind the card',
-                        labelText: 'CVC',
+                    validator: validateCVC,
+                    keyboardType: TextInputType.number,
+                    onSaved: (value) {
+                      _card.cvc = value;
+                    },
+                  ),
+                  new SizedBox(
+                    height: 30.0,
+                  ),
+                  new TextFormField(
+                    inputFormatters: [
+                      WhitelistingTextInputFormatter.digitsOnly,
+                      new LengthLimitingTextInputFormatter(4),
+                      new CardMonthInputFormatter()
+                    ],
+                    initialValue: _getInitialExpiryMonth(widget.currentCard),
+                    decoration: new InputDecoration(
+                      border: const UnderlineInputBorder(),
+                      icon: new Image.asset(
+                        'assets/images/calender.png',
+                        width: 30.0,
+                        color: Colors.grey[600],
+                        package: 'flutter_paystack',
                       ),
-                      validator: validateCVC,
-                      keyboardType: TextInputType.number,
-                      onSaved: (value) {
-                        _card.cvc = value;
-                      },
+                      hintText: 'MM/YY',
+                      labelText: 'Expiry Date',
                     ),
-                    new SizedBox(
-                      height: 30.0,
-                    ),
-                    new TextFormField(
-                      inputFormatters: [
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        new LengthLimitingTextInputFormatter(4),
-                        new CardMonthInputFormatter()
-                      ],
-                      initialValue: _getInitialExpiryMonth(widget.currentCard),
-                      decoration: new InputDecoration(
-                        border: const UnderlineInputBorder(),
-                        icon: new Image.asset(
-                          'assets/images/calender.png',
-                          width: 30.0,
-                          color: Colors.grey[600],
-                          package: 'flutter_paystack',
-                        ),
-                        hintText: 'MM/YY',
-                        labelText: 'Expiry Date',
-                      ),
-                      validator: validateDate,
-                      keyboardType: TextInputType.number,
-                      onSaved: (value) {
-                        List<int> expiryDate = getExpiryDate(value);
-                        _card.expiryMonth = expiryDate[0];
-                        _card.expiryYear = expiryDate[1];
-                      },
-                    ),
-                    new SizedBox(
-                      height: 50.0,
-                    ),
-                    new Container(
-                      width: double.infinity,
-                      child: Platform.isIOS
-                          ? new CupertinoButton(
-                              onPressed: _validateInputs,
-                              color: CupertinoColors.activeBlue,
-                              child: const Text(
-                                Strings.continue_,
-                              ),
-                            )
-                          : new FlatButton(
-                              onPressed: _validateInputs,
-                              color: Colors.lightBlue[900],
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: const BorderRadius.all(
-                                    const Radius.circular(5.0)),
-                              ),
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 15.0),
-                              textColor: Colors.white,
-                              child: new Text(
-                                Strings.continue_.toUpperCase(),
-                                style: const TextStyle(fontSize: 17.0),
-                              ),
-                            ),
-                    )
-                  ],
+                    validator: validateDate,
+                    keyboardType: TextInputType.number,
+                    onSaved: (value) {
+                      List<int> expiryDate = getExpiryDate(value);
+                      _card.expiryMonth = expiryDate[0];
+                      _card.expiryYear = expiryDate[1];
+                    },
+                  ),
+                ],
+              ),
+            )),
+      ),
+      actions: <Widget>[
+        Platform.isIOS
+            ? new CupertinoDialogAction(
+                onPressed: _validateInputs,
+                child: const Text(
+                  Strings.continue_,
                 ),
-              )),
-        ));
+              )
+            : new FlatButton(
+                onPressed: _validateInputs,
+                child: new Text(
+                  Strings.continue_.toUpperCase(),
+                ),
+              ),
+      ],
+    );
   }
 
   Future<bool> _onWillPop() async {

@@ -1,10 +1,9 @@
-package co.paystack.paystackflutter
+package co.paystack.flutterpaystack
 
 import android.app.Activity
 import android.content.Intent
 import android.os.AsyncTask
 import android.util.Log
-import co.paystack.flutterpaystack.AuthActivity
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.lang.ref.WeakReference

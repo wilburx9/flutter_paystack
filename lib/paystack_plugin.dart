@@ -17,13 +17,13 @@ export 'package:flutter_paystack/src/model/charge.dart';
 export 'package:flutter_paystack/src/transaction.dart';
 export 'package:flutter_paystack/src/exceptions.dart' hide PaystackException;
 
-class PaystackSdk {
+class PaystackPlugin {
   static bool _sdkInitialized = false;
   static String _publicKey;
 
-  PaystackSdk._();
+  PaystackPlugin._();
 
-  static Future<PaystackSdk> initialize({@required String publicKey}) async {
+  static Future<PaystackPlugin> initialize({@required String publicKey}) async {
     assert(() {
       if (publicKey == null || publicKey.isEmpty) {
         throw new PaystackException('publicKey cannot be null or empty');
@@ -32,11 +32,11 @@ class PaystackSdk {
     }());
     //do all the init work here
 
-    var completer = Completer<PaystackSdk>();
+    var completer = Completer<PaystackPlugin>();
 
     //check if sdk is actually initialized
     if (sdkInitialized) {
-      completer.complete(PaystackSdk._());
+      completer.complete(PaystackPlugin._());
     } else {
       _publicKey = publicKey;
 
@@ -52,7 +52,7 @@ class PaystackSdk {
           ..deviceId = deviceId;
 
         _sdkInitialized = true;
-        completer.complete(PaystackSdk._());
+        completer.complete(PaystackPlugin._());
       } on PlatformException catch (e) {
 
         completer.completeError(e);
