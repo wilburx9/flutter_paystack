@@ -60,8 +60,7 @@ class Paystack {
 
       transactionManager.chargeCard();
     } catch (e) {
-      print('Something went wrong while charging card in Paystack class. '
-          'Reason ${e.toString()}');
+
       assert(onError != null);
       onError(e, null);
     }

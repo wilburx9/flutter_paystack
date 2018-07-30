@@ -213,7 +213,7 @@ class _PinInputUIState extends State<PinInputUI> {
   }
 
   void _handleNumberPress(int number) {
-    print('Pressed $number');
+
     setState(() {
       _selectedPins.add(number.toString());
     });

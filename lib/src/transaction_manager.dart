@@ -51,37 +51,29 @@ class TransactionManager {
   }
 
   _initiate() async {
-    print("Started _initiate");
+
     if (TransactionManager.processing) {
       throw ProcessingException();
     }
     _setProcessingOn();
-    print('Tansaction Manager: _initiate: 1');
+
     _apiService = ApiService();
-    print('Tansaction Manager: _initiate: 2');
     _chargeRequestBody = await ChargeRequestBody.getChargeRequestBody(_charge);
-    print('Tansaction Manager: _initiate: 3');
     _validateRequestBody = ValidateRequestBody();
-    print('Tansaction Manager: _initiate: 4');
   }
 
   chargeCard() async {
-    print("chargeCard Entered");
+
     try {
-      print('chargeCard Started If');
       if (_charge.card == null || !_charge.card.isValid()) {
-        print('chargeCard True');
         _getCardInfoFrmUI(_charge.card);
       } else {
-        print("chargeCard Is Flase");
         await _initiate();
-        print("chargeCard IS False 2");
         _sendChargeToServer();
       }
-      print("chargeCard End If");
+
     } catch (e) {
-      print(
-          'Something went wrong while charging card. Reason: ${e.toString()}');
+
       if (!(e is ProcessingException)) {
         _setProcessingOff();
       }
@@ -90,12 +82,11 @@ class TransactionManager {
   }
 
   _sendChargeToServer() {
-    print('Started _sendChargeToServer');
+
     try {
       _initiateChargeOnServer();
     } catch (e) {
-      print('Something went wrong while sending charge to server. '
-          'Reason: ${e.toString()}');
+
       _notifyProcessingError(e);
     }
   }
@@ -104,7 +95,7 @@ class TransactionManager {
     try {
       _validateChargeOnServer();
     } catch (e) {
-      print('Something went wrong while validating. Reason ${e.toString()}');
+
       _notifyProcessingError(e);
     }
   }
@@ -113,7 +104,7 @@ class TransactionManager {
     try {
       _reQueryChargeOnServer();
     } catch (e) {
-      print('Something went wrong while reQuering ${e.toString()}');
+
       _notifyProcessingError(e);
     }
   }
@@ -180,7 +171,6 @@ class TransactionManager {
         return;
       }
 
-      print('Gotten Here ----------- 3');
 
       if (apiResponse.hasValidAuth() &&
           (apiResponse.auth.toLowerCase() == 'otp'.toLowerCase() ||
@@ -192,7 +182,7 @@ class TransactionManager {
         return;
       }
     }
-    print('Gotten Here ----------- 4');
+
     if (status == '0'.toLowerCase() || status == 'error') {
       if (apiResponse.message.toLowerCase() ==
               'Invalid Data Sent'.toLowerCase() &&
@@ -201,7 +191,7 @@ class TransactionManager {
         _sendChargeToServer();
         return;
       }
-      print('Gotten Here ----------- 5');
+
 
       if (apiResponse.message.toLowerCase() ==
           'Access code has expired'.toLowerCase()) {
@@ -209,12 +199,12 @@ class TransactionManager {
         return;
       }
 
-      print('Gotten Here ----------- 6');
+
       _notifyProcessingError(ChargeException(apiResponse.message));
       return;
     }
 
-    print('Gotten Here ----------- 7');
+
     _notifyProcessingError(PaystackException('Unknown server response'));
   }
 
@@ -300,16 +290,16 @@ class TransactionManager {
   }
 
   _getAuthFrmUI(String url) async {
-    print('Want to get authorization from');
+
     String result =
         await Utils.channel.invokeMethod('getAuthorization', {"authUrl": url});
     TransactionApiResponse apiResponse;
     try {
       Map<String, dynamic> responseMap = json.decode(result);
       apiResponse = TransactionApiResponse.fromMap(responseMap);
-      print('API response = $responseMap');
+
     } catch (e) {
-      print('Error occured during authentication. Error ${e.toString()}');
+
       apiResponse = TransactionApiResponse.unknownServerResponse();
     }
     _handleApiResponse(apiResponse);

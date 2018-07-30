@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                                 decoration: const InputDecoration(
                                     border: const UnderlineInputBorder(),
                                     labelText: 'CVV'),
-                                onSaved: (value) => assignVariable(value),
+                                onSaved: (String value) => cvv = value,
                                 validator: (String value) =>
                                     value.isEmpty ? fieldIsReq : null,
                               ))
@@ -289,7 +289,7 @@ class _HomePageState extends State<HomePage> {
     if (!_allInputsAreValid()) {
       return;
     }
-    print("IsLocal: $isLocal");
+
     _charge = Charge();
     _charge.card = _getCardFromUI();
 
@@ -314,7 +314,7 @@ class _HomePageState extends State<HomePage> {
 
   _chargeCard() {
     _transaction = null;
-    print('Sending charge with ${_charge.amount}');
+
     PaystackSdk.chargeCard(context,
         charge: _charge,
         beforeValidate: (transaction) => handleBeforeValidate(transaction),
@@ -445,7 +445,7 @@ class _HomePageState extends State<HomePage> {
       http.Response response = await http.get(url);
       var body = response.body;
       _charge.accessCode = body;
-      print('Access Code Response Body = $body');
+
       _chargeCard();
     } catch (e) {
       setState(() {
@@ -462,7 +462,7 @@ class _HomePageState extends State<HomePage> {
     try {
       http.Response response = await http.get(url);
       var body = response.body;
-      print('Verify Response Body = $body');
+
       setState(() {
         _backendMessage = 'Gateway response: $body';
       });
@@ -474,11 +474,6 @@ class _HomePageState extends State<HomePage> {
         _remoteInProgress = false;
       });
     }
-  }
-
-  assignVariable(String value) {
-    print('CVV legth $value');
-    cvv = value;
   }
 }
 

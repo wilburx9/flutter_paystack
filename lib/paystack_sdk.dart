@@ -46,17 +46,15 @@ class PaystackSdk {
         String paystackBuild =
             await Utils.channel.invokeMethod('getVersionCode');
         String deviceId = await Utils.channel.invokeMethod('getDeviceId');
-        var platformInfo = PlatformInfo()
+        PlatformInfo()
           ..userAgent = userAgent
           ..paystackBuild = paystackBuild
           ..deviceId = deviceId;
 
-        print('Platform Info ${platformInfo.toString()}');
-
         _sdkInitialized = true;
         completer.complete(PaystackSdk._());
       } on PlatformException catch (e) {
-        print('An error occured while initializing Paystck: ${e.toString()}');
+
         completer.completeError(e);
       }
     }

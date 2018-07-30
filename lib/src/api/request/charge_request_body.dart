@@ -39,7 +39,6 @@ class ChargeRequestBody extends BaseRequestBody {
   Map<String, String> _additionalParameters;
 
   ChargeRequestBody._(Charge charge, String clientData) {
-    print('Email = ${charge.email}');
     this.setDeviceId();
     this._clientData = clientData;
     this._last4 = charge.card.last4Digits;
