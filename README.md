@@ -1,6 +1,6 @@
 # flutter_paystack
 
-A new Flutter plugin for paystack.
+A Flutter plugin for Paystack Payment Gateway.
 
 ## Getting Started
 
