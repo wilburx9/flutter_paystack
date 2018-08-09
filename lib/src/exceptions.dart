@@ -1,3 +1,5 @@
+import 'package:flutter_paystack/src/my_strings.dart';
+
 class PaystackException implements Exception {
   String message;
 
@@ -5,8 +7,8 @@ class PaystackException implements Exception {
 
   @override
   String toString() {
-    if (message == null) return "Exception";
-    return "Exception: $message";
+    if (message == null) return Strings.unKnownError;
+    return message;
   }
 }
 
@@ -49,4 +51,3 @@ class ProcessingException extends ChargeException {
       : super(
             'A transaction is currently processing, please wait till it concludes before attempting a new charge.');
 }
-

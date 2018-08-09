@@ -7,20 +7,20 @@ class Utils {
 
   static validateSdkInitialized() {
     if (!PaystackPlugin.sdkInitialized) {
-      throw new PaystackSdkNotInitializedException('Paystack SDK has not been initialized. The SDK has'
+      throw new PaystackSdkNotInitializedException(
+          'Paystack SDK has not been initialized. The SDK has'
           ' to be initialized before use');
     }
   }
 
   static String hasPublicKey() {
     var publicKey = PaystackPlugin.publicKey;
-    if(publicKey == null || publicKey.isEmpty) {
-      throw PaystackException('No Public key found, please set the Public key.');
+    if (publicKey == null || publicKey.isEmpty) {
+      throw PaystackException(
+          'No Public key found, please set the Public key.');
     }
     return publicKey;
   }
 
-  static validatePlatformSpecificInfo() {
-
-  }
+  static validatePlatformSpecificInfo() {}
 }

@@ -15,7 +15,6 @@ class StringUtils {
     return regExp.hasMatch(email);
   }
 
-
   ///  Method to nullify an empty String.
   ///  [value] - A string we want to be sure to keep null if empty
   ///  Returns null if a value is empty or null, otherwise, returns the value

@@ -48,9 +48,9 @@ class ChargeRequestBody extends BaseRequestBody {
     this._reference = charge.reference;
     this._subAccount = charge.subAccount;
     this._transactionCharge =
-    charge.transactionCharge != null && charge.transactionCharge > 0
-        ? charge.transactionCharge.toString()
-        : null;
+        charge.transactionCharge != null && charge.transactionCharge > 0
+            ? charge.transactionCharge.toString()
+            : null;
     this._bearer = charge.bearer != null ? _getBearer(charge.bearer) : null;
     this._metadata = charge.metadata;
     this._plan = charge.plan;
@@ -60,8 +60,9 @@ class ChargeRequestBody extends BaseRequestBody {
   }
 
   static Future<ChargeRequestBody> getChargeRequestBody(Charge charge) async {
-    return Crypto.encrypt(CardUtils.concatenateCardFields(charge.card)).then(
-            (clientData) => ChargeRequestBody._(charge, clientData));
+    return Crypto
+        .encrypt(CardUtils.concatenateCardFields(charge.card))
+        .then((clientData) => ChargeRequestBody._(charge, clientData));
   }
 
   addPin(String pin) async {

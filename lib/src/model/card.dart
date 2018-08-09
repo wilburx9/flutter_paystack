@@ -103,17 +103,17 @@ class PaymentCard {
 
   PaymentCard(
       {@required String number,
-        @required this.cvc,
-        @required this.expiryMonth,
-        @required this.expiryYear,
-        String name,
-        String addressLine1,
-        String addressLine2,
-        String addressLine3,
-        String addressLine4,
-        String addressPostCode,
-        String addressCountry,
-        String country}) {
+      @required this.cvc,
+      @required this.expiryMonth,
+      @required this.expiryYear,
+      String name,
+      String addressLine1,
+      String addressLine2,
+      String addressLine3,
+      String addressLine4,
+      String addressPostCode,
+      String addressCountry,
+      String country}) {
     this.number = CardUtils.getCleanedNumber(number);
     this.name = StringUtils.nullify(name);
     this.addressLine1 = StringUtils.nullify(addressLine1);
@@ -149,9 +149,9 @@ class PaymentCard {
 
     var cvcValue = cardCvc.trim();
     bool validLength =
-    ((_type == null && cvcValue.length >= 3 && cvcValue.length <= 4) ||
-        (CardType.americanExpress == _type && cvcValue.length == 4) ||
-        (CardType.americanExpress != _type && cvcValue.length == 3));
+        ((_type == null && cvcValue.length >= 3 && cvcValue.length <= 4) ||
+            (CardType.americanExpress == _type && cvcValue.length == 4) ||
+            (CardType.americanExpress != _type && cvcValue.length == 3));
     return !(!CardUtils.isWholeNumberPositive(cvcValue) || !validLength);
   }
 
@@ -164,7 +164,8 @@ class PaymentCard {
     if (StringUtils.isEmpty(cardNumber)) return false;
 
     // Remove all non digits
-    var formattedNumber = cardNumber.trim().replaceAll(new RegExp(r'[^0-9]'), '');
+    var formattedNumber =
+        cardNumber.trim().replaceAll(new RegExp(r'[^0-9]'), '');
 
     // Verve card needs no other validation except it matched pattern
     if (CardType.fullPatternVerve.hasMatch(formattedNumber)) {
@@ -242,13 +243,12 @@ abstract class CardType {
       r'^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$');
   static final fullPatternAmericanExpress = RegExp(r'^3[47][0-9]{13}$');
   static final fullPatternDinersClub = RegExp(r'^3(?:0[0-5]|[68][0-9])'
-  r'[0-9]{11}$');
+      r'[0-9]{11}$');
   static final fullPatternDiscover = RegExp(r'^6(?:011|5[0-9]{2})[0-9]{12}$');
   static final fullPatternJCB = RegExp(r'^(?:2131|1800|35[0-9]{3})'
-  r'[0-9]{11}$');
+      r'[0-9]{11}$');
   static final fullPatternVerve =
-  RegExp(r'^((506(0|1))|(507(8|9))|(6500))[0-9]{12,15}$');
-
+      RegExp(r'^((506(0|1))|(507(8|9))|(6500))[0-9]{12,15}$');
 
   // Regular expression to match starting characters (aka issuer
   // identification number (IIN)) of the card
@@ -257,13 +257,11 @@ abstract class CardType {
   static final startingPatternMasterCard = RegExp(
       r'((5[1-5])|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720))');
   static final startingPatternAmericanExpress = RegExp(r'((34)|(37))');
-  static final startingPatternDinersClub = RegExp(
-      r'((30[0-5])|(3[89])|(36)|(3095))');
+  static final startingPatternDinersClub =
+      RegExp(r'((30[0-5])|(3[89])|(36)|(3095))');
   static final startingPatternJCB = RegExp(r'(352[89]|35[3-8][0-9])');
-  static final startingPatternVerve = RegExp(
-      r'((506(0|1))|(507(8|9))|(6500))');
+  static final startingPatternVerve = RegExp(r'((506(0|1))|(507(8|9))|(6500))');
   static final startingPatternDiscover = RegExp(r'((6[45])|(6011))');
-
 
   bool hasFullMatch(String cardNumber);
 

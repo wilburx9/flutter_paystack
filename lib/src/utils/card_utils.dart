@@ -102,7 +102,8 @@ class CardUtils {
       }
       return cardString;
     } else {
-      throw new CardException('Invalid card details: Card number is empty or null');
+      throw new CardException(
+          'Invalid card details: Card number is empty or null');
     }
   }
 }
