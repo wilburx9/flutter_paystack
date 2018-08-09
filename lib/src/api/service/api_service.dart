@@ -27,7 +27,7 @@ class ApiService {
 
       var statusCode = response.statusCode;
 
-      if (statusCode == HttpStatus.ok) {
+      if (statusCode == HttpStatus.OK) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
@@ -52,7 +52,7 @@ class ApiService {
       var body = response.body;
 
       var statusCode = response.statusCode;
-      if (statusCode == HttpStatus.ok) {
+      if (statusCode == HttpStatus.OK) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
@@ -73,7 +73,7 @@ class ApiService {
       http.Response response = await http.get(url, headers: headers);
       var body = response.body;
       var statusCode = response.statusCode;
-      if (statusCode == HttpStatus.ok) {
+      if (statusCode == HttpStatus.OK) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
