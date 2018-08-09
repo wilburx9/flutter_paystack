@@ -27,7 +27,7 @@ class ApiService {
 
       var statusCode = response.statusCode;
 
-      if (statusCode == HttpStatus.OK) {
+      if (statusCode == HttpStatus.ok) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
@@ -35,7 +35,6 @@ class ApiService {
             '$statusCode and response: $body');
       }
     } catch (e) {
-
       completer.completeError('charge transaction failed error: $e');
     }
 
@@ -53,7 +52,7 @@ class ApiService {
       var body = response.body;
 
       var statusCode = response.statusCode;
-      if (statusCode == HttpStatus.OK) {
+      if (statusCode == HttpStatus.ok) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
@@ -61,7 +60,6 @@ class ApiService {
             'status code: $statusCode and response: $body');
       }
     } catch (e) {
-
       completer.completeError('validate charge transaction failed error: $e');
     }
 
@@ -75,7 +73,7 @@ class ApiService {
       http.Response response = await http.get(url, headers: headers);
       var body = response.body;
       var statusCode = response.statusCode;
-      if (statusCode == HttpStatus.OK) {
+      if (statusCode == HttpStatus.ok) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
@@ -83,7 +81,6 @@ class ApiService {
             '$statusCode and response: $body');
       }
     } catch (e) {
-
       completer.completeError('requery transaction failed error: $e');
     }
 
