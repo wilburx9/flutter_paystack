@@ -55,7 +55,6 @@ import 'package:http/http.dart' as http;
 
     Map<String, String> headers = {
       'Authorization': 'Bearer $[YOUR_PAYSTACK_SECRET_KEY]',
-      'Content-Type': 'application/json'
     };
 
     Map<String, String> body = {
