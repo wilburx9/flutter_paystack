@@ -1,4 +1,4 @@
-import 'package:flutter_paystack/src/my_strings.dart';
+import 'package:flutter_paystack/src/common/my_strings.dart';
 
 class PaystackException implements Exception {
   String message;

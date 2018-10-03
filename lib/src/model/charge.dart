@@ -1,11 +1,15 @@
-import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/exceptions.dart';
+import 'package:flutter_paystack/src/model/card.dart';
+import 'package:flutter_paystack/src/ui/widgets/checkout/bank_checkout.dart';
 import 'package:flutter_paystack/src/utils/string_utils.dart';
 
 class Charge {
   PaymentCard card;
   String _email;
   String _accessCode;
+  BankAccount _account;
+
+  /// Amount in kobo
   int _amount = 0;
   Map<String, dynamic> _metadata;
   List<Map<String, dynamic>> _customFields;
@@ -82,7 +86,7 @@ class Charge {
   String get reference => _reference;
 
   set reference(String value) {
-    _beforeLocalSet('subaccount');
+    _beforeLocalSet('reference');
     _reference = value;
   }
 
@@ -107,13 +111,17 @@ class Charge {
     _subAccount = value;
   }
 
-  putStringMetadata(String name, String value) {
-    _beforeLocalSet('metadata');
-    this._metadata[name] = value;
-    this._hasMeta = true;
+  BankAccount get account => _account;
+
+  set account(BankAccount value) {
+    if (value == null) {
+      // Precaution to avoid setting of this field outside the library
+      throw new PaystackException('account cannot be null');
+    }
+    _account = value;
   }
 
-  putMapMetadata(String name, Map<String, dynamic> value) {
+  putMetaData(String name, dynamic value) {
     _beforeLocalSet('metadata');
     this._metadata[name] = value;
     this._hasMeta = true;
@@ -142,7 +150,8 @@ class Charge {
   String get email => _email;
 
   set email(String value) {
-    _beforeLocalSet('email');
+    // _beforeLocalSet('email');  Not needed because of PaystackPlugin.checkout. Email
+    // is needed for the checkout ui even after setting access code.
     if (!StringUtils.isValidEmail(value)) {
       throw InvalidEmailException(value);
     }
@@ -151,8 +160,11 @@ class Charge {
 
   int get amount => _amount;
 
+  /// Set amount
+  /// [value] amount in kobo
   set amount(int value) {
-    _beforeLocalSet('amount');
+    // _beforeLocalSet('amount'); Not needed because of PaystackPlugin.checkout. Amount
+    // is needed for the checkout ui even after setting access code.
     if (value <= 0) {
       throw InvalidAmountException(value);
     }

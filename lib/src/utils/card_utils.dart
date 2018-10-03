@@ -42,6 +42,9 @@ class CardUtils {
   }
 
   static bool isNotExpired(int year, int month) {
+    if (month > 12 || year > 2999) {
+      return false;
+    }
     // It has not expired if both the year and date has not passed
     return !hasYearPassed(year) && !hasMonthPassed(year, month);
   }
@@ -58,6 +61,7 @@ class CardUtils {
   }
 
   static String getCleanedNumber(String text) {
+    print('Get clean number for $text');
     if (text == null) {
       return '';
     }
@@ -105,5 +109,10 @@ class CardUtils {
       throw new CardException(
           'Invalid card details: Card number is empty or null');
     }
+  }
+
+  static List<int> getExpiryDate(String value) {
+    var split = value.split(new RegExp(r'(\/)'));
+    return [int.parse(split[0]), int.parse(split[1])];
   }
 }

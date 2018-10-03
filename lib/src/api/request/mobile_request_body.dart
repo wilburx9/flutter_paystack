@@ -38,30 +38,29 @@ class ChargeRequestBody extends BaseRequestBody {
   String _plan;
   Map<String, String> _additionalParameters;
 
-  ChargeRequestBody._(Charge charge, String clientData) {
+  ChargeRequestBody._(Charge charge, String clientData)
+      : this._clientData = clientData,
+        this._last4 = charge.card.last4Digits,
+        this._publicKey = PaystackPlugin.publicKey,
+        this._email = charge.email,
+        this._amount = charge.amount.toString(),
+        this._reference = charge.reference,
+        this._subAccount = charge.subAccount,
+        this._transactionCharge =
+            charge.transactionCharge != null && charge.transactionCharge > 0
+                ? charge.transactionCharge.toString()
+                : null,
+        this._bearer = charge.bearer != null ? getBearer(charge.bearer) : null,
+        this._metadata = charge.metadata,
+        this._plan = charge.plan,
+        this._currency = charge.currency,
+        this._accessCode = charge.accessCode,
+        this._additionalParameters = charge.additionalParameters {
     this.setDeviceId();
-    this._clientData = clientData;
-    this._last4 = charge.card.last4Digits;
-    this._publicKey = PaystackPlugin.publicKey;
-    this._email = charge.email;
-    this._amount = charge.amount.toString();
-    this._reference = charge.reference;
-    this._subAccount = charge.subAccount;
-    this._transactionCharge =
-        charge.transactionCharge != null && charge.transactionCharge > 0
-            ? charge.transactionCharge.toString()
-            : null;
-    this._bearer = charge.bearer != null ? _getBearer(charge.bearer) : null;
-    this._metadata = charge.metadata;
-    this._plan = charge.plan;
-    this._currency = charge.currency;
-    this._accessCode = charge.accessCode;
-    this._additionalParameters = charge.additionalParameters;
   }
 
   static Future<ChargeRequestBody> getChargeRequestBody(Charge charge) async {
-    return Crypto
-        .encrypt(CardUtils.concatenateCardFields(charge.card))
+    return Crypto.encrypt(CardUtils.concatenateCardFields(charge.card))
         .then((clientData) => ChargeRequestBody._(charge, clientData));
   }
 
@@ -69,7 +68,7 @@ class ChargeRequestBody extends BaseRequestBody {
     this._handle = await Crypto.encrypt(pin);
   }
 
-  _getBearer(Bearer bearer) {
+  static getBearer(Bearer bearer) {
     String bearerStr;
     switch (bearer) {
       case Bearer.SubAccount:

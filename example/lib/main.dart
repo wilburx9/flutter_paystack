@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 // To get started quickly, change this to your heroku deployment of
@@ -16,6 +16,8 @@ import 'package:http/http.dart' as http;
 String backendUrl = 'https://wilbur-paystack.herokuapp.com';
 // Set this to a public key that matches the secret key you supplied while creating the heroku instance
 String paystackPublicKey = '{YOUR_PAYSTACK_PUBLIC_KEY}';
+String paystackSecretKey = '{YOUR_PAYSTACK_SECRET_KEY}';
+const String appName = 'Paystack Example';
 
 void main() => runApp(new MyApp());
 
@@ -23,10 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Paystack Example',
-      theme: new ThemeData(
-        primaryColor: Colors.lightBlue[900],
-      ),
+      title: appName,
       home: new HomePage(),
     );
   }
@@ -34,374 +33,302 @@ class MyApp extends StatelessWidget {
 
 class HomePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => new _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  var _scaffoldKey = GlobalKey<ScaffoldState>();
-  var _formKey = GlobalKey<FormState>();
-  var _autoValidate = false;
-  var _localInProgress = false;
-  var _remoteInProgress = false;
-  Charge _charge;
-  Transaction _transaction;
-  String _reference = 'No transaction yet';
-  String _error = '';
-  String _backendMessage = '';
-  String cardNumber;
-  String cvv;
-  int expiryMonth = 0;
-  int expiryYear = 0;
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
+  final _verticalSizeBox = const SizedBox(height: 20.0);
+  final _horizontalSizeBox = const SizedBox(width: 10.0);
+  var _border = new Container(
+    width: double.infinity,
+    height: 1.0,
+    color: Colors.red,
+  );
+  int _radioValue = 0;
+  CheckoutMethod _method;
+  bool _inProgress = false;
+  String _cardNumber;
+  String _cvv;
+  int _expiryMonth = 0;
+  int _expiryYear = 0;
 
   @override
   void initState() {
-    _validateSetupParams();
-    PaystackPlugin.initialize(publicKey: paystackPublicKey);
+    PaystackPlugin.initialize(publicKey: paystackPublicKey, secretKey: paystackSecretKey);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    var screenWidth = size.width;
-    var screenHeight = size.height;
-
-    var appBar = new AppBar(
-      title: new Text('Paystack Example'),
-    );
-
     return new Scaffold(
       key: _scaffoldKey,
-      appBar: appBar,
+      appBar: new AppBar(title: const Text(appName)),
       body: new Container(
-        color: new Color(0xFF1C3A4B),
-        child: new ListView(
-          children: <Widget>[
-            new Container(
-              color: Colors.grey[50],
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              width: double.infinity,
-              height: ((screenHeight / 2) - appBar.preferredSize.height),
-              child: new Form(
-                key: _formKey,
-                autovalidate: _autoValidate,
-                child: new SingleChildScrollView(
-                  child: new ListBody(
-                    children: <Widget>[
-                      new SizedBox(
-                        height: 5.0,
-                      ),
-                      new Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          new Container(
-                            width: screenWidth / 1.7,
-                            child: new TextFormField(
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                WhitelistingTextInputFormatter.digitsOnly,
-                              ],
-                              decoration: const InputDecoration(
-                                border: const UnderlineInputBorder(),
-                                labelText: 'Card number',
-                              ),
-                              onSaved: (String value) => cardNumber = value,
-                              validator: (String value) =>
-                                  value.isEmpty ? fieldIsReq : null,
-                            ),
-                          ),
-                          new SizedBox(
-                            width: 30.0,
-                          ),
-                          new Container(
-                              width: screenWidth / 5,
-                              child: new TextFormField(
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  WhitelistingTextInputFormatter.digitsOnly,
-                                  new LengthLimitingTextInputFormatter(4)
-                                ],
-                                decoration: const InputDecoration(
-                                    border: const UnderlineInputBorder(),
-                                    labelText: 'CVV'),
-                                onSaved: (String value) => cvv = value,
-                                validator: (String value) =>
-                                    value.isEmpty ? fieldIsReq : null,
-                              ))
-                        ],
-                      ),
-                      new SizedBox(
-                        height: 20.0,
-                      ),
-                      new Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          new Container(
-                            width: screenWidth / 5,
-                            child: new TextFormField(
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                WhitelistingTextInputFormatter.digitsOnly,
-                                new LengthLimitingTextInputFormatter(2)
-                              ],
-                              decoration: const InputDecoration(
-                                border: const UnderlineInputBorder(),
-                                labelText: 'MM',
-                              ),
-                              onSaved: (String value) =>
-                                  expiryMonth = int.parse(value),
-                              validator: (String value) =>
-                                  value.isEmpty ? fieldIsReq : null,
-                            ),
-                          ),
-                          new SizedBox(
-                            width: 30.0,
-                          ),
-                          new Container(
-                              width: screenWidth / 5,
-                              child: new TextFormField(
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  WhitelistingTextInputFormatter.digitsOnly,
-                                  new LengthLimitingTextInputFormatter(4)
-                                ],
-                                decoration: const InputDecoration(
-                                    border: const UnderlineInputBorder(),
-                                    labelText: 'YYYY'),
-                                onSaved: (String value) =>
-                                    expiryYear = int.parse(value),
-                                validator: (String value) =>
-                                    value.isEmpty ? fieldIsReq : null,
-                              )),
-                        ],
-                      ),
-                      new SizedBox(
-                        height: 40.0,
-                      ),
-                      _localInProgress || _remoteInProgress
-                          ? new Container(
-                              alignment: Alignment.center,
-                              child: Platform.isIOS
-                                  ? new CupertinoActivityIndicator()
-                                  : new CircularProgressIndicator(),
-                            )
-                          : new Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                _getPlatformButton(
-                                    'Charge Card (Init From Server)', false),
-                                new SizedBox(
-                                  height: 10.0,
-                                ),
-                                _getPlatformButton(
-                                    'Charge Card (Init From App)', true),
-                              ],
-                            ),
-                    ],
-                  ),
+        padding: const EdgeInsets.all(20.0),
+        child: new Form(
+          key: _formKey,
+          child: new SingleChildScrollView(
+            child: new ListBody(
+              children: <Widget>[
+                new Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Expanded(
+                      child: const Text('Initalize transaction from:'),
+                    ),
+                    new Expanded(
+                      child:
+                          new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                        new RadioListTile<int>(
+                          value: 0,
+                          groupValue: _radioValue,
+                          onChanged: _handleRadioValueChanged,
+                          title: const Text('Local'),
+                        ),
+                        new RadioListTile<int>(
+                          value: 1,
+                          groupValue: _radioValue,
+                          onChanged: _handleRadioValueChanged,
+                          title: const Text('Server'),
+                        ),
+                      ]),
+                    )
+                  ],
                 ),
-              ),
-            ),
-            new Container(
-              width: double.infinity,
-              height: screenHeight / 2.35, // Can't 2.0
-              child: new Container(
-                margin: const EdgeInsets.only(top: 15.0),
-                padding: const EdgeInsets.all(20.0),
-                child: new SingleChildScrollView(
-                  child: new ListBody(
-                    children: <Widget>[
-                      new Text(
-                        _reference,
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 18.0),
+                _border,
+                _verticalSizeBox,
+                new TextFormField(
+                  decoration: const InputDecoration(
+                    border: const UnderlineInputBorder(),
+                    labelText: 'Card number',
+                  ),
+                  onSaved: (String value) => _cardNumber = value,
+                ),
+                _verticalSizeBox,
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    new Expanded(
+                      child: new TextFormField(
+                        decoration: const InputDecoration(
+                          border: const UnderlineInputBorder(),
+                          labelText: 'CVV',
+                        ),
+                        onSaved: (String value) => _cvv = value,
                       ),
-                      new SizedBox(height: 20.0),
-                      new Text(
-                        _error,
-                        style: new TextStyle(color: Colors.red[400]),
+                    ),
+                    _horizontalSizeBox,
+                    new Expanded(
+                      child: new TextFormField(
+                        decoration: const InputDecoration(
+                          border: const UnderlineInputBorder(),
+                          labelText: 'Expiry Month',
+                        ),
+                        onSaved: (String value) => _expiryMonth = _toInt(value),
                       ),
-                      new SizedBox(
-                        height: 20.0,
+                    ),
+                    _horizontalSizeBox,
+                    new Expanded(
+                      child: new TextFormField(
+                        decoration: const InputDecoration(
+                          border: const UnderlineInputBorder(),
+                          labelText: 'Expiry Year',
+                        ),
+                        onSaved: (String value) => _expiryYear = _toInt(value),
                       ),
-                      new Text(
-                        _backendMessage,
-                        style: const TextStyle(color: Colors.white),
+                    )
+                  ],
+                ),
+                _verticalSizeBox,
+                _inProgress
+                    ? new Container(
+                        alignment: Alignment.center,
+                        height: 50.0,
+                        child: Platform.isIOS
+                            ? new CupertinoActivityIndicator()
+                            : new CircularProgressIndicator(),
                       )
-                    ],
-                  ),
-                ),
-              ),
-            )
-          ],
+                    : new Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          _getPlatformButton('Charge Card', () => _startAfreshCharge()),
+                          _verticalSizeBox,
+                          _border,
+                          new SizedBox(
+                            height: 40.0,
+                          ),
+                          new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              new Flexible(
+                                  flex: 3,
+                                  child: new DropdownButtonHideUnderline(
+                                      child: new InputDecorator(
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      isDense: true,
+                                      hintText: 'Checkout method',
+                                    ),
+                                    isEmpty: _method == null,
+                                    child: new DropdownButton<CheckoutMethod>(
+                                      value: _method,
+                                      isDense: true,
+                                      onChanged: (CheckoutMethod value) {
+                                        setState(() {
+                                          _method = value;
+                                        });
+                                      },
+                                      items: banks.map((String value) {
+                                        return new DropdownMenuItem<CheckoutMethod>(
+                                          value: _parseStringToMethod(value),
+                                          child: new Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ))),
+                              _horizontalSizeBox,
+                              new Flexible(
+                                flex: 2,
+                                child: new Container(
+                                    width: double.infinity,
+                                    child: _getPlatformButton(
+                                      'Checkout',
+                                      () => _handleCheckout(),
+                                    )),
+                              ),
+                            ],
+                          )
+                        ],
+                      )
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _getPlatformButton(String string, bool isLocal) {
-    // is still in progress
-    Widget widget;
-    if (Platform.isIOS) {
-      widget = new CupertinoButton(
-        onPressed: () => _startAfreshCharge(isLocal),
-        color: CupertinoColors.activeBlue,
-        child: new Text(
-          string,
-        ),
-      );
-    } else {
-      widget = new RaisedButton(
-        onPressed: () => _startAfreshCharge(isLocal),
-        color: Colors.lightBlue[900],
-        textColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 13.0, horizontal: 10.0),
-        child: new Text(
-          string.toUpperCase(),
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
-    }
-    return widget;
-  }
+  void _handleRadioValueChanged(int value) => setState(() => _radioValue = value);
 
-  _showSnackBar(String message) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(message),
-      duration: const Duration(seconds: 3),
-    ));
-  }
-
-  bool _allInputsAreValid() {
-    final FormState form = _formKey.currentState;
-    if (!form.validate()) {
-      setState(() {
-        _autoValidate = true; // Start validating on every change.
-      });
-      return false;
-    } else {
-      form.save();
-      return true;
-    }
-  }
-
-  _startAfreshCharge(bool isLocal) {
-    if (!_allInputsAreValid()) {
+  _handleCheckout() async {
+    if (_method == null) {
+      _showMessage('Select checkout method first');
       return;
     }
+    setState(() => _inProgress = true);
+    _formKey.currentState.save();
+    Charge charge = Charge()
+      ..amount = 10000
+      ..email = 'customer@email.com'
+      ..card = _getCardFromUI();
 
-    _charge = Charge();
-    _charge.card = _getCardFromUI();
+    if (_method != CheckoutMethod.bank) {
+      if (!_isLocal()) {
+        var accessCode = await _fetchAccessCodeFrmServer(_getReference());
+        charge.accessCode = accessCode;
+      } else {
+        print('Using reference');
+        charge.reference = _getReference();
+      }
+    }
 
-    if (isLocal) {
-      setState(() => _localInProgress = true);
+    CheckoutResponse response = await PaystackPlugin.checkout(
+      context,
+      method: _method,
+      charge: charge,
+    );
+    print('Response = $response');
+    setState(() => _inProgress = false);
+    _updateStatus(response.reference, '$response');
+  }
+
+  _startAfreshCharge() async {
+    _formKey.currentState.save();
+
+    Charge charge = Charge();
+    charge.card = _getCardFromUI();
+
+    setState(() => _inProgress = true);
+
+    if (_isLocal()) {
       // Set transaction params directly in app (note that these params
       // are only used if an access_code is not set. In debug mode,
       // setting them after setting an access code would throw an exception
-      _charge
-        ..amount = 2000
-        ..email = 'faradaywilly@gmail.com'
+      // 1 NGN = 100Kobo
+      // x NGN  = 2000
+      charge
+        ..amount = 10000
+        ..email = 'customer@email.com'
         ..reference = _getReference()
         ..putCustomField('Charged From', 'Flutter SDK');
-      _chargeCard();
+      _chargeCard(charge);
     } else {
       // Perform transaction/initialize on Paystack server to get an access code
       // documentation: https://developers.paystack.co/reference#initialize-a-transaction
-      setState(() => _remoteInProgress = true);
-      _fetchAccessCodeFrmServer();
+      charge.accessCode = await _fetchAccessCodeFrmServer(_getReference());
+      _chargeCard(charge);
     }
   }
 
-  _chargeCard() {
-    _transaction = null;
+  _chargeCard(Charge charge) {
+    // This is called only before requesting OTP
+    // Save reference so you may send to server if error occurs with OTP
+    handleBeforeValidate(Transaction transaction) {
+      _updateStatus(transaction.reference, 'validating...');
+    }
+
+    handleOnError(Object e, Transaction transaction) {
+      // If an access code has expired, simply ask your server for a new one
+      // and restart the charge instead of displaying error
+      if (e is ExpiredAccessCodeException) {
+        _startAfreshCharge();
+        _chargeCard(charge);
+        return;
+      }
+
+      if (transaction.reference != null) {
+        _verifyOnServer(transaction.reference);
+      } else {
+        setState(() => _inProgress = false);
+        _updateStatus(transaction.reference, e.toString());
+      }
+    }
+
+    // This is called only after transaction is successful
+    handleOnSuccess(Transaction transaction) {
+      _verifyOnServer(transaction.reference);
+    }
 
     PaystackPlugin.chargeCard(context,
-        charge: _charge,
+        charge: charge,
         beforeValidate: (transaction) => handleBeforeValidate(transaction),
         onSuccess: (transaction) => handleOnSuccess(transaction),
         onError: (error, transaction) => handleOnError(error, transaction));
   }
 
-  // This is called only before requesting OTP
-  // Save reference so you may send to server if error occurs with OTP
-  handleBeforeValidate(Transaction transaction) {
-    this._transaction = transaction;
-    _showSnackBar(_transaction.reference);
-    setState(() => _updateReference());
-  }
-
-  handleOnError(Object e, Transaction transaction) {
-    // If an access code has expired, simply ask your server for a new one
-    // and restart the charge instead of displaying error
-    this._transaction = transaction;
-    if (e is ExpiredAccessCodeException) {
-      _startAfreshCharge(false);
-      _chargeCard();
-      return;
-    }
-
-    if (transaction.reference != null) {
-      _showSnackBar('${this._transaction.reference} concluded with error: '
-          '${e.toString()}');
-      _error = '${this._transaction.reference} concluded with error: '
-          '${e.toString()}';
-      _verifyOnServer();
+  String _getReference() {
+    String platform;
+    if (Platform.isIOS) {
+      platform = 'iOS';
     } else {
-      _showSnackBar(e.toString());
-      _error = '${e.toString()}';
+      platform = 'Android';
     }
 
-    setState(() {
-      _localInProgress = false;
-      _remoteInProgress = false;
-      _updateReference();
-    });
-  }
-
-  // This is called only after transaction is successful
-  handleOnSuccess(Transaction transaction) {
-    setState(() {
-      _localInProgress = false;
-      _remoteInProgress = false;
-      this._transaction = transaction;
-      _error = '';
-      _updateReference();
-    });
-    _showSnackBar(this._transaction.reference);
-    _verifyOnServer();
-  }
-
-  _updateReference() {
-    if (_transaction.reference != null) {
-      _reference = 'Reference: ${_transaction.reference}';
-    } else {
-      _reference = 'No transaction';
-    }
-  }
-
-  _validateSetupParams() {
-    assert(() {
-      if (backendUrl == null || !backendUrl.isNotEmpty) {
-        throw new UnimplementedError(
-            'Please set a backend url before running the sample');
-      }
-      if (paystackPublicKey == null ||
-          !paystackPublicKey.isNotEmpty ||
-          paystackPublicKey == '{YOUR_PAYSTACK_PUBLIC_KEY}') {
-        throw new UnimplementedError(
-            'Please set a public key before running the sample');
-      }
-      return true;
-    }());
+    return 'ChargedFrom${platform}_${DateTime.now().millisecondsSinceEpoch}';
   }
 
   PaymentCard _getCardFromUI() {
     // Using just the must-required parameters.
     return PaymentCard(
-      number: cardNumber,
-      cvc: cvv,
-      expiryMonth: expiryMonth,
-      expiryYear: expiryYear,
+      number: _cardNumber,
+      cvc: _cvv,
+      expiryMonth: _expiryMonth,
+      expiryYear: _expiryYear,
     );
 
     // Using Cascade notation (similar to Java's builder pattern)
@@ -426,55 +353,109 @@ class _HomePageState extends State<HomePage> {
 //        addressLine1: '90, Nnebisi Road, Asaba, Deleta State');
   }
 
-  String _getReference() {
-    String platform;
+  Widget _getPlatformButton(String string, Function() function) {
+    // is still in progress
+    Widget widget;
     if (Platform.isIOS) {
-      platform = 'iOS';
+      widget = new CupertinoButton(
+        onPressed: function,
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        color: CupertinoColors.activeBlue,
+        child: new Text(
+          string,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      );
     } else {
-      platform = 'Android';
+      widget = new RaisedButton(
+        onPressed: function,
+        color: Colors.blueAccent,
+        textColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 13.0, horizontal: 10.0),
+        child: new Text(
+          string.toUpperCase(),
+          style: const TextStyle(fontSize: 17.0),
+        ),
+      );
     }
-
-    return 'ChargedFrom${platform}_${DateTime
-        .now()
-        .millisecondsSinceEpoch}';
+    return widget;
   }
 
-  void _fetchAccessCodeFrmServer() async {
+  Future<String> _fetchAccessCodeFrmServer(String reference) async {
     String url = '$backendUrl/new-access-code';
+    String accessCode;
     try {
       http.Response response = await http.get(url);
-      var body = response.body;
-      _charge.accessCode = body;
-
-      _chargeCard();
+      accessCode = response.body;
+      print('Response for access code = $accessCode');
     } catch (e) {
-      setState(() {
-        _backendMessage = 'There was a problem getting a new access code form'
-            ' the backend: ${e.toString()}';
-        _localInProgress = false;
-        _remoteInProgress = false;
-      });
+      setState(() => _inProgress = false);
+      _updateStatus(
+          reference,
+          'There was a problem getting a new access code form'
+          ' the backend: $e');
     }
+    return accessCode;
   }
 
-  void _verifyOnServer() async {
-    String url = '$backendUrl/verify/${_transaction.reference}';
+  void _verifyOnServer(String reference) async {
+    _updateStatus(reference, 'Verifying...');
+    String url = '$backendUrl/verify/$reference';
     try {
       http.Response response = await http.get(url);
       var body = response.body;
-
-      setState(() {
-        _backendMessage = 'Gateway response: $body';
-      });
+      _updateStatus(reference, body);
     } catch (e) {
-      setState(() {
-        _backendMessage = 'There was a problem verifying %s on the backend: '
-            '${_transaction.reference} $e';
-        _localInProgress = false;
-        _remoteInProgress = false;
-      });
+      _updateStatus(
+          reference,
+          'There was a problem verifying %s on the backend: '
+          '$reference $e');
     }
+    setState(() => _inProgress = false);
+  }
+
+  _updateStatus(String reference, String message) {
+    _showMessage(
+        'Reference: $reference \n\ Response: $message', const Duration(seconds: 7));
+  }
+
+  _showMessage(String message, [Duration duration = const Duration(seconds: 4)]) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(message),
+      duration: duration,
+      action: new SnackBarAction(
+          label: 'CLOSE',
+          onPressed: () => _scaffoldKey.currentState.removeCurrentSnackBar()),
+    ));
+  }
+
+  bool _isLocal() {
+    return _radioValue == 0;
   }
 }
 
-const fieldIsReq = 'Field is required';
+int _toInt(String source) {
+  int value;
+  try {
+    return int.parse(source);
+  } catch (e) {
+    print('Error occured while parsing $value to int. Error: $e');
+  }
+  return value;
+}
+
+var banks = ['Selectable', 'Bank', 'Card'];
+
+CheckoutMethod _parseStringToMethod(String string) {
+  CheckoutMethod method = CheckoutMethod.selectable;
+  switch (string) {
+    case 'Bank':
+      method = CheckoutMethod.bank;
+      break;
+    case 'Card':
+      method = CheckoutMethod.card;
+      break;
+  }
+  return method;
+}

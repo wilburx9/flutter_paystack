@@ -1,22 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
+import 'package:flutter_paystack/src/api/service/base_service.dart';
 import 'package:flutter_paystack/src/platform_info.dart';
+import 'package:http/http.dart' as http;
 
-class ApiService {
-  static const baseUrl = 'https://standard.paystack.co';
-  Map<String, String> headers = {};
+class MobileService extends BaseApiService {
+  MobileService()
+      : super(baseUrl: 'https://standard.paystack.co', headers: {
+          HttpHeaders.contentTypeHeader: 'application/x-www-form-urlencoded',
+          HttpHeaders.userAgentHeader: PlatformInfo().userAgent,
+          HttpHeaders.acceptHeader: 'application/json',
+          'X-Paystack-Build': PlatformInfo().paystackBuild,
+        });
 
-  ApiService() {
-    headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    headers['User-Agent'] = PlatformInfo().userAgent;
-    headers['X-Paystack-Build'] = PlatformInfo().paystackBuild;
-    headers['Accept'] = 'application/json';
-  }
-
-  Future<TransactionApiResponse> charge(Map<String, String> fields) async {
+  // Mobile Charge
+  Future<TransactionApiResponse> chargeCard(Map<String, String> fields) async {
     var url = '$baseUrl/charge/mobile_charge';
     var completer = Completer<TransactionApiResponse>();
 
@@ -27,7 +28,7 @@ class ApiService {
 
       var statusCode = response.statusCode;
 
-      if (statusCode == HttpStatus.OK) {
+      if (statusCode == HttpStatus.ok) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
@@ -35,7 +36,7 @@ class ApiService {
             '$statusCode and response: $body');
       }
     } catch (e) {
-      completer.completeError('charge transaction failed error: $e');
+      completer.completeError(e);
     }
 
     return completer.future;
@@ -52,7 +53,7 @@ class ApiService {
       var body = response.body;
 
       var statusCode = response.statusCode;
-      if (statusCode == HttpStatus.OK) {
+      if (statusCode == HttpStatus.ok) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
@@ -60,7 +61,7 @@ class ApiService {
             'status code: $statusCode and response: $body');
       }
     } catch (e) {
-      completer.completeError('validate charge transaction failed error: $e');
+      completer.completeError(e);
     }
 
     return completer.future;
@@ -73,7 +74,7 @@ class ApiService {
       http.Response response = await http.get(url, headers: headers);
       var body = response.body;
       var statusCode = response.statusCode;
-      if (statusCode == HttpStatus.OK) {
+      if (statusCode == HttpStatus.ok) {
         Map<String, dynamic> responseBody = json.decode(body);
         completer.complete(TransactionApiResponse.fromMap(responseBody));
       } else {
@@ -81,7 +82,7 @@ class ApiService {
             '$statusCode and response: $body');
       }
     } catch (e) {
-      completer.completeError('requery transaction failed error: $e');
+      completer.completeError(e);
     }
 
     return completer.future;

@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="10"
-            android:background="#292929"
+            android:background="#031b33"
             android:orientation="vertical">
 
             <TextView
@@ -38,7 +38,7 @@
                 android:layout_marginRight="@dimen/paystack__view__margin"
                 android:layout_marginTop="@dimen/paystack__view__margin"
                 android:layout_weight="1"
-                android:background="#292929"
+                android:background="#031b33"
                 android:gravity="center"
                 android:text="@string/auth_text"/>
 
@@ -50,7 +50,7 @@
                 android:layout_marginLeft="@dimen/paystack__view__margin"
                 android:layout_marginRight="@dimen/paystack__view__margin"
                 android:layout_weight="10"
-                android:background="#292929"/>
+                android:background="#031b33"/>
         </LinearLayout>
 
         <Space

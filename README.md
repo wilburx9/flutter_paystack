@@ -60,7 +60,7 @@ import 'package:http/http.dart' as http;
 
     Map<String, String> body = {
       'reference': '[YOUR_GENERATED_REFERENCE]',
-      'amount': 500000.toString(),
+      'amount': 500000.toString(), // Amount must always be in kobo
       'email': 'user@email.com'
     };
 

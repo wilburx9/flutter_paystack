@@ -1,6 +1,6 @@
-import 'package:meta/meta.dart';
 import 'package:flutter_paystack/src/utils/card_utils.dart';
 import 'package:flutter_paystack/src/utils/string_utils.dart';
+import 'package:meta/meta.dart';
 
 /// The class for the Payment Card model. Has utility methods for validating
 /// the card.
@@ -23,7 +23,7 @@ class PaymentCard {
   String _number;
 
   /// Card CVV or CVC
-  String cvc;
+  String _cvc;
 
   /// Expiry month
   int expiryMonth = 0;
@@ -59,6 +59,7 @@ class PaymentCard {
   set type(String value) => _type = value;
 
   String get number => _number;
+
   String get last4Digits => _last4Digits;
 
   String get type {
@@ -101,9 +102,15 @@ class PaymentCard {
     }
   }
 
+  String get cvc => _cvc;
+
+  set cvc(String value) {
+    _cvc = CardUtils.getCleanedNumber(value);
+  }
+
   PaymentCard(
       {@required String number,
-      @required this.cvc,
+      @required String cvc,
       @required this.expiryMonth,
       @required this.expiryYear,
       String name,
@@ -114,7 +121,8 @@ class PaymentCard {
       String addressPostCode,
       String addressCountry,
       String country}) {
-    this.number = CardUtils.getCleanedNumber(number);
+    this.number = number;
+    this.cvc = cvc;
     this.name = StringUtils.nullify(name);
     this.addressLine1 = StringUtils.nullify(addressLine1);
     this.addressLine2 = StringUtils.nullify(addressLine2);
@@ -125,6 +133,13 @@ class PaymentCard {
 
     this.country = StringUtils.nullify(country);
     this.type = type;
+  }
+
+  PaymentCard.empty() {
+    this.expiryYear = 0;
+    this.expiryMonth = 0;
+    this._number = null;
+    this.cvc = null;
   }
 
   /// Validates the CVC or CVV of the card
