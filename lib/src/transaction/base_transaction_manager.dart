@@ -38,7 +38,6 @@ abstract class BaseTransactionManager {
         assert(onError != null, 'onError must not be null');
 
   initiate() async {
-    print('Init started');
     if (BaseTransactionManager.processing) {
       throw ProcessingException();
     }
@@ -47,7 +46,6 @@ abstract class BaseTransactionManager {
   }
 
   sendCharge() {
-    print('SendCharge');
     try {
       sendChargeOnServer();
     } catch (e) {

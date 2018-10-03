@@ -24,7 +24,6 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
   Widget buildChild(BuildContext context);
 
   Future<bool> _onWillPop() async {
-    print('_onWillPop');
     if (isProcessing) {
       return false;
     }
@@ -92,7 +91,6 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
   }
 
   void onCancelPress() async {
-    print('OnCancelPress ${getPopReturnValue()}');
     bool close = await _onWillPop();
     if (close) {
       Navigator.of(context).pop(getPopReturnValue());

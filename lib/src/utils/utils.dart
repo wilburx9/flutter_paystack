@@ -22,14 +22,12 @@ class Utils {
           http.Response response = await http.get(url);
           Map<String, dynamic> body = json.decode(response.body);
           var data = body['data'];
-          print('Getting banks Sucessful');
           List<Bank> banks = [];
           for (var bank in data) {
             banks.add(new Bank(bank['name'], bank['code']));
           }
           return banks;
         } catch (e) {
-          print('Getting supported banks failed error: $e');
         }
         return null;
       });

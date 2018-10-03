@@ -75,7 +75,6 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
   }
 
   void _onCardValidated(PaymentCard card) {
-    print('_onCardValidated AccessCode = $_accessCode');
     _charge.card = card;
     widget.onCardChange(_charge.card);
     widget.onProcessingChange(true);
@@ -110,8 +109,6 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
 
   void _initializePayment() async {
     _validateReference();
-
-    print('Initialize Payment ');
 
     var url = 'https://api.paystack.co/transaction/initialize';
 
@@ -149,18 +146,15 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
         return;
       }
       Map<String, dynamic> responseData = json.decode(response.body);
-      print('Initialize payment $responseData');
       bool status = responseData['status'];
 
       if (status) {
         String accessCode = responseData['data']['access_code'];
-        print('Sending access code = $accessCode');
         this._accessCode = accessCode;
         Charge charge = new Charge()
           ..accessCode = accessCode
           ..card = _charge.card;
 
-        print('Sending access code_____________ = $accessCode');
         widget.onInitialized(accessCode);
 
         _chargeCard(charge);
@@ -168,7 +162,7 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
         handleError(responseData['message'], _charge.reference);
       }
     } catch (e) {
-      print(e);
+
       String message;
       if (e is PaystackException) {
         message = e.message;
@@ -178,7 +172,6 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
   }
 
   void _chargeCard(Charge charge) {
-    print('Charge card reference =  ${charge.reference}');
     handleBeforeValidate(Transaction transaction) {
       // Do nothing
     }
@@ -188,7 +181,6 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
         return;
       }
       if (e is ExpiredAccessCodeException) {
-        print('License has expired');
         Charge charge = new Charge()
           ..accessCode = _accessCode
           ..card = _charge.card;
@@ -196,7 +188,6 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
         return;
       }
 
-      print('Card payment Error $e');
       if (transaction.reference != null && !(e is PaystackException)) {
         verifyPaymentFromPaystack(transaction, card: _charge.card);
       } else {

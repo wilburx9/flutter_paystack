@@ -227,9 +227,6 @@ class Paystack {
     assert(() {
       Utils.validateChargeAndKeys(charge);
 
-      print('Access code = ${charge.accessCode}');
-      print('Reference = ${charge.reference}');
-
       if ((method == CheckoutMethod.selectable ||
               method == CheckoutMethod.card) &&
           (charge.accessCode == null && charge.reference == null)) {

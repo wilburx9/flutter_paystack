@@ -34,7 +34,6 @@ class TransactionApiResponse extends ApiResponse {
   }
 
   bool hasValidUrl() {
-    print('Valid URL? Message = $otpMessage');
     if (otpMessage == null || otpMessage.length == 0) {
       return false;
     }

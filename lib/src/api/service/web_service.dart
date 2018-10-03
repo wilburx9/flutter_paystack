@@ -17,7 +17,6 @@ class WebService extends BaseApiService {
         });
 
   Future<TransactionApiResponse> chargeBank(Map<String, dynamic> fields) async {
-    print('Charge Bank Fields = ${jsonEncode(fields)}');
     var url = baseUrl;
     headers[HttpHeaders.contentTypeHeader] = 'application/json';
     return _getChargeFuture(url, fields: jsonEncode(fields));
@@ -25,7 +24,6 @@ class WebService extends BaseApiService {
 
   Future<TransactionApiResponse> sendBirthday(
       Map<String, String> fields) async {
-    print('sendBirthday = $fields');
     headers.remove(HttpHeaders.contentTypeHeader);
     var url = '$baseUrl/submit_birthday';
     return _getChargeFuture(url,
@@ -34,14 +32,12 @@ class WebService extends BaseApiService {
 
   Future<TransactionApiResponse> sendOtp(Map<String, String> fields) async {
     headers.remove(HttpHeaders.contentTypeHeader);
-    print('sendOTP = $fields');
     var url = '$baseUrl/submit_otp';
     return _getChargeFuture(url, fields: fields);
   }
 
   Future<TransactionApiResponse> checkPending(String reference) async {
     headers.remove(HttpHeaders.contentTypeHeader);
-    print('checkPending = $reference');
     var url = '$baseUrl/$reference';
     var completer = Completer<TransactionApiResponse>();
 
@@ -50,7 +46,6 @@ class WebService extends BaseApiService {
       return _getResponseFuture(response, completer);
     } catch (e, stacktrace) {
       completer.completeError(e);
-      print('Charge error = $e. Stack =  $stacktrace');
     }
 
     return completer.future;
@@ -66,7 +61,6 @@ class WebService extends BaseApiService {
       return _getResponseFuture(response, completer, reference: reference);
     } catch (e, stacktrace) {
       completer.completeError(e);
-      print('Charge error = $e. Stack =  $stacktrace');
     }
 
     return completer.future;
@@ -76,14 +70,10 @@ class WebService extends BaseApiService {
       http.Response response, Completer<TransactionApiResponse> completer,
       {String reference}) {
     var body = response.body;
-
-    print('Undecodeded response = $body');
+    
     Map<String, dynamic> responseBody = json.decode(body);
 
-    print('Charge response = $responseBody');
-
     var statusCode = response.statusCode;
-    print('Status code = $statusCode');
 
     if (statusCode == HttpStatus.ok) {
       completer.complete(TransactionApiResponse.fromMap(

@@ -129,7 +129,6 @@ class _SuccessfulWidgetState extends State<SuccessfulWidget>
     }
     _countdownController.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {
-        print('Dismissing');
         widget.onCountdownComplete();
       }
     });

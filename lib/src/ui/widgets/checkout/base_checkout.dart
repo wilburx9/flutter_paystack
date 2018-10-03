@@ -29,7 +29,6 @@ abstract class BaseCheckoutMethodState<T extends StatefulWidget>
       message = Strings.sthWentWrong;
     }
 
-    print('Transaction error. Reference = $reference');
     onResponse(new CheckoutResponse(
         message: message,
         reference: reference,
@@ -44,8 +43,6 @@ abstract class BaseCheckoutMethodState<T extends StatefulWidget>
     var reference = transaction.reference;
     String url = 'https://api.paystack.co/transaction/verify/$reference';
 
-    print("Verifying Transaction. Url = $url");
-
     Map<String, String> headers = {
       HttpHeaders.authorizationHeader: 'Bearer ${PaystackPlugin.secretKey}',
     };
@@ -56,7 +53,6 @@ abstract class BaseCheckoutMethodState<T extends StatefulWidget>
         return;
       }
       Map<String, dynamic> responseData = json.decode(response.body);
-      print('Verify From Paystack = $responseData');
       String message = responseData['message'];
 
       var statusCode = response.statusCode;
@@ -81,7 +77,6 @@ abstract class BaseCheckoutMethodState<T extends StatefulWidget>
         handleAllError(message, reference, card: card, account: account);
       }
     } catch (e) {
-      print('Error while verifying = $e');
       String message;
       if (e is PaystackException) {
         message = e.message;

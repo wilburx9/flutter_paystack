@@ -87,7 +87,6 @@ class WebTransactionManager extends BaseTransactionManager {
     }
 
     if (status == 'pending') {
-      print('Will check pending in 12 secs');
       new Timer(const Duration(seconds: 12), () {
         _checkPending(response.reference);
       });

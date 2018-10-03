@@ -206,7 +206,6 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   }
 
   void _initMethods() {
-    print('Init methods = $_accessCode');
     _methodWidgets = [
       new MethodItem(
           text: 'Card',
@@ -217,9 +216,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             onResponse: _onPaymentResponse,
             accessCode: _accessCode,
             onInitialized: (String accessCode) {
-              print('Payment initialized = $accessCode');
               _accessCode = accessCode;
-              print('Payment initialized2 = $_accessCode');
             },
             onCardChange: (PaymentCard card) {
               _charge.card.number = card.number;
@@ -344,7 +341,6 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
       response.method =
           _tabController.index == 0 ? CheckoutMethod.card : CheckoutMethod.bank;
     }
-    print('Get response = $response');
     return response;
   }
 }

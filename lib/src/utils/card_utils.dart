@@ -61,7 +61,6 @@ class CardUtils {
   }
 
   static String getCleanedNumber(String text) {
-    print('Get clean number for $text');
     if (text == null) {
       return '';
     }

@@ -32,7 +32,6 @@ class MobileTransactionManager extends BaseTransactionManager {
 
   @override
   postInitiate() async {
-    print('PostInit');
     service = new MobileService();
     chargeRequestBody = await ChargeRequestBody.getChargeRequestBody(charge);
     validateRequestBody = ValidateRequestBody();
@@ -84,7 +83,6 @@ class MobileTransactionManager extends BaseTransactionManager {
 
   @override
   sendChargeOnServer() {
-    print('sendChargeToSerer request = $chargeRequestBody');
     Future<TransactionApiResponse> future =
         service.chargeCard(chargeRequestBody.paramsMap());
     handleServerResponse(future);

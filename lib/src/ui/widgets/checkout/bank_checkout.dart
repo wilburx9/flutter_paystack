@@ -214,7 +214,6 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
   }
 
   void _chargeAccount() {
-    print('Charge bank  =  $_account');
     handleBeforeValidate(Transaction transaction) {
       // Do nothing
     }
@@ -223,12 +222,11 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
       if (!mounted) {
         return;
       }
-      print(
-          'Error occured in chargeAccount = $e. Reference = ${transaction.reference}');
+
       setState(() {
         _loading = false;
       });
-      print('Bank payment Error $e');
+
       if (transaction.reference != null) {
         verifyPaymentFromPaystack(transaction, account: _account);
       } else {
