@@ -8,17 +8,22 @@ class CheckoutResponse {
   /// A user readable message. If the transaction was successful, this returns the
   /// cause of the error.
   String message;
+
   /// The card used for the payment. Will return null if the customer didn't use card
   /// payment
   PaymentCard card;
+
   /// The bank account used for the payment. Will return null if the customer didn't use
   /// bank account as a means of  payment
   BankAccount account;
+
   /// Transaction reference. Might return null for failed transaction transactions
   String reference;
+
   /// The status of the transaction. A successful response returns true and false
   /// otherwise
   bool status;
+
   /// The means of payment. It may return [CheckoutMethod.bank] or [CheckoutMethod.card]
   CheckoutMethod method;
 

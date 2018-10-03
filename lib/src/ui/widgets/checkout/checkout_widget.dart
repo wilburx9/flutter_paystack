@@ -50,7 +50,9 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     _currentIndex = _getCurrentTab();
     _showTabs = widget.method == CheckoutMethod.selectable ? true : false;
     _tabController = new TabController(
-        vsync: this, length: _methodWidgets.length, initialIndex: _currentIndex);
+        vsync: this,
+        length: _methodWidgets.length,
+        initialIndex: _currentIndex);
     _tabController.addListener(_indexChange);
     _animationController = new AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -78,7 +80,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
       content: new Container(
         child: new SingleChildScrollView(
           child: new Container(
-              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: _showProcessingError()
                   ? _buildErrorWidget()
                   : _paymentSuccessful
@@ -109,7 +112,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                 children: <Widget>[
                   const Text(
                     'Pay',
-                    style: const TextStyle(fontSize: 14.0, color: Colors.black54),
+                    style:
+                        const TextStyle(fontSize: 14.0, color: Colors.black54),
                   ),
                   new SizedBox(
                     width: 5.0,
@@ -138,7 +142,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                 isScrollable: true,
                 unselectedLabelColor: Colors.black54,
                 labelColor: MyColors.green,
-                labelStyle: new TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
+                labelStyle:
+                    new TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
                 indicator: new ShapeDecoration(
                   shape: const RoundedRectangleBorder(
                         borderRadius: tabBorderRadius,
@@ -326,7 +331,6 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
         amount: _charge.amount,
         onCountdownComplete: () => Navigator.of(context).pop(_response),
       );
-
 
   @override
   getPopReturnValue() {

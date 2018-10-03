@@ -56,7 +56,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    PaystackPlugin.initialize(publicKey: paystackPublicKey, secretKey: paystackSecretKey);
+    PaystackPlugin.initialize(
+        publicKey: paystackPublicKey, secretKey: paystackSecretKey);
     super.initState();
   }
 
@@ -80,21 +81,22 @@ class _HomePageState extends State<HomePage> {
                       child: const Text('Initalize transaction from:'),
                     ),
                     new Expanded(
-                      child:
-                          new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                        new RadioListTile<int>(
-                          value: 0,
-                          groupValue: _radioValue,
-                          onChanged: _handleRadioValueChanged,
-                          title: const Text('Local'),
-                        ),
-                        new RadioListTile<int>(
-                          value: 1,
-                          groupValue: _radioValue,
-                          onChanged: _handleRadioValueChanged,
-                          title: const Text('Server'),
-                        ),
-                      ]),
+                      child: new Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            new RadioListTile<int>(
+                              value: 0,
+                              groupValue: _radioValue,
+                              onChanged: _handleRadioValueChanged,
+                              title: const Text('Local'),
+                            ),
+                            new RadioListTile<int>(
+                              value: 1,
+                              groupValue: _radioValue,
+                              onChanged: _handleRadioValueChanged,
+                              title: const Text('Server'),
+                            ),
+                          ]),
                     )
                   ],
                 ),
@@ -155,7 +157,8 @@ class _HomePageState extends State<HomePage> {
                     : new Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          _getPlatformButton('Charge Card', () => _startAfreshCharge()),
+                          _getPlatformButton(
+                              'Charge Card', () => _startAfreshCharge()),
                           _verticalSizeBox,
                           _border,
                           new SizedBox(
@@ -184,7 +187,8 @@ class _HomePageState extends State<HomePage> {
                                         });
                                       },
                                       items: banks.map((String value) {
-                                        return new DropdownMenuItem<CheckoutMethod>(
+                                        return new DropdownMenuItem<
+                                            CheckoutMethod>(
                                           value: _parseStringToMethod(value),
                                           child: new Text(value),
                                         );
@@ -213,7 +217,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _handleRadioValueChanged(int value) => setState(() => _radioValue = value);
+  void _handleRadioValueChanged(int value) =>
+      setState(() => _radioValue = value);
 
   _handleCheckout() async {
     if (_method == null) {
@@ -416,11 +421,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   _updateStatus(String reference, String message) {
-    _showMessage(
-        'Reference: $reference \n\ Response: $message', const Duration(seconds: 7));
+    _showMessage('Reference: $reference \n\ Response: $message',
+        const Duration(seconds: 7));
   }
 
-  _showMessage(String message, [Duration duration = const Duration(seconds: 4)]) {
+  _showMessage(String message,
+      [Duration duration = const Duration(seconds: 4)]) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: new Text(message),
       duration: duration,

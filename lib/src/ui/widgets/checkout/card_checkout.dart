@@ -35,7 +35,8 @@ class CardCheckout extends StatefulWidget {
   });
 
   @override
-  _CardCheckoutState createState() => _CardCheckoutState(charge, accessCode, onResponse);
+  _CardCheckoutState createState() =>
+      _CardCheckoutState(charge, accessCode, onResponse);
 }
 
 class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
@@ -100,7 +101,8 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
   _validateReference() {
     //check for null value, and length and starts with pk_
     if (_charge.reference == null || _charge.reference.isEmpty) {
-      throw new PaystackException('Payment reference cannot be null or empty. If you '
+      throw new PaystackException(
+          'Payment reference cannot be null or empty. If you '
           'don\' want the plugin to initialize the transaction, then don\'t pass a '
           'private key in ${PaystackPlugin.initialize}');
     }
@@ -141,7 +143,8 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
     }
 
     try {
-      http.Response response = await http.post(url, body: body, headers: headers);
+      http.Response response =
+          await http.post(url, body: body, headers: headers);
       if (!mounted) {
         return;
       }
@@ -210,11 +213,12 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
     }
 
     new MobileTransactionManager(
-        charge: charge,
-        context: context,
-        beforeValidate: (transaction) => handleBeforeValidate(transaction),
-        onSuccess: (transaction) => handleOnSuccess(transaction),
-        onError: (error, transaction) => handleOnError(error, transaction)).chargeCard();
+            charge: charge,
+            context: context,
+            beforeValidate: (transaction) => handleBeforeValidate(transaction),
+            onSuccess: (transaction) => handleOnSuccess(transaction),
+            onError: (error, transaction) => handleOnError(error, transaction))
+        .chargeCard();
   }
 
   void handleError(String message, String reference) {

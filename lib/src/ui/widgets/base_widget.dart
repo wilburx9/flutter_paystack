@@ -32,8 +32,7 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
     var returnValue = getPopReturnValue();
     if (alwaysPop ||
         (returnValue != null &&
-            (returnValue is CheckoutResponse &&
-                returnValue.status == true))) {
+            (returnValue is CheckoutResponse && returnValue.status == true))) {
       Navigator.of(context).pop(returnValue);
       return false;
     }
@@ -56,8 +55,8 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
                 child: const Text('No'),
                 isDefaultAction: true,
                 onPressed: () {
-                  Navigator.pop(
-                      context, false); // Pops the confirmation dialog but not the page.
+                  Navigator.pop(context,
+                      false); // Pops the confirmation dialog but not the page.
                 },
               ),
             ],
@@ -68,14 +67,14 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
               new FlatButton(
                   child: const Text('NO'),
                   onPressed: () {
-                    Navigator.of(context)
-                        .pop(false); // Pops the confirmation dialog but not the page.
+                    Navigator.of(context).pop(
+                        false); // Pops the confirmation dialog but not the page.
                   }),
               new FlatButton(
                   child: const Text('YES'),
                   onPressed: () {
-                    Navigator.of(context)
-                        .pop(true); // Returning true to _onWillPop will pop again.
+                    Navigator.of(context).pop(
+                        true); // Returning true to _onWillPop will pop again.
                   })
             ],
           );
