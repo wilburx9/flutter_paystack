@@ -1,3 +1,7 @@
+## 0.9.1
+
+* Bumped version of dependencies.
+
 ## 0.9.0
 
 * Added checkout form and supported bank account payment.
