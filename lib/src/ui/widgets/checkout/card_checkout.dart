@@ -162,7 +162,6 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
         handleError(responseData['message'], _charge.reference);
       }
     } catch (e) {
-
       String message;
       if (e is PaystackException) {
         message = e.message;

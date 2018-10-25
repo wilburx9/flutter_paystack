@@ -27,8 +27,7 @@ class Utils {
             banks.add(new Bank(bank['name'], bank['code']));
           }
           return banks;
-        } catch (e) {
-        }
+        } catch (e) {}
         return null;
       });
 

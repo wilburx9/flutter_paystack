@@ -70,7 +70,7 @@ class WebService extends BaseApiService {
       http.Response response, Completer<TransactionApiResponse> completer,
       {String reference}) {
     var body = response.body;
-    
+
     Map<String, dynamic> responseBody = json.decode(body);
 
     var statusCode = response.statusCode;
