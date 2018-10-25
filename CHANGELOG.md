@@ -1,3 +1,7 @@
+## 0.9.1+1
+
+* Updated to the latest gradle and kotlin dependencies
+
 ## 0.9.1
 
 * Bumped version of dependencies.
