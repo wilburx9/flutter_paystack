@@ -45,7 +45,7 @@ There are two ways of making payment with the plugin.
        ..reference = _getReference()
         // or ..accessCode = _getAccessCodeFrmInitialization()
        ..email = 'customer@email.com';
-     bool success = await PaystackPlugin.checkout(
+     CheckoutResponse response = await PaystackPlugin.checkout(
        context,
        method: _method,
        charge: charge,
