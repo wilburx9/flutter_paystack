@@ -5,7 +5,7 @@ import 'package:flutter_paystack/src/ui/widgets/checkout/bank_checkout.dart';
 import 'package:meta/meta.dart';
 
 class CheckoutResponse {
-  /// A user readable message. If the transaction was successful, this returns the
+  /// A user readable message. If the transaction was not successful, this returns the
   /// cause of the error.
   String message;
 
