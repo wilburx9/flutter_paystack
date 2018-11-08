@@ -1,6 +1,10 @@
+## 0.9.1+2
+
+* Fixed build failure because of difference in type of passed and expected value of encrypt function.
+
 ## 0.9.1+1
 
-* Updated to the latest gradle and kotlin dependencies
+* Updated to the latest gradle and kotlin dependencies.
 
 ## 0.9.1
 

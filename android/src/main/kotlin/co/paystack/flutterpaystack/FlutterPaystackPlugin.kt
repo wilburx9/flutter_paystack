@@ -41,7 +41,7 @@ class FlutterPaystackPlugin(val appContext: Context, val authDelegate: AuthDeleg
         authDelegate.handleAuthorization(result, call)
       }
       "getEncryptedData" -> {
-        val encryptedData = Crypto.encrypt(call.argument<String>("stringData"))
+        val encryptedData = Crypto.encrypt(call.argument<String>("stringData").toString())
         result.success(encryptedData)
       }
 

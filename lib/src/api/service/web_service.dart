@@ -44,7 +44,7 @@ class WebService extends BaseApiService {
     try {
       http.Response response = await http.get(url, headers: headers);
       return _getResponseFuture(response, completer);
-    } catch (e, stacktrace) {
+    } catch (e) {
       completer.completeError(e);
     }
 
@@ -59,7 +59,7 @@ class WebService extends BaseApiService {
       http.Response response =
           await http.post(url, body: fields, headers: headers);
       return _getResponseFuture(response, completer, reference: reference);
-    } catch (e, stacktrace) {
+    } catch (e) {
       completer.completeError(e);
     }
 
