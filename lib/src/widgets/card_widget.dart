@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/model/card.dart';
-import 'package:flutter_paystack/src/ui/widgets/base_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/buttons.dart';
-import 'package:flutter_paystack/src/ui/widgets/input/card_input.dart';
-import 'package:flutter_paystack/src/ui/widgets/custom_dialog.dart';
+import 'package:flutter_paystack/src/widgets/base_widget.dart';
+import 'package:flutter_paystack/src/widgets/buttons.dart';
+import 'package:flutter_paystack/src/widgets/input/card_input.dart';
+import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
 
 class CardInputWidget extends StatefulWidget {
   final PaymentCard card;

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/ui/input_formatters.dart';
-import 'package:flutter_paystack/src/utils/card_utils.dart';
+import 'package:flutter_paystack/src/widgets/common/input_formatters.dart';
+import 'package:flutter_paystack/src/common/card_utils.dart';
 
-import 'package:flutter_paystack/src/ui/widgets/input/base_field.dart';
+import 'package:flutter_paystack/src/widgets/input/base_field.dart';
 
 class DateField extends BaseTextField {
   DateField(

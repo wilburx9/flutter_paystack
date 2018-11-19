@@ -1,7 +1,7 @@
-import 'package:flutter_paystack/src/exceptions.dart';
+import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/model/card.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/bank_checkout.dart';
-import 'package:flutter_paystack/src/utils/string_utils.dart';
+import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
+import 'package:flutter_paystack/src/common/string_utils.dart';
 
 class Charge {
   PaymentCard card;

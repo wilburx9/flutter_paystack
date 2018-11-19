@@ -4,15 +4,15 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/src/paystack.dart';
-import 'package:flutter_paystack/src/transaction.dart';
+import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/common/transaction.dart';
 import 'package:flutter_paystack/src/transaction/web_transaction_manager.dart';
-import 'package:flutter_paystack/src/ui/my_colors.dart';
-import 'package:flutter_paystack/src/ui/widgets/buttons.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/base_checkout.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/checkout_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/input/account_field.dart';
-import 'package:flutter_paystack/src/utils/utils.dart';
+import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
+import 'package:flutter_paystack/src/widgets/buttons.dart';
+import 'package:flutter_paystack/src/widgets/checkout/base_checkout.dart';
+import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
+import 'package:flutter_paystack/src/widgets/input/account_field.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 
 class BankCheckout extends StatefulWidget {
   final Charge charge;

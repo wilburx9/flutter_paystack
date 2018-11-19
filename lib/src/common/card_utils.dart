@@ -1,6 +1,6 @@
-import 'package:flutter_paystack/src/exceptions.dart';
+import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/model/card.dart';
-import 'package:flutter_paystack/src/utils/string_utils.dart';
+import 'package:flutter_paystack/src/common/string_utils.dart';
 
 const cardConcatenateValue = '*';
 

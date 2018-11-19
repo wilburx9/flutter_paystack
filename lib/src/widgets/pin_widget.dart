@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/ui/my_colors.dart';
-import 'package:flutter_paystack/src/ui/widgets/base_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/custom_dialog.dart';
-import 'package:flutter_paystack/src/ui/widgets/input/pin_field.dart';
+import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
+import 'package:flutter_paystack/src/widgets/base_widget.dart';
+import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
+import 'package:flutter_paystack/src/widgets/input/pin_field.dart';
 
 import 'buttons.dart';
 

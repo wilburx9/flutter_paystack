@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/ui/my_colors.dart';
+import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
 
 class CustomTheme extends Theme {
   CustomTheme({@required Widget child})

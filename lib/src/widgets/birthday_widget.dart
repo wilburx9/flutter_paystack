@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/ui/widgets/base_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/buttons.dart';
-import 'package:flutter_paystack/src/ui/widgets/custom_dialog.dart';
+import 'package:flutter_paystack/src/widgets/base_widget.dart';
+import 'package:flutter_paystack/src/widgets/buttons.dart';
+import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
 import 'package:intl/intl.dart';
 
 class BirthdayWidget extends StatefulWidget {

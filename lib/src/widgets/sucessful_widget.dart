@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/ui/widgets/animated_widget.dart';
-import 'package:flutter_paystack/src/ui/my_colors.dart';
-import 'package:flutter_paystack/src/utils/utils.dart';
+import 'package:flutter_paystack/src/widgets/animated_widget.dart';
+import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 
 class SuccessfulWidget extends StatefulWidget {
   final int amount;

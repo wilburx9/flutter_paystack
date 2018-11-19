@@ -3,14 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/exceptions.dart';
+import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/model/card.dart';
-import 'package:flutter_paystack/src/paystack.dart';
-import 'package:flutter_paystack/src/transaction.dart';
-import 'package:flutter_paystack/src/ui/widgets/animated_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/bank_checkout.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/checkout_widget.dart';
+import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/common/transaction.dart';
+import 'package:flutter_paystack/src/widgets/animated_widget.dart';
+import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
+import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 import 'package:http/http.dart' as http;
 
 abstract class BaseCheckoutMethodState<T extends StatefulWidget>

@@ -1,4 +1,4 @@
-import 'package:flutter_paystack/src/platform_info.dart';
+import 'package:flutter_paystack/src/common/platform_info.dart';
 
 abstract class BaseRequestBody {
   final fieldDevice = 'device';

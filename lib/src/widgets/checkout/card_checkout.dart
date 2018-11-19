@@ -4,17 +4,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/api/request/mobile_request_body.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/exceptions.dart';
+import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/src/paystack.dart';
-import 'package:flutter_paystack/src/transaction.dart';
+import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/common/transaction.dart';
 import 'package:flutter_paystack/src/transaction/mobile_transaction_manager.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/base_checkout.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/checkout_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/input/card_input.dart';
-import 'package:flutter_paystack/src/utils/utils.dart';
+import 'package:flutter_paystack/src/widgets/checkout/base_checkout.dart';
+import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
+import 'package:flutter_paystack/src/widgets/input/card_input.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:http/http.dart' as http;
 
 class CardCheckout extends StatefulWidget {

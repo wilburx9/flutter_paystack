@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/bank_checkout.dart';
+import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 
 class BankChargeRequestBody {
   String _reference;

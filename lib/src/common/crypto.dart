@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:flutter_paystack/src/utils/utils.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 
 class Crypto {
   static Future<String> encrypt(String data) async {

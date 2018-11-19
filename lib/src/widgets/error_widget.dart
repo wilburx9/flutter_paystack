@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/paystack.dart';
-import 'package:flutter_paystack/src/ui/widgets/animated_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/buttons.dart';
+import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/widgets/animated_widget.dart';
+import 'package:flutter_paystack/src/widgets/buttons.dart';
 
 class ErrorWidget extends StatelessWidget {
   final TickerProvider vSync;

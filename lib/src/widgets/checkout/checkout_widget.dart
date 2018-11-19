@@ -2,16 +2,16 @@ import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/src/paystack.dart';
-import 'package:flutter_paystack/src/ui/my_colors.dart';
-import 'package:flutter_paystack/src/ui/widgets/base_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/bank_checkout.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/card_checkout.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/checkout_method.dart';
-import 'package:flutter_paystack/src/ui/widgets/custom_dialog.dart';
-import 'package:flutter_paystack/src/ui/widgets/error_widget.dart';
-import 'package:flutter_paystack/src/ui/widgets/sucessful_widget.dart';
-import 'package:flutter_paystack/src/utils/utils.dart';
+import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
+import 'package:flutter_paystack/src/widgets/base_widget.dart';
+import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
+import 'package:flutter_paystack/src/widgets/checkout/card_checkout.dart';
+import 'package:flutter_paystack/src/widgets/checkout/checkout_method.dart';
+import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
+import 'package:flutter_paystack/src/widgets/error_widget.dart';
+import 'package:flutter_paystack/src/widgets/sucessful_widget.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 
 const kFullTabHeight = 74.0;
 

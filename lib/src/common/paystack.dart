@@ -4,15 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/exceptions.dart';
+import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/src/platform_info.dart';
-import 'package:flutter_paystack/src/transaction.dart';
+import 'package:flutter_paystack/src/common/platform_info.dart';
+import 'package:flutter_paystack/src/common/transaction.dart';
 import 'package:flutter_paystack/src/transaction/mobile_transaction_manager.dart';
-import 'package:flutter_paystack/src/ui/widgets/checkout/checkout_widget.dart';
-import 'package:flutter_paystack/src/utils/utils.dart';
+import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 
 class PaystackPlugin {
   static bool _sdkInitialized = false;

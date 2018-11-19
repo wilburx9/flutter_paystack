@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_paystack/src/ui/my_colors.dart';
+import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
 
 class PinField extends StatefulWidget {
   final ValueChanged<String> onSaved;

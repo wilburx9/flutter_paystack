@@ -5,10 +5,10 @@ import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 import 'package:flutter_paystack/src/api/request/mobile_request_body.dart';
 import 'package:flutter_paystack/src/api/request/validate_request_body.dart';
 import 'package:flutter_paystack/src/api/service/mobile_service.dart';
-import 'package:flutter_paystack/src/exceptions.dart';
+import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/src/paystack.dart';
-import 'package:flutter_paystack/src/transaction.dart';
+import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/common/transaction.dart';
 import 'package:flutter_paystack/src/transaction/base_transaction_manager.dart';
 
 class MobileTransactionManager extends BaseTransactionManager {

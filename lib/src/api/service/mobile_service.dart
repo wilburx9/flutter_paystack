@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 import 'package:flutter_paystack/src/api/service/base_service.dart';
-import 'package:flutter_paystack/src/platform_info.dart';
+import 'package:flutter_paystack/src/common/platform_info.dart';
 import 'package:http/http.dart' as http;
 
 class MobileService extends BaseApiService {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 
-import 'package:flutter_paystack/src/ui/widgets/input/base_field.dart';
+import 'package:flutter_paystack/src/widgets/input/base_field.dart';
 
 class AccountField extends BaseTextField {
   AccountField({@required FormFieldSetter<String> onSaved})
