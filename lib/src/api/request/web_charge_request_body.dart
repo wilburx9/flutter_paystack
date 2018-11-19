@@ -4,6 +4,7 @@ import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/ui/widgets/checkout/bank_checkout.dart';
 
 class BankChargeRequestBody {
+  String _reference;
   String _email;
   String _amount;
   String _metadata;
@@ -12,13 +13,15 @@ class BankChargeRequestBody {
   String otp;
 
   BankChargeRequestBody(Charge charge)
-      : this._email = charge.email,
+      : this._reference = charge.reference,
+        this._email = charge.email,
         this._amount = charge.amount.toString(),
         this._metadata = charge.metadata,
         this._account = charge.account;
 
   Map paramsMap() {
     var params = {
+      'reference': _reference,
       'email': _email,
       'amount': _amount,
       'bank': {
