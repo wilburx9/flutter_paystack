@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
-import 'package:flutter_paystack/src/model/checkout_response.dart';
-import 'package:flutter_paystack/src/model/card.dart';
-import 'package:flutter_paystack/src/model/charge.dart';
+import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/platform_info.dart';
 import 'package:flutter_paystack/src/common/transaction.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
+import 'package:flutter_paystack/src/model/card.dart';
+import 'package:flutter_paystack/src/model/charge.dart';
+import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/transaction/mobile_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
-import 'package:flutter_paystack/src/common/utils.dart';
 
 class PaystackPlugin {
   static bool _sdkInitialized = false;
@@ -163,16 +163,18 @@ class PaystackPlugin {
     BuildContext context, {
     @required Charge charge,
     CheckoutMethod method = CheckoutMethod.selectable,
+    bool fullscreen = false,
   }) async {
     assert(context != null, 'context must not be null');
     assert(
         method != null,
         'method must not be null. You can pass CheckoutMethod.selectable if you want the user '
         'to select the checkout option');
+    assert(fullscreen != null, 'fillscreen must not be null');
 
     _performChecks(isSecret: true);
-    return Paystack.withSecretKey(secretKey)
-        .checkout(context, charge: charge, method: method);
+    return Paystack.withSecretKey(secretKey).checkout(context,
+        charge: charge, method: method, fullscreen: fullscreen);
   }
 }
 
@@ -223,6 +225,7 @@ class Paystack {
     BuildContext context, {
     @required Charge charge,
     @required CheckoutMethod method,
+    @required bool fullscreen,
   }) async {
     assert(() {
       Utils.validateChargeAndKeys(charge);
@@ -238,8 +241,11 @@ class Paystack {
     CheckoutResponse response = await showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (BuildContext context) =>
-            new CheckoutWidget(method: method, charge: charge));
+        builder: (BuildContext context) => new CheckoutWidget(
+              method: method,
+              charge: charge,
+              fullscreen: fullscreen,
+            ));
     return response == null ? CheckoutResponse.defaults() : response;
   }
 }

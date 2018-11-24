@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,8 @@ class CustomAlertDialog extends StatelessWidget {
     this.titlePadding,
     this.onCancelPress,
     this.contentPadding = const EdgeInsets.symmetric(vertical: 10.0),
+    this.expanded = false,
+    this.fullscreen = false,
     @required this.content,
   })  : assert(content != null),
         super(key: key);
@@ -19,6 +23,8 @@ class CustomAlertDialog extends StatelessWidget {
   final Widget content;
   final EdgeInsetsGeometry contentPadding;
   final VoidCallback onCancelPress;
+  final bool expanded;
+  final bool fullscreen;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +52,7 @@ class CustomAlertDialog extends StatelessWidget {
 
     var body = new Material(
       type: MaterialType.card,
-      borderRadius: new BorderRadius.circular(5.0),
+      borderRadius: new BorderRadius.circular(10.0),
       color: Colors.white,
       child: new Column(
         mainAxisSize: MainAxisSize.min,
@@ -68,7 +74,7 @@ class CustomAlertDialog extends StatelessWidget {
                       highlightColor: Colors.white54,
                       splashColor: Colors.white54,
                       color: Colors.white,
-                      iconSize: 22.0,
+                      iconSize: 30.0,
                       padding: const EdgeInsets.all(3.0),
                       icon: const Icon(
                         Icons.cancel,
@@ -80,7 +86,8 @@ class CustomAlertDialog extends StatelessWidget {
             ),
     );
 
-    return new CustomDialog(child: dialogChild);
+    return new CustomDialog(
+        child: dialogChild, expanded: expanded, fullscreen: fullscreen);
   }
 }
 
@@ -89,7 +96,9 @@ class CustomAlertDialog extends StatelessWidget {
 class CustomDialog extends StatelessWidget {
   const CustomDialog({
     Key key,
-    this.child,
+    @required this.child,
+    @required this.expanded,
+    @required this.fullscreen,
     this.insetAnimationDuration = const Duration(milliseconds: 100),
     this.insetAnimationCurve = Curves.decelerate,
   }) : super(key: key);
@@ -97,12 +106,14 @@ class CustomDialog extends StatelessWidget {
   final Widget child;
   final Duration insetAnimationDuration;
   final Curve insetAnimationCurve;
+  final bool expanded;
+  final bool fullscreen;
 
   @override
   Widget build(BuildContext context) {
     return new AnimatedPadding(
       padding: MediaQuery.of(context).viewInsets +
-          const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
+          const EdgeInsets.symmetric(horizontal: 30.0, vertical: 24.0),
       duration: insetAnimationDuration,
       curve: insetAnimationCurve,
       child: new MediaQuery.removeViewInsets(
@@ -113,7 +124,11 @@ class CustomDialog extends StatelessWidget {
         context: context,
         child: new Center(
           child: new ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 280.0),
+            constraints: new BoxConstraints(
+                minWidth: expanded
+                    ? math.min(
+                        (MediaQuery.of(context).size.width - 60.0), 332.0)
+                    : 280.0),
             child: new Material(
               elevation: 50.0,
               type: MaterialType.transparency,

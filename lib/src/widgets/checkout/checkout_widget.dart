@@ -18,8 +18,12 @@ const kFullTabHeight = 74.0;
 class CheckoutWidget extends StatefulWidget {
   final CheckoutMethod method;
   final Charge charge;
+  final bool fullscreen;
 
-  CheckoutWidget({@required this.method, @required this.charge});
+  CheckoutWidget(
+      {@required this.method,
+      @required this.charge,
+      @required this.fullscreen});
 
   @override
   _CheckoutWidgetState createState() => _CheckoutWidgetState(charge);
@@ -74,6 +78,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   Widget buildChild(BuildContext context) {
     return new CustomAlertDialog(
       key: _scaffoldKey,
+      expanded: true,
+      fullscreen: widget.fullscreen,
       titlePadding: EdgeInsets.all(0.0),
       onCancelPress: onCancelPress,
       title: _buildTitle(),
