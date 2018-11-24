@@ -11,11 +11,13 @@ class ErrorWidget extends StatelessWidget {
   final VoidCallback payWithBank;
   final VoidCallback tryAnotherCard;
   final VoidCallback startOverWithCard;
+  final bool isCardPayment;
 
   ErrorWidget({
     @required this.text,
     @required this.vSync,
     @required this.method,
+    @required this.isCardPayment,
     this.payWithBank,
     this.tryAnotherCard,
     this.startOverWithCard,
@@ -30,8 +32,6 @@ class ErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var isCardPayment =
-        method == CheckoutMethod.selectable || method == CheckoutMethod.card;
     var buttonMargin =
         isCardPayment ? new SizedBox(height: 5.0) : emptyContainer;
     return new Container(

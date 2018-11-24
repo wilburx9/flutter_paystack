@@ -304,6 +304,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     return new ErrorWidget(
       text: _paymentError,
       method: widget.method,
+      isCardPayment: _charge.card.isValid(),
       vSync: this,
       payWithBank: () {
         setState(() {
