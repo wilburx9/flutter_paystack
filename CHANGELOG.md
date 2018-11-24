@@ -1,3 +1,10 @@
+## 0.9.2
+
+* Bank account payment: fixed issue where the reference value passed to checkout is different from what is returned after transaction.
+* Increased width of checkout dialog.
+* Added flag to enable fullscreen checkout dialog.
+* Felt like doing some reorganising so I refactored some .dart files.
+
 ## 0.9.1+2
 
 * Fixed build failure because of difference in type of passed and expected value of encrypt function.
