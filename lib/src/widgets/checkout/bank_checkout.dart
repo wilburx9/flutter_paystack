@@ -199,7 +199,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
   }
 
   void _validateInputs() {
-    // TODO: Close keyboard
+    FocusScope.of(context).requestFocus(new FocusNode());
     final FormState form = _formKey.currentState;
     if (form.validate()) {
       form.save();

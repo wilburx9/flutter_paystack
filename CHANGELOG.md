@@ -1,6 +1,7 @@
 ## 0.9.3
 
 * Fixed failure of web OTP on iOS devices
+* Automatically closes soft keyboard when text-field entries are submitted
 
 ## 0.9.2
 
