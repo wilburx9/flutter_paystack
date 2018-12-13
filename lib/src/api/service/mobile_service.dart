@@ -14,6 +14,12 @@ class MobileService extends BaseApiService {
           HttpHeaders.userAgentHeader: PlatformInfo().userAgent,
           HttpHeaders.acceptHeader: 'application/json',
           'X-Paystack-Build': PlatformInfo().paystackBuild,
+          'X-PAYSTACK-USER-AGENT':
+              jsonEncode({'lang': Platform.isIOS ? 'objective-c' : 'kotlin'}),
+          'bindings_version': Platform.isIOS
+              ? '3.0.5' // Latest version of Paystack official iOS SDK
+              : '3.0.10', // Latest version of Paystack official Android SDK
+          'X-FLUTTER-USER-AGENT': jsonEncode({'version': '0.9.3'})
         });
 
   // Mobile Charge

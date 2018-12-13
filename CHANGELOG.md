@@ -1,3 +1,7 @@
+## 0.9.3
+
+* Fixed failure of web OTP on iOS devices
+
 ## 0.9.2
 
 * Bank account payment: fixed issue where the reference value passed to checkout is different from what is returned after transaction.

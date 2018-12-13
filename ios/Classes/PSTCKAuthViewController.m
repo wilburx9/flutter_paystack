@@ -65,7 +65,7 @@ BOOL handlingRedirectURL;
 #pragma mark UI Action Methods
 
 - (void)tappedCancelButton:(id)cancelButton {
-#pragma unused(cancelButton)
+    #pragma unused(cancelButton)
     self.completion();
 }
 
@@ -74,7 +74,7 @@ BOOL handlingRedirectURL;
 @implementation PSTCKAuthViewController (UIWebViewDelegate)
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-#pragma unused(webView, navigationType)
+    #pragma unused(webView, navigationType)
     NSString *url = [[request URL] absoluteString];
     
     // Prevent loading URL if it is the redirectURL
@@ -90,7 +90,11 @@ BOOL handlingRedirectURL;
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-#pragma unused(webView)
+    #pragma unused(webView)
+    
+    NSLog(@"%@", error);
+    NSString * myString = error.description;
+    NSLog(@"%@", myString);
     
     // Turn off network activity indicator upon failure to load web view
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
@@ -107,11 +111,11 @@ BOOL handlingRedirectURL;
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-#pragma unused(webView)
-    
+    #pragma unused(webView)
+
     // Turn off network activity indicator upon finishing web view load
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-    
+
 }
 
 @end

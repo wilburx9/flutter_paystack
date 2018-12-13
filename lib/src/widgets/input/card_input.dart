@@ -102,6 +102,7 @@ class _CardInputState extends State<CardInput> {
   }
 
   void _validateInputs() {
+    // TODO: Close keyboard
     final FormState form = _formKey.currentState;
     if (form.validate()) {
       form.save();

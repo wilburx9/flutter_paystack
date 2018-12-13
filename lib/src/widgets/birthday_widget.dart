@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 class BirthdayWidget extends StatefulWidget {
   final String message;
 
+  // TODO: Use iOS date picker
+
   BirthdayWidget({@required this.message});
 
   @override

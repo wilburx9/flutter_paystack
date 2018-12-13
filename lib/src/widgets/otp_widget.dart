@@ -76,6 +76,7 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
   }
 
   void _validateInputs() {
+    // TODO: Close keyboard
     final FormState form = _formKey.currentState;
     if (form.validate()) {
       form.save();
