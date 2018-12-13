@@ -1,15 +1,16 @@
-import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_paystack/src/widgets/base_widget.dart';
 import 'package:flutter_paystack/src/widgets/buttons.dart';
 import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
 import 'package:intl/intl.dart';
 
+const double _kPickerSheetHeight = 216.0;
+
 class BirthdayWidget extends StatefulWidget {
   final String message;
-
-  // TODO: Use iOS date picker
 
   BirthdayWidget({@required this.message});
 
@@ -86,22 +87,55 @@ class _BirthdayWidgetState extends BaseState<BirthdayWidget> {
     ));
   }
 
-  Future<DateTime> _showDatePicker() {
-    var now = new DateTime.now();
-    return showDatePicker(
-        context: context,
-        selectableDayPredicate: (DateTime val) =>
-            val.year > now.year && val.month > now.month && val.day > now.day
-                ? false
-                : true,
-        initialDate: now,
-        firstDate: new DateTime(1900),
-        lastDate: now);
-  }
-
   void _selectBirthday() async {
-    DateTime result = await _showDatePicker();
-    setState(() => _pickedDate = result);
+    updateDate(date) {
+      setState(() => _pickedDate = date);
+    }
+
+    var now = new DateTime.now();
+    var minimumYear = 1900;
+    if (Platform.isIOS) {
+      showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) => Container(
+                height: _kPickerSheetHeight,
+                padding: const EdgeInsets.only(top: 6.0),
+                color: CupertinoColors.white,
+                child: DefaultTextStyle(
+                  style: const TextStyle(
+                    color: CupertinoColors.black,
+                    fontSize: 22.0,
+                  ),
+                  child: GestureDetector(
+                    // Blocks taps from propagating to the modal sheet and popping.
+                    onTap: () {},
+                    child: SafeArea(
+                      top: false,
+                      child: new CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.date,
+                        initialDateTime: now,
+                        maximumDate: now,
+                        minimumYear: minimumYear,
+                        maximumYear: now.year,
+                        onDateTimeChanged: updateDate,
+                      ),
+                    ),
+                  ),
+                ),
+              ));
+    } else {
+      DateTime result = await showDatePicker(
+          context: context,
+          selectableDayPredicate: (DateTime val) =>
+              val.year > now.year && val.month > now.month && val.day > now.day
+                  ? false
+                  : true,
+          initialDate: now,
+          firstDate: new DateTime(minimumYear),
+          lastDate: now);
+
+      updateDate(result);
+    }
   }
 
   Widget dateItem(String text) {

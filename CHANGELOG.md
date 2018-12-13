@@ -2,6 +2,7 @@
 
 * Fixed failure of web OTP on iOS devices
 * Automatically closes soft keyboard when text-field entries are submitted
+* Changed date picker on iOS to CupertinoDatePicker
 
 ## 0.9.2
 
