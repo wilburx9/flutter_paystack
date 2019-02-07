@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 import 'package:flutter_paystack/src/api/service/base_service.dart';
+import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/platform_info.dart';
 import 'package:http/http.dart' as http;
 
@@ -34,12 +35,17 @@ class MobileService extends BaseApiService {
 
       var statusCode = response.statusCode;
 
-      if (statusCode == HttpStatus.ok) {
-        Map<String, dynamic> responseBody = json.decode(body);
-        completer.complete(TransactionApiResponse.fromMap(responseBody));
-      } else {
-        completer.completeError('charge transaction failed with status code: '
-            '$statusCode and response: $body');
+      switch (statusCode) {
+        case HttpStatus.ok:
+          Map<String, dynamic> responseBody = json.decode(body);
+          completer.complete(TransactionApiResponse.fromMap(responseBody));
+          break;
+        case HttpStatus.gatewayTimeout:
+          completer.completeError('Gateway timeout error');
+          break;
+        default:
+          completer.completeError(Strings.unKnownResponse);
+          break;
       }
     } catch (e) {
       completer.completeError(e);

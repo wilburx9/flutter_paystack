@@ -11,8 +11,9 @@ class Strings {
   static const String unKnownError = 'Unknown Error';
   static const String nigerianLocale = 'en_NG';
   static const String noAccessCodeReference =
-      'Pass either an access code or payment '
+      'Pass either an access code or transaction '
       'reference';
   static const String sthWentWrong = 'Something went wrong.';
-  static const String userTerminated = 'Terminated by customer';
+  static const String userTerminated = 'Transactio terminated';
+  static const String unKnownResponse = 'Unknown server response';
 }

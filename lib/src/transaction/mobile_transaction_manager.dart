@@ -6,6 +6,7 @@ import 'package:flutter_paystack/src/api/request/mobile_request_body.dart';
 import 'package:flutter_paystack/src/api/request/validate_request_body.dart';
 import 'package:flutter_paystack/src/api/service/mobile_service.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
+import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/transaction.dart';
@@ -155,7 +156,7 @@ class MobileTransactionManager extends BaseTransactionManager {
       return;
     }
 
-    notifyProcessingError(PaystackException('Unknown server response'));
+    notifyProcessingError(PaystackException(Strings.unKnownResponse));
   }
 
   @override

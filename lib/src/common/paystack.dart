@@ -153,9 +153,6 @@ class PaystackPlugin {
         'the user '
         'to select the checkout option');
     assert(fullscreen != null, 'fillscreen must not be null');
-    assert(charge.accessCode != null || charge.reference != null,
-        'Pass an accessCode or a transaction reference');
-
     return Paystack.withPublicKey(publicKey).checkout(context,
         charge: charge, method: method, fullscreen: fullscreen);
   }
@@ -210,9 +207,7 @@ class Paystack {
     assert(() {
       Utils.validateChargeAndKey(charge);
 
-      if ((method == CheckoutMethod.selectable ||
-              method == CheckoutMethod.card) &&
-          (charge.accessCode == null && charge.reference == null)) {
+      if (charge.accessCode == null && charge.reference == null) {
         throw new ChargeException(Strings.noAccessCodeReference);
       }
       return true;

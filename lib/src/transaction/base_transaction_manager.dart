@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
@@ -75,6 +76,10 @@ abstract class BaseTransactionManager {
 
   notifyProcessingError(Object e) {
     setProcessingOff();
+
+    if (e is TimeoutException || e is SocketException) {
+      e = 'Please  check your internet connection or try again later';
+    }
     onError(e, transaction);
   }
 
