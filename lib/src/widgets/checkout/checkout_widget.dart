@@ -16,14 +16,18 @@ import 'package:flutter_paystack/src/common/utils.dart';
 const kFullTabHeight = 74.0;
 
 class CheckoutWidget extends StatefulWidget {
-  final CheckoutMethod method;
+  final CheckoutMethod method = CheckoutMethod.card;
   final Charge charge;
   final bool fullscreen;
 
   CheckoutWidget(
-      {@required this.method,
-      @required this.charge,
-      @required this.fullscreen});
+      {@required
+          CheckoutMethod method, // We are ignoring this pending when we bring
+      // back bank payment
+      @required
+          this.charge,
+      @required
+          this.fullscreen});
 
   @override
   _CheckoutWidgetState createState() => _CheckoutWidgetState(charge);
@@ -34,7 +38,6 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   static const tabBorderRadius = BorderRadius.all(Radius.circular(4.0));
   final Charge _charge;
-  String _accessCode;
   var _currentIndex = 0;
   var _showTabs = true;
   String _paymentError;
@@ -220,10 +223,6 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             charge: _charge,
             onProcessingChange: _onProcessingChange,
             onResponse: _onPaymentResponse,
-            accessCode: _accessCode,
-            onInitialized: (String accessCode) {
-              _accessCode = accessCode;
-            },
             onCardChange: (PaymentCard card) {
               _charge.card.number = card.number;
               _charge.card.cvc = card.cvc;

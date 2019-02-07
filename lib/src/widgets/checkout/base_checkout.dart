@@ -1,17 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
-import 'package:flutter_paystack/src/common/transaction.dart';
 import 'package:flutter_paystack/src/widgets/animated_widget.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
-import 'package:http/http.dart' as http;
 
 abstract class BaseCheckoutMethodState<T extends StatefulWidget>
     extends BaseAnimatedState<T> {
@@ -20,7 +14,7 @@ abstract class BaseCheckoutMethodState<T extends StatefulWidget>
 
   BaseCheckoutMethodState(this.onResponse, this._method);
 
-  void handleAllError(String message, String reference,
+  void handleAllError(String message, String reference, bool verify,
       {PaymentCard card, BankAccount account}) {
     if (!mounted) {
       return;
@@ -35,53 +29,9 @@ abstract class BaseCheckoutMethodState<T extends StatefulWidget>
         status: false,
         method: _method,
         card: card,
-        account: account));
+        account: account,
+        verify: verify));
   }
 
-  void verifyPaymentFromPaystack(Transaction transaction,
-      {PaymentCard card, BankAccount account}) async {
-    var reference = transaction.reference;
-    String url = 'https://api.paystack.co/transaction/verify/$reference';
-
-    Map<String, String> headers = {
-      HttpHeaders.authorizationHeader: 'Bearer ${PaystackPlugin.secretKey}',
-    };
-
-    try {
-      http.Response response = await http.get(url, headers: headers);
-      if (!mounted) {
-        return;
-      }
-      Map<String, dynamic> responseData = json.decode(response.body);
-      String message = responseData['message'];
-
-      var statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.ok) {
-        Map<String, dynamic> data = responseData['data'];
-        String message = data['gateway_response'];
-        String status = data['status'];
-
-        if (status.toLowerCase() == 'success') {
-          onResponse(new CheckoutResponse(
-              message: message,
-              reference: reference,
-              status: true,
-              method: _method,
-              card: card,
-              account: account));
-        } else {
-          handleAllError(message, reference, card: card, account: account);
-        }
-      } else {
-        handleAllError(message, reference, card: card, account: account);
-      }
-    } catch (e) {
-      String message;
-      if (e is PaystackException) {
-        message = e.message;
-      }
-      handleAllError(message, reference, card: card, account: account);
-    }
-  }
+  CheckoutMethod get method => _method;
 }

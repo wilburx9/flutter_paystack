@@ -5,13 +5,13 @@ import 'dart:io';
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 import 'package:flutter_paystack/src/api/service/base_service.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
-import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:http/http.dart' as http;
 
 class WebService extends BaseApiService {
   WebService()
       : super(baseUrl: 'https://api.paystack.co/charge', headers: {
-          HttpHeaders.authorizationHeader: 'Bearer ${PaystackPlugin.secretKey}',
+          // I had to comment this out because we no longer use secret key.
+          // HttpHeaders.authorizationHeader: 'Bearer ${PaystackPlugin.secretKey}',
           HttpHeaders.cacheControlHeader: 'no-cache',
           HttpHeaders.acceptHeader: 'application/json',
         });

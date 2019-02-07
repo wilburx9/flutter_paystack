@@ -47,14 +47,6 @@ class Utils {
     }
   }
 
-  static hasSecretKey() {
-    var secretKey = PaystackPlugin.secretKey;
-    if (secretKey == null || secretKey.isEmpty) {
-      throw PaystackException(
-          'No Secret key found, please set the Secret key.');
-    }
-  }
-
   static String getKeyErrorMsg(String keyType) {
     return 'Invalid $keyType key. You must use a valid $keyType key. Ensure that you '
         'have set a $keyType key. Check http://paystack.co for more';
@@ -69,20 +61,13 @@ class Utils {
     return _currencyFormatter.format((amountInKobo / 100));
   }
 
-  static validateChargeAndKeys(Charge charge) {
+  static validateChargeAndKey(Charge charge) {
     String publicKey = PaystackPlugin.publicKey;
-    String secretKey = PaystackPlugin.secretKey;
 
     if (publicKey == null ||
         publicKey.isEmpty ||
         !publicKey.startsWith("pk_")) {
       throw new AuthenticationException(Utils.getKeyErrorMsg('public'));
-    }
-
-    if (secretKey == null ||
-        secretKey.isEmpty ||
-        !secretKey.startsWith("sk_")) {
-      throw new AuthenticationException(Utils.getKeyErrorMsg('secret'));
     }
 
     if (charge == null) {

@@ -48,4 +48,9 @@ class TransactionApiResponse extends ApiResponse {
   bool hasValidAuth() {
     return auth != null;
   }
+
+  @override
+  String toString() {
+    return 'TransactionApiResponse{reference: $reference, trans: $trans, auth: $auth, otpMessage: $otpMessage, displayText: $displayText}';
+  }
 }

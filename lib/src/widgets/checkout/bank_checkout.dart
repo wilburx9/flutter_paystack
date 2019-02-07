@@ -228,11 +228,12 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
         _loading = false;
       });
 
+      String message = e.toString();
       if (transaction.reference != null) {
-        verifyPaymentFromPaystack(transaction, account: _account);
+        handleAllError(message, transaction.reference, true, account: _account);
       } else {
-        String message = e.toString();
-        handleAllError(message, transaction.reference, account: _account);
+        handleAllError(message, transaction.reference, false,
+            account: _account);
       }
     }
 
@@ -240,7 +241,14 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
       if (!mounted) {
         return;
       }
-      verifyPaymentFromPaystack(transaction, account: _account);
+      onResponse(new CheckoutResponse(
+        message: transaction.message,
+        reference: transaction.reference,
+        status: true,
+        method: method,
+        account: _account,
+        verify: true,
+      ));
     }
 
     new WebTransactionManager(

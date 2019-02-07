@@ -16,7 +16,6 @@ import 'package:http/http.dart' as http;
 String backendUrl = 'https://wilbur-paystack.herokuapp.com';
 // Set this to a public key that matches the secret key you supplied while creating the heroku instance
 String paystackPublicKey = '{YOUR_PAYSTACK_PUBLIC_KEY}';
-String paystackSecretKey = '{YOUR_PAYSTACK_SECRET_KEY}';
 const String appName = 'Paystack Example';
 
 void main() => runApp(new MyApp());
@@ -47,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     color: Colors.red,
   );
   int _radioValue = 0;
-  CheckoutMethod _method;
+  CheckoutMethod _method = CheckoutMethod.card;
   bool _inProgress = false;
   String _cardNumber;
   String _cvv;
@@ -56,8 +55,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    PaystackPlugin.initialize(
-        publicKey: paystackPublicKey, secretKey: paystackSecretKey);
+    PaystackPlugin.initialize(publicKey: paystackPublicKey);
     super.initState();
   }
 
@@ -183,8 +181,14 @@ class _HomePageState extends State<HomePage> {
                                       isDense: true,
                                       onChanged: (CheckoutMethod value) {
                                         setState(() {
-                                          _method = value;
+                                          //  _method = value;
+                                          _method = CheckoutMethod.card;
                                         });
+
+                                        if (value != CheckoutMethod.card) {
+                                          _showMessage(
+                                              'Currently not supported');
+                                        }
                                       },
                                       items: banks.map((String value) {
                                         return new DropdownMenuItem<
@@ -237,7 +241,6 @@ class _HomePageState extends State<HomePage> {
         var accessCode = await _fetchAccessCodeFrmServer(_getReference());
         charge.accessCode = accessCode;
       } else {
-        print('Using reference');
         charge.reference = _getReference();
       }
     }

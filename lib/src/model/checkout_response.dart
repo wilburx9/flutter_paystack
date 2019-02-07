@@ -27,6 +27,10 @@ class CheckoutResponse {
   /// The means of payment. It may return [CheckoutMethod.bank] or [CheckoutMethod.card]
   CheckoutMethod method;
 
+  /// If the transaction should be verified. See https://developers.paystack.co/v2.0/reference#verify-transaction
+  /// This might return true regardless whether a transaction fails or not.
+  bool verify;
+
   CheckoutResponse.defaults() {
     message = Strings.userTerminated;
     card = null;
@@ -34,6 +38,7 @@ class CheckoutResponse {
     reference = null;
     status = false;
     method = null;
+    verify = false;
   }
 
   CheckoutResponse(
@@ -41,12 +46,13 @@ class CheckoutResponse {
       @required this.reference,
       @required this.status,
       @required this.method,
-      @required this.card,
-      @required this.account});
+      @required this.verify,
+      this.card,
+      this.account})
+      : assert(card != null || account != null);
 
   @override
   String toString() {
-    return '[Message: $message, \nCard: $card, \nAccount: $account, '
-        '\nReference: $reference, \nMethod: $method, \nStatus: $status]';
+    return 'CheckoutResponse{message: $message, card: $card, account: $account, reference: $reference, status: $status, method: $method, verify: $verify}';
   }
 }

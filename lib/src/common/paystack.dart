@@ -17,7 +17,6 @@ import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 class PaystackPlugin {
   static bool _sdkInitialized = false;
   static String _publicKey;
-  static String _secretKey;
 
   PaystackPlugin._();
 
@@ -26,24 +25,18 @@ class PaystackPlugin {
   ///
   /// [publicKey] - your paystack public key. This is mandatory
   ///
-  /// [secretKey] - your paystack private key. This is not needed except you intent to
   /// use [checkout] and you want this plugin to initialize the transaction for you.
   /// Please check [checkout] for more information
   ///
-  static Future<PaystackPlugin> initialize(
-      {@required String publicKey, String secretKey}) async {
+  static Future<PaystackPlugin> initialize({@required String publicKey}) async {
     assert(() {
       if (publicKey == null || publicKey.isEmpty) {
         throw new PaystackException('publicKey cannot be null or empty');
       }
-      if (secretKey != null && secretKey.isEmpty) {
-        throw new PaystackException(
-            'privateKey can be null or but it cannot be empty. '
-            'Except you are using checkout, you don\'t need to pass a privateKey');
-      }
       return true;
     }());
-    //do all the init work here
+
+    // do all the init work here
 
     var completer = Completer<PaystackPlugin>();
 
@@ -52,14 +45,12 @@ class PaystackPlugin {
       completer.complete(PaystackPlugin._());
     } else {
       _publicKey = publicKey;
-      _secretKey = secretKey;
 
-      // If private key is not null, it implies that checkout will be used.
-      // Hence, let's get the list of supported banks. We won't wait for the result. If it
-      // completes successfully, fine. If it fails, we'll retry in BankCheckout
-      if (_secretKey != null) {
-        Utils.getSupportedBanks();
-      }
+      // We're supposed to get the list of supported banks here but bank payment
+      // requires the secret key which is a security issue. So have removed support for
+      // bank payment
+
+      // Utils.getSupportedBanks();
 
       // Using cascade notation to build the platform specific info
       try {
@@ -89,22 +80,12 @@ class PaystackPlugin {
     return _publicKey;
   }
 
-  static String get secretKey {
-    // Validate that the sdk has been initialized
-    Utils.validateSdkInitialized();
-    return _secretKey;
-  }
-
-  static void _performChecks({bool isSecret = false}) {
+  static void _performChecks() {
     //validate that sdk has been initialized
     Utils.validateSdkInitialized();
 
-    if (isSecret) {
-      //validate public keys
-      Utils.hasPublicKey();
-    } else {
-      Utils.hasSecretKey();
-    }
+    //validate public keys
+    Utils.hasPublicKey();
   }
 
   /// Make payment by chargingg the user's card
@@ -157,7 +138,7 @@ class PaystackPlugin {
   ///
   /// [onValidated] - Called when the payment completes with an unrecoverable error
   ///
-  /// [method] - The payment payment method to use(card, bank, USSD). It defaults to
+  /// [method] - The payment payment method to use(card, bank). It defaults to
   /// [CheckoutMethod.selectable] to allow the user to select
   static Future<CheckoutResponse> checkout(
     BuildContext context, {
@@ -168,19 +149,20 @@ class PaystackPlugin {
     assert(context != null, 'context must not be null');
     assert(
         method != null,
-        'method must not be null. You can pass CheckoutMethod.selectable if you want the user '
+        'method must not be null. You can pass CheckoutMethod.selectable if you want '
+        'the user '
         'to select the checkout option');
     assert(fullscreen != null, 'fillscreen must not be null');
+    assert(charge.accessCode != null || charge.reference != null,
+        'Pass an accessCode or a transaction reference');
 
-    _performChecks(isSecret: true);
-    return Paystack.withSecretKey(secretKey).checkout(context,
+    return Paystack.withPublicKey(publicKey).checkout(context,
         charge: charge, method: method, fullscreen: fullscreen);
   }
 }
 
 class Paystack {
   String _publicKey;
-  String _secretKey;
 
   Paystack() {
     // Validate sdk initialized
@@ -188,8 +170,6 @@ class Paystack {
   }
 
   Paystack.withPublicKey(this._publicKey);
-
-  Paystack.withSecretKey(this._secretKey);
 
   chargeCard(
       {@required BuildContext context,
@@ -228,7 +208,7 @@ class Paystack {
     @required bool fullscreen,
   }) async {
     assert(() {
-      Utils.validateChargeAndKeys(charge);
+      Utils.validateChargeAndKey(charge);
 
       if ((method == CheckoutMethod.selectable ||
               method == CheckoutMethod.card) &&
