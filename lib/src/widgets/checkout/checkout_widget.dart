@@ -332,7 +332,10 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   Widget _buildSuccessfulWidget() => new SuccessfulWidget(
         amount: _charge.amount,
-        onCountdownComplete: () => Navigator.of(context).pop(_response),
+        onCountdownComplete: () {
+          _response.card.nullifyNumber();
+          Navigator.of(context).pop(_response);
+        },
       );
 
   @override
@@ -342,6 +345,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   CheckoutResponse _getResponse() {
     CheckoutResponse response = _response;
+    response.card.nullifyNumber();
     if (response == null) {
       response = CheckoutResponse.defaults();
       response.method =

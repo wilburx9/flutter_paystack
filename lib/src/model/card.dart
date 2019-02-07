@@ -102,6 +102,10 @@ class PaymentCard {
     }
   }
 
+  nullifyNumber() {
+    _number = null;
+  }
+
   String get cvc => _cvc;
 
   set cvc(String value) {
@@ -163,10 +167,9 @@ class PaymentCard {
     if (cardCvc == null || cardCvc.trim().isEmpty) return false;
 
     var cvcValue = cardCvc.trim();
-    bool validLength =
-        ((_type == null && cvcValue.length >= 3 && cvcValue.length <= 4) ||
-            (CardType.americanExpress == _type && cvcValue.length == 4) ||
-            (CardType.americanExpress != _type && cvcValue.length == 3));
+    bool validLength = ((_type == null && cvcValue.length >= 3 && cvcValue.length <= 4) ||
+        (CardType.americanExpress == _type && cvcValue.length == 4) ||
+        (CardType.americanExpress != _type && cvcValue.length == 3));
     return !(!CardUtils.isWholeNumberPositive(cvcValue) || !validLength);
   }
 
@@ -179,8 +182,7 @@ class PaymentCard {
     if (StringUtils.isEmpty(cardNumber)) return false;
 
     // Remove all non digits
-    var formattedNumber =
-        cardNumber.trim().replaceAll(new RegExp(r'[^0-9]'), '');
+    var formattedNumber = cardNumber.trim().replaceAll(new RegExp(r'[^0-9]'), '');
 
     // Verve card needs no other validation except it matched pattern
     if (CardType.fullPatternVerve.hasMatch(formattedNumber)) {
@@ -230,8 +232,9 @@ class PaymentCard {
 
   @override
   String toString() {
-    return '[Type: $type, Number: $number, Month: $expiryMonth, Year: '
-        '$expiryMonth, CVC: $cvc]';
+    return 'PaymentCard{_cvc: $_cvc, expiryMonth: $expiryMonth, expiryYear: '
+        '$expiryYear, _type: $_type, _last4Digits: $_last4Digits , _number: '
+        '$_number}';
   }
 }
 
@@ -262,18 +265,16 @@ abstract class CardType {
   static final fullPatternDiscover = RegExp(r'^6(?:011|5[0-9]{2})[0-9]{12}$');
   static final fullPatternJCB = RegExp(r'^(?:2131|1800|35[0-9]{3})'
       r'[0-9]{11}$');
-  static final fullPatternVerve =
-      RegExp(r'^((506(0|1))|(507(8|9))|(6500))[0-9]{12,15}$');
+  static final fullPatternVerve = RegExp(r'^((506(0|1))|(507(8|9))|(6500))[0-9]{12,15}$');
 
   // Regular expression to match starting characters (aka issuer
   // identification number (IIN)) of the card
   // Source https://en.wikipedia.org/wiki/Payment_card_number
   static final startingPatternVisa = RegExp(r'[4]');
-  static final startingPatternMasterCard = RegExp(
-      r'((5[1-5])|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720))');
+  static final startingPatternMasterCard =
+      RegExp(r'((5[1-5])|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720))');
   static final startingPatternAmericanExpress = RegExp(r'((34)|(37))');
-  static final startingPatternDinersClub =
-      RegExp(r'((30[0-5])|(3[89])|(36)|(3095))');
+  static final startingPatternDinersClub = RegExp(r'((30[0-5])|(3[89])|(36)|(3095))');
   static final startingPatternJCB = RegExp(r'(352[89]|35[3-8][0-9])');
   static final startingPatternVerve = RegExp(r'((506(0|1))|(507(8|9))|(6500))');
   static final startingPatternDiscover = RegExp(r'((6[45])|(6011))');

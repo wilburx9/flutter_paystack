@@ -108,7 +108,6 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
         status: true,
         method: method,
         card: _charge.card,
-        // TODO: Return only last-four digits of card
         verify: true,
       ));
     }
