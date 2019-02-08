@@ -139,7 +139,8 @@ class PaystackPlugin {
   /// [onValidated] - Called when the payment completes with an unrecoverable error
   ///
   /// [method] - The payment payment method to use(card, bank). It defaults to
-  /// [CheckoutMethod.selectable] to allow the user to select
+  /// [CheckoutMethod.selectable] to allow the user to select. Please note that this is
+  /// just redundant pending when bank payment returns
   static Future<CheckoutResponse> checkout(
     BuildContext context, {
     @required Charge charge,

@@ -2,7 +2,8 @@
 
 [![pub package](https://img.shields.io/pub/v/flutter_paystack.svg)](https://pub.dartlang.org/packages/flutter_paystack)
 
-A Flutter plugin for making payments via Paystack Payment Gateway. Completely supports Android and iOS.
+A Flutter plugin for making payments via Paystack Payment Gateway. Fully
+supports Android and iOS.
 
 ## :rocket: Installation
 To use this plugin, add `flutter_paystack` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
@@ -10,34 +11,36 @@ To use this plugin, add `flutter_paystack` as a [dependency in your pubspec.yaml
 Then initialize the plugin preferably in the `initState` of your widget.
 
 ``` dart
-import 'package:flutter_paystack/flutter_paystack.dart'
+import 'package:flutter_paystack/flutter_paystack.dart';
 
 class _PaymentPageState extends State<PaymentPage> {
-  var paystackPublicKey = '[YOUR_PAYSTACK_PUBLIC_KEY]';
-  var paystackSecretKey = '[YOUR_PAYSTACK_SECRET_KEY]';
+  var publicKey = '[YOUR_PAYSTACK_PUBLIC_KEY]';
 
   @override
   void initState() {
     PaystackPlugin.initialize(
-            publicKey: paystackPublicKey, secretKey: paystackSecretKey);
-    // secretKey is not needed if you're not using checkout as a payment method.
-    //
+            publicKey: publicKey);
   }
 }
 ```
 
-No other configuration required - the plugin works out of the box.
+No other configuration required&mdash;the plugin works out of the box.
 
 ## :heavy_dollar_sign: Making Payments
 There are two ways of making payment with the plugin.
- 1. **Checkout**: This is the easy way; as the plugin handles all the processes involved in making a payment.
- 2. **Charge Card**: This is a longer approach; you handle all callbacks and UI states on your own.
+1.  **Checkout**: This is the easy way; as the plugin handles all the
+    processes involved in making a payment (except transaction
+    initialization and verification which should be done from your
+    backend).
+2.  **Charge Card**: This is a longer approach; you handle all callbacks
+    and UI states.
 
 ### 1. :star2: Checkout (Recommended)
- You initialize a charge object with just an amount, email & accessCode or reference.
- Pass an `accessCode` only when you have [initialized the transaction](https://developers.paystack.co/reference#initialize-a-transaction) from your end otherwise, pass `reference`;
+ You initialize a charge object with an amount, email & accessCode or
+ reference. Pass an `accessCode` only when you have
+ [initialized the transaction](https://developers.paystack.co/reference#initialize-a-transaction)
+ from your backend. Otherwise, pass a `reference`.
 
- Except you want the user to use a preferred checkout method, pass a one of your choosing.
 
  ```dart
  Charge charge = Charge()
@@ -46,20 +49,28 @@ There are two ways of making payment with the plugin.
         // or ..accessCode = _getAccessCodeFrmInitialization()
        ..email = 'customer@email.com';
      CheckoutResponse response = await PaystackPlugin.checkout(
-       context,
-       method: _method,
+       context context,
        charge: charge,
      );
  ```
 
- `PaystackPlugin.checkout()` returns `true` for a successful payment otherwise, it returns `false`.
+ `PaystackPlugin.checkout()` returns the state and details of the
+ payment in an instance of `CheckoutResponse` .
+ 
+ 
+ It is recommended that when `PaystackPlugin.checkout()` returns, the
+ payment should be
+ [verified](https://developers.paystack.co/v2.0/reference#verify-transaction)
+ on your backend.
 
 ### 2. :star: Charge Card
-You can choose to initialize the payment locally or via Paystack's backend.
+You can choose to initialize the payment locally or via your backend.
 
-#### A. Initialize Via Paystack (Recommended)
+#### A. Initialize Via Your Backend (Recommended)
 
-1.a. This starts by making a HTTP POST request to [paystack](https://developers.paystack.co/reference#initialize-a-transaction).
+1.a. This starts by making a HTTP POST request to
+[paystack](https://developers.paystack.co/reference#initialize-a-transaction)
+on your backend.
 
 1.b If everything goes well, the initialization request returns a response with an `access_code`.
 You can then create a `Charge` object with the access code and card details. The `charge` is in turn passed to the ` PaystackPlugin.chargeCard()` function for payment:
@@ -96,10 +107,9 @@ You can then create a `Charge` object with the access code and card details. The
 //        addressLine1: '90, Nnebisi Road, Asaba, Deleta State');
   }
 
-  _chargeCard(http.Response response) {
-    Map<String, dynamic> responseBody = json.decode(response.body);
+  _chargeCard(String accessCode) {
     var charge = Charge()
-      ..accessCode = responseBody['access_code']
+      ..accessCode = accessCode
       ..card = _getCardFromUI();
 
     PaystackPlugin.chargeCard(context,

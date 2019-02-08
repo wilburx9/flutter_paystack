@@ -1,3 +1,12 @@
+## 0.10.0 (Breaking change)
+
+
+* Security Improvement: Removed usage of the secret key in checkout
+* Removed support for bank payment (requires secret key)
+* Transaction initialization and verification is no longer being handled by the checkout function (requires secret key)
+* Handled Gateway timeout error
+* Returning last for digits instead full card number after payment
+
 ## 0.9.3
 
 * Fixed failure of web OTP on iOS devices
