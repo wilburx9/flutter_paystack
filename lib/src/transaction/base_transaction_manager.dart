@@ -54,7 +54,7 @@ abstract class BaseTransactionManager {
     }
   }
 
-  handleApiResponse(TransactionApiResponse apiResponse, String status);
+  handleApiResponse(TransactionApiResponse apiResponse);
 
   _initApiResponse(TransactionApiResponse apiResponse) {
     if (apiResponse == null) {
@@ -63,8 +63,7 @@ abstract class BaseTransactionManager {
 
     transaction.loadFromResponse(apiResponse);
 
-    var status = apiResponse.status.toLowerCase();
-    handleApiResponse(apiResponse, status);
+    handleApiResponse(apiResponse);
   }
 
   handleServerResponse(Future<TransactionApiResponse> future) {
@@ -117,7 +116,11 @@ abstract class BaseTransactionManager {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) => new OtpWidget(
-            message: message == null ? response.displayText : message));
+            message: message != null
+                ? message
+                : response.displayText == null || response.displayText.isEmpty
+                    ? response.message
+                    : response.displayText));
 
     if (otp != null && otp.isNotEmpty) {
       handleOtpInput(otp, response);
@@ -156,8 +159,11 @@ abstract class BaseTransactionManager {
     String birthday = await showDialog<String>(
         barrierDismissible: false,
         context: context,
-        builder: (BuildContext context) =>
-            new BirthdayWidget(message: response.displayText));
+        builder: (BuildContext context) => new BirthdayWidget(
+            message:
+                response.displayText == null || response.displayText.isEmpty
+                    ? response.message
+                    : response.displayText));
 
     if (birthday != null && birthday.isNotEmpty) {
       handleBirthdayInput(birthday, response);

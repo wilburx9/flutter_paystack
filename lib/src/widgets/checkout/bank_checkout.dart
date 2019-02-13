@@ -6,7 +6,7 @@ import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/transaction.dart';
-import 'package:flutter_paystack/src/transaction/web_transaction_manager.dart';
+import 'package:flutter_paystack/src/transaction/bank_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
 import 'package:flutter_paystack/src/widgets/buttons.dart';
 import 'package:flutter_paystack/src/widgets/checkout/base_checkout.dart';
@@ -251,7 +251,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
       ));
     }
 
-    new WebTransactionManager(
+    new BankTransactionManager(
             charge: widget.charge,
             context: context,
             onSuccess: handleOnSuccess,
@@ -282,13 +282,13 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
 
 class Bank {
   String name;
-  String code;
+  int id;
 
-  Bank(this.name, this.code);
+  Bank(this.name, this.id);
 
   @override
   String toString() {
-    return '[Name: $name, Code: $code]';
+    return 'Bank{name: $name, id: $id}';
   }
 }
 
@@ -303,7 +303,7 @@ class BankAccount {
       return false;
     }
 
-    if (bank == null || bank.code == null || bank.code.isEmpty) {
+    if (bank == null || bank.id == null) {
       return false;
     }
     return true;
@@ -311,6 +311,6 @@ class BankAccount {
 
   @override
   String toString() {
-    return '[Bank: $bank, Number: $number]';
+    return 'BankAccount{bank: $bank, number: $number}';
   }
 }

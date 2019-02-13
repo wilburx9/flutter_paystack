@@ -16,18 +16,14 @@ import 'package:flutter_paystack/src/common/utils.dart';
 const kFullTabHeight = 74.0;
 
 class CheckoutWidget extends StatefulWidget {
-  final CheckoutMethod method = CheckoutMethod.card;
+  final CheckoutMethod method;
   final Charge charge;
   final bool fullscreen;
 
   CheckoutWidget(
-      {@required
-          CheckoutMethod method, // We are ignoring this pending when we bring
-      // back bank payment
-      @required
-          this.charge,
-      @required
-          this.fullscreen});
+      {@required this.method,
+      @required this.charge,
+      @required this.fullscreen});
 
   @override
   _CheckoutWidgetState createState() => _CheckoutWidgetState(charge);
@@ -333,7 +329,9 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   Widget _buildSuccessfulWidget() => new SuccessfulWidget(
         amount: _charge.amount,
         onCountdownComplete: () {
-          _response.card.nullifyNumber();
+          if (_response.card != null) {
+            _response.card.nullifyNumber();
+          }
           Navigator.of(context).pop(_response);
         },
       );
@@ -345,11 +343,13 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   CheckoutResponse _getResponse() {
     CheckoutResponse response = _response;
-    response.card.nullifyNumber();
     if (response == null) {
       response = CheckoutResponse.defaults();
       response.method =
           _tabController.index == 0 ? CheckoutMethod.card : CheckoutMethod.bank;
+    }
+    if (response.card != null) {
+      response.card.nullifyNumber();
     }
     return response;
   }

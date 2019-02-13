@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     color: Colors.red,
   );
   int _radioValue = 0;
-  CheckoutMethod _method = CheckoutMethod.card;
+  CheckoutMethod _method;
   bool _inProgress = false;
   String _cardNumber;
   String _cvv;
@@ -181,14 +181,8 @@ class _HomePageState extends State<HomePage> {
                                       isDense: true,
                                       onChanged: (CheckoutMethod value) {
                                         setState(() {
-                                          //  _method = value;
-                                          _method = CheckoutMethod.card;
+                                          _method = value;
                                         });
-
-                                        if (value != CheckoutMethod.card) {
-                                          _showMessage(
-                                              'Currently not supported');
-                                        }
                                       },
                                       items: banks.map((String value) {
                                         return new DropdownMenuItem<
@@ -236,13 +230,11 @@ class _HomePageState extends State<HomePage> {
       ..email = 'customer@email.com'
       ..card = _getCardFromUI();
 
-    if (_method != CheckoutMethod.bank) {
-      if (!_isLocal()) {
-        var accessCode = await _fetchAccessCodeFrmServer(_getReference());
-        charge.accessCode = accessCode;
-      } else {
-        charge.reference = _getReference();
-      }
+    if (!_isLocal()) {
+      var accessCode = await _fetchAccessCodeFrmServer(_getReference());
+      charge.accessCode = accessCode;
+    } else {
+      charge.reference = _getReference();
     }
 
     CheckoutResponse response = await PaystackPlugin.checkout(context,
@@ -401,6 +393,7 @@ class _HomePageState extends State<HomePage> {
           'There was a problem getting a new access code form'
           ' the backend: $e');
     }
+
     return accessCode;
   }
 

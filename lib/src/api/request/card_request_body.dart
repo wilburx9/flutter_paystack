@@ -6,7 +6,7 @@ import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutter_paystack/src/common/card_utils.dart';
 import 'package:flutter_paystack/src/common/crypto.dart';
 
-class ChargeRequestBody extends BaseRequestBody {
+class CardRequestBody extends BaseRequestBody {
   static const String fieldClientData = "clientdata";
   static const String fieldLast4 = "last4";
   static const String fieldAccessCode = "access_code";
@@ -38,7 +38,7 @@ class ChargeRequestBody extends BaseRequestBody {
   String _plan;
   Map<String, String> _additionalParameters;
 
-  ChargeRequestBody._(Charge charge, String clientData)
+  CardRequestBody._(Charge charge, String clientData)
       : this._clientData = clientData,
         this._last4 = charge.card.last4Digits,
         this._publicKey = PaystackPlugin.publicKey,
@@ -55,13 +55,11 @@ class ChargeRequestBody extends BaseRequestBody {
         this._plan = charge.plan,
         this._currency = charge.currency,
         this._accessCode = charge.accessCode,
-        this._additionalParameters = charge.additionalParameters {
-    this.setDeviceId();
-  }
+        this._additionalParameters = charge.additionalParameters;
 
-  static Future<ChargeRequestBody> getChargeRequestBody(Charge charge) async {
+  static Future<CardRequestBody> getChargeRequestBody(Charge charge) async {
     return Crypto.encrypt(CardUtils.concatenateCardFields(charge.card))
-        .then((clientData) => ChargeRequestBody._(charge, clientData));
+        .then((clientData) => CardRequestBody._(charge, clientData));
   }
 
   addPin(String pin) async {
