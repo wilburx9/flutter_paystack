@@ -14,7 +14,7 @@ class BaseApiService {
     'bindings_version': Platform.isIOS
         ? '3.0.5' // Latest version of Paystack official iOS SDK
         : '3.0.10', // Latest version of Paystack official Android SDK
-    'X-FLUTTER-USER-AGENT': jsonEncode({'version': '0.10.0'})
+    'X-FLUTTER-USER-AGENT': jsonEncode({'version': '1.0.0'})
   };
   final String baseUrl = 'https://standard.paystack.co';
 }

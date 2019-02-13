@@ -1,3 +1,8 @@
+## 1.0.0
+
+* Reintroduced and improved bank payment
+* Minor bug fixes
+Z
 ## 0.10.0 (Breaking change)
 
 
