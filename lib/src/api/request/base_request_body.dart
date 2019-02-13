@@ -4,12 +4,16 @@ abstract class BaseRequestBody {
   final fieldDevice = 'device';
   String _device;
 
+  BaseRequestBody() {
+    _setDeviceId();
+  }
+
   Map<String, String> paramsMap();
 
   String get device => _device;
 
-  setDeviceId() {
-    String deviceId = PlatformInfo().deviceId;
+  _setDeviceId() {
+    String deviceId = PlatformInfo().deviceId ?? '';
     this._device = deviceId;
   }
 }

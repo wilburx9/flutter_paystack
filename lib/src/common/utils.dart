@@ -24,7 +24,7 @@ class Utils {
           var data = body['data'];
           List<Bank> banks = [];
           for (var bank in data) {
-            banks.add(new Bank(bank['name'], bank['code']));
+            banks.add(new Bank(bank['name'], bank['id']));
           }
           return banks;
         } catch (e) {}

@@ -11,7 +11,7 @@ import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/model/checkout_response.dart';
-import 'package:flutter_paystack/src/transaction/mobile_transaction_manager.dart';
+import 'package:flutter_paystack/src/transaction/card_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 
 class PaystackPlugin {
@@ -38,19 +38,16 @@ class PaystackPlugin {
 
     // do all the init work here
 
-    var completer = Completer<PaystackPlugin>();
-
     //check if sdk is actually initialized
     if (sdkInitialized) {
-      completer.complete(PaystackPlugin._());
+      return PaystackPlugin._();
     } else {
       _publicKey = publicKey;
 
-      // We're supposed to get the list of supported banks here but bank payment
-      // requires the secret key which is a security issue. So have removed support for
-      // bank payment
-
-      // Utils.getSupportedBanks();
+      // If private key is not null, it implies that checkout will be used.
+      // Hence, let's get the list of supported banks. We won't wait for the result. If it
+      // completes successfully, fine. If it fails, we'll retry in BankCheckout
+      Utils.getSupportedBanks();
 
       // Using cascade notation to build the platform specific info
       try {
@@ -64,12 +61,11 @@ class PaystackPlugin {
           ..deviceId = deviceId;
 
         _sdkInitialized = true;
-        completer.complete(PaystackPlugin._());
-      } on PlatformException catch (e, stacktrace) {
-        completer.completeError(e, stacktrace);
+        return PaystackPlugin._();
+      } on PlatformException {
+        rethrow;
       }
     }
-    return completer.future;
   }
 
   static bool get sdkInitialized => _sdkInitialized;
@@ -108,7 +104,7 @@ class PaystackPlugin {
 
     _performChecks();
 
-    Paystack.withPublicKey(publicKey).chargeCard(
+    Paystack(publicKey).chargeCard(
         context: context,
         charge: charge,
         beforeValidate: beforeValidate,
@@ -139,8 +135,7 @@ class PaystackPlugin {
   /// [onValidated] - Called when the payment completes with an unrecoverable error
   ///
   /// [method] - The payment payment method to use(card, bank). It defaults to
-  /// [CheckoutMethod.selectable] to allow the user to select. Please note that this is
-  /// just redundant pending when bank payment returns
+  /// [CheckoutMethod.selectable] to allow the user to select
   static Future<CheckoutResponse> checkout(
     BuildContext context, {
     @required Charge charge,
@@ -154,7 +149,7 @@ class PaystackPlugin {
         'the user '
         'to select the checkout option');
     assert(fullscreen != null, 'fillscreen must not be null');
-    return Paystack.withPublicKey(publicKey).checkout(context,
+    return Paystack(publicKey).checkout(context,
         charge: charge, method: method, fullscreen: fullscreen);
   }
 }
@@ -162,12 +157,7 @@ class PaystackPlugin {
 class Paystack {
   String _publicKey;
 
-  Paystack() {
-    // Validate sdk initialized
-    Utils.validateSdkInitialized();
-  }
-
-  Paystack.withPublicKey(this._publicKey);
+  Paystack(this._publicKey);
 
   chargeCard(
       {@required BuildContext context,
@@ -183,7 +173,7 @@ class Paystack {
         throw new AuthenticationException(Utils.getKeyErrorMsg('public'));
       }
 
-      new MobileTransactionManager(
+      new CardTransactionManager(
               charge: charge,
               context: context,
               beforeValidate: beforeValidate,
@@ -207,9 +197,18 @@ class Paystack {
   }) async {
     assert(() {
       Utils.validateChargeAndKey(charge);
-
-      if (charge.accessCode == null && charge.reference == null) {
-        throw new ChargeException(Strings.noAccessCodeReference);
+      switch (method) {
+        case CheckoutMethod.card:
+          if (charge.accessCode == null && charge.reference == null) {
+            throw new ChargeException(Strings.noAccessCodeReference);
+          }
+          break;
+        case CheckoutMethod.bank:
+        case CheckoutMethod.selectable:
+          if (charge.accessCode == null) {
+            throw new ChargeException('Pass an accesscode');
+          }
+          break;
       }
       return true;
     }());

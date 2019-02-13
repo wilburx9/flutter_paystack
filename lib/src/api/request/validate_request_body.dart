@@ -6,10 +6,6 @@ class ValidateRequestBody extends BaseRequestBody {
   String trans;
   String token;
 
-  ValidateRequestBody() {
-    this.setDeviceId();
-  }
-
   @override
   Map<String, String> paramsMap() {
     Map<String, String> params = {_fieldTrans: trans, _fieldToken: token};

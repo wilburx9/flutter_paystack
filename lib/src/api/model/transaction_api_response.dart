@@ -12,11 +12,8 @@ class TransactionApiResponse extends ApiResponse {
     message = 'Unknown server response';
   }
 
-  TransactionApiResponse.fromMap(Map<String, dynamic> map, {String reference}) {
-    // Some times the response doesn't return an otp (e.g birthday response) so instead
-    // nullifying the reference, let's use the passed response.
-    this.reference =
-        map.containsKey('reference') ? map['reference'] : reference;
+  TransactionApiResponse.fromMap(Map<String, dynamic> map) {
+    this.reference = map['reference'];
     if (map.containsKey('trans')) {
       trans = map['trans'];
     } else if (map.containsKey('id')) {
@@ -26,7 +23,23 @@ class TransactionApiResponse extends ApiResponse {
     otpMessage = map['otpmessage'];
     status = map['status'];
     message = map['message'];
-    displayText = map['display_text'];
+    displayText =
+        !map.containsKey('display_text') ? message : map['display_text'];
+
+    if (status != null) {
+      status = status.toLowerCase();
+    }
+
+    if (auth != null) {
+      auth = auth.toLowerCase();
+    }
+  }
+
+  TransactionApiResponse.fromAccessCodeVerification(Map<String, dynamic> map) {
+    var data = map['data'];
+    trans = data['id'].toString();
+    status = data['transaction_status'];
+    message = map['message'];
   }
 
   bool hasValidReferenceAndTrans() {
@@ -51,6 +64,8 @@ class TransactionApiResponse extends ApiResponse {
 
   @override
   String toString() {
-    return 'TransactionApiResponse{reference: $reference, trans: $trans, auth: $auth, otpMessage: $otpMessage, displayText: $displayText}';
+    return 'TransactionApiResponse{reference: $reference, trans: $trans, auth: $auth, '
+        'otpMessage: $otpMessage, displayText: $displayText, message: $message, '
+        'status: $status}';
   }
 }

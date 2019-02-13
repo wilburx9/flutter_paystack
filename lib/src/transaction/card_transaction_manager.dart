@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
-import 'package:flutter_paystack/src/api/request/mobile_request_body.dart';
+import 'package:flutter_paystack/src/api/request/card_request_body.dart';
 import 'package:flutter_paystack/src/api/request/validate_request_body.dart';
-import 'package:flutter_paystack/src/api/service/mobile_service.dart';
+import 'package:flutter_paystack/src/api/service/card_service.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
@@ -12,13 +12,13 @@ import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/transaction.dart';
 import 'package:flutter_paystack/src/transaction/base_transaction_manager.dart';
 
-class MobileTransactionManager extends BaseTransactionManager {
+class CardTransactionManager extends BaseTransactionManager {
   ValidateRequestBody validateRequestBody;
-  ChargeRequestBody chargeRequestBody;
-  MobileService service;
+  CardRequestBody chargeRequestBody;
+  CardService service;
   var _invalidDataSentRetries = 0;
 
-  MobileTransactionManager({
+  CardTransactionManager({
     @required Charge charge,
     @required BuildContext context,
     @required OnTransactionChange<Transaction> onSuccess,
@@ -33,8 +33,8 @@ class MobileTransactionManager extends BaseTransactionManager {
 
   @override
   postInitiate() async {
-    service = new MobileService();
-    chargeRequestBody = await ChargeRequestBody.getChargeRequestBody(charge);
+    service = new CardService();
+    chargeRequestBody = await CardRequestBody.getChargeRequestBody(charge);
     validateRequestBody = ValidateRequestBody();
   }
 
@@ -90,7 +90,8 @@ class MobileTransactionManager extends BaseTransactionManager {
   }
 
   @override
-  handleApiResponse(TransactionApiResponse apiResponse, String status) {
+  handleApiResponse(TransactionApiResponse apiResponse) {
+    var status = apiResponse.status;
     if (status == '1' || status == 'success') {
       setProcessingOff();
       onSuccess(transaction);

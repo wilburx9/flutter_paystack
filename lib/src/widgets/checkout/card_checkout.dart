@@ -6,7 +6,7 @@ import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/transaction.dart';
-import 'package:flutter_paystack/src/transaction/mobile_transaction_manager.dart';
+import 'package:flutter_paystack/src/transaction/card_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/checkout/base_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 import 'package:flutter_paystack/src/widgets/input/card_input.dart';
@@ -112,7 +112,7 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
       ));
     }
 
-    new MobileTransactionManager(
+    new CardTransactionManager(
             charge: charge,
             context: context,
             beforeValidate: (transaction) => handleBeforeValidate(transaction),
