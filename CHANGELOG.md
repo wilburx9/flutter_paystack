@@ -1,10 +1,16 @@
+## 1.0.1
+
+* Migrated to AndroidX
+* Bumped up dependencies to the latest versions
+* Improved month input formatter
+
+
 ## 1.0.0
 
 * Reintroduced and improved bank payment
 * Minor bug fixes
 
 ## 0.10.0 (Breaking change)
-
 
 * Security Improvement: Removed usage of the secret key in checkout
 * Removed support for bank payment (requires secret key)
