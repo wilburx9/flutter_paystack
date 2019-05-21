@@ -115,27 +115,26 @@ class PaystackPlugin {
   /// Make payment using Paystack's checkout form. The plugin will handle the whole
   /// processes involved.
   ///
-  /// [context] - the widgets BuildContext
+  /// [context] - the widget's BuildContext
   ///
-  /// [charge] - the charge object. You must pass the amount (in kobo) to it. If you
-  /// want to use CheckoutMethod.card/CheckoutMethod.selectable, you must also
-  /// pass either an  access code or payment reference to the charge object.
-  ///
-  /// Notes:
-  ///
-  /// * When you pass an  access code, the plugin won't
-  /// initialize the transaction and payment is made immediately
-  /// * When you pass the reference, the plugin will initialize the transaction
-  /// (via https://api.paystack.co/transaction/initialize) with the passed reference.
-  /// * You can also pass the [PaymentCard] object and we'll use it to prepopulate the
-  /// card  fields if card payment is being used
+  /// [charge] - the charge object.
   ///
   /// [onSuccess] - Called when the payment completes successfully
   ///
   /// [onValidated] - Called when the payment completes with an unrecoverable error
   ///
-  /// [method] - The payment payment method to use(card, bank). It defaults to
-  /// [CheckoutMethod.selectable] to allow the user to select
+  /// [method] - The payment method to use(card, bank). It defaults to
+  /// [CheckoutMethod.selectable] to allow the user to select. For [CheckoutMethod.bank]
+  ///  or [CheckoutMethod.selectable], it is
+  /// required that you supply an access code to the [Charge] object passed to [charge].
+  /// For [CheckoutMethod.card], though not recommended, passing a reference to the
+  /// [Charge] object will do just fine.
+  ///
+  /// Notes:
+  ///
+  /// * You can also pass the [PaymentCard] object and we'll use it to prepopulate the
+  /// card  fields if card payment is being used
+  ///
   static Future<CheckoutResponse> checkout(
     BuildContext context, {
     @required Charge charge,

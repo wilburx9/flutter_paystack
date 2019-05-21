@@ -40,7 +40,7 @@ There are two ways of making payment with the plugin.
  reference. Pass an `accessCode` only when you have
  [initialized the transaction](https://developers.paystack.co/reference#initialize-a-transaction)
  from your backend. Otherwise, pass a `reference`.
-
+ 
 
  ```dart
  Charge charge = Charge()
@@ -50,9 +50,13 @@ There are two ways of making payment with the plugin.
        ..email = 'customer@email.com';
      CheckoutResponse response = await PaystackPlugin.checkout(
        context context,
+       method: CheckoutMethod.card, // Defaults to CheckoutMethod.selectable
        charge: charge,
      );
  ```
+
+Please, note that an `accessCode` is required if the method is
+`CheckoutMethod.bank` or `CheckoutMethod.selectable`.
 
  `PaystackPlugin.checkout()` returns the state and details of the
  payment in an instance of `CheckoutResponse` .

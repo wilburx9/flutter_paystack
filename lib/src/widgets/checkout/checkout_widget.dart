@@ -31,7 +31,6 @@ class CheckoutWidget extends StatefulWidget {
 
 class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     with TickerProviderStateMixin {
-  final _scaffoldKey = new GlobalKey<ScaffoldState>();
   static const tabBorderRadius = BorderRadius.all(Radius.circular(4.0));
   final Charge _charge;
   var _currentIndex = 0;
@@ -76,7 +75,6 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   @override
   Widget buildChild(BuildContext context) {
     return new CustomAlertDialog(
-      key: _scaffoldKey,
       expanded: true,
       fullscreen: widget.fullscreen,
       titlePadding: EdgeInsets.all(0.0),
@@ -98,7 +96,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   }
 
   Widget _buildTitle() {
-    var amountAndAmount = new Column(
+    var emailAndAmount = new Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         _charge.email != null
@@ -193,7 +191,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
               new SizedBox(
                 width: 50.0,
               ),
-              new Expanded(child: amountAndAmount),
+              new Expanded(child: emailAndAmount),
             ],
           ),
         ),

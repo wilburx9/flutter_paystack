@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                           border: const UnderlineInputBorder(),
                           labelText: 'Expiry Month',
                         ),
-                        onSaved: (String value) => _expiryMonth = _toInt(value),
+                        onSaved: (String value) => _expiryMonth = int.tryParse(value),
                       ),
                     ),
                     _horizontalSizeBox,
@@ -138,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                           border: const UnderlineInputBorder(),
                           labelText: 'Expiry Year',
                         ),
-                        onSaved: (String value) => _expiryYear = _toInt(value),
+                        onSaved: (String value) => _expiryYear = int.tryParse(value),
                       ),
                     )
                   ],
@@ -432,16 +432,6 @@ class _HomePageState extends State<HomePage> {
   bool _isLocal() {
     return _radioValue == 0;
   }
-}
-
-int _toInt(String source) {
-  int value;
-  try {
-    return int.parse(source);
-  } catch (e) {
-    print('Error occured while parsing $value to int. Error: $e');
-  }
-  return value;
 }
 
 var banks = ['Selectable', 'Bank', 'Card'];
