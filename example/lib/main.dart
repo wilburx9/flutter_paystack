@@ -128,7 +128,8 @@ class _HomePageState extends State<HomePage> {
                           border: const UnderlineInputBorder(),
                           labelText: 'Expiry Month',
                         ),
-                        onSaved: (String value) => _expiryMonth = int.tryParse(value),
+                        onSaved: (String value) =>
+                            _expiryMonth = int.tryParse(value),
                       ),
                     ),
                     _horizontalSizeBox,
@@ -138,7 +139,8 @@ class _HomePageState extends State<HomePage> {
                           border: const UnderlineInputBorder(),
                           labelText: 'Expiry Year',
                         ),
-                        onSaved: (String value) => _expiryYear = int.tryParse(value),
+                        onSaved: (String value) =>
+                            _expiryYear = int.tryParse(value),
                       ),
                     )
                   ],

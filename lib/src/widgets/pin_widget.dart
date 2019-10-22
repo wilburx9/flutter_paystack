@@ -34,7 +34,7 @@ class _PinWidgetState extends BaseState<PinWidget> {
               heightBox,
               const Text(
                 'To confirm you\'re the owner of this card, please '
-                    'enter your card pin.',
+                'enter your card pin.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
