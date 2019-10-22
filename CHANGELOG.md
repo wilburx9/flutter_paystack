@@ -1,3 +1,8 @@
+## 1.0.1+1
+
+* Bumped dependencies versions
+
+
 ## 1.0.1
 
 * Migrated to AndroidX
