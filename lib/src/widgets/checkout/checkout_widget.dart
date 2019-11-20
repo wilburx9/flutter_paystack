@@ -76,32 +76,44 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   @override
   Widget buildChild(BuildContext context) {
-    var securedWidget = Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      runAlignment: WrapAlignment.center,
-      alignment: WrapAlignment.center,
+    var securedWidget = Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Icon(Icons.lock, size: 10),
-        Padding(
-          padding: EdgeInsetsDirectional.only(end: 5, start: 3),
-          child: Text(
-            "Sucured by",
-            style: TextStyle(fontSize: 10),
-          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.lock, size: 10),
+            Padding(
+              padding: EdgeInsetsDirectional.only(start: 3),
+              child: Text(
+                "Secured by",
+                style: TextStyle(fontSize: 10),
+              ),
+            )
+          ],
         ),
-        if (widget.logo != null)
-          Padding(
-            padding: EdgeInsetsDirectional.only(end: 3),
-            child: Image.asset(
-              'assets/images/paystack_icon.png',
+        SizedBox(height: 5),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if (widget.logo != null)
+              Padding(
+                padding: EdgeInsetsDirectional.only(end: 3),
+                child: Image.asset(
+                  'assets/images/paystack_icon.png',
+                  package: 'flutter_paystack',
+                  height: 16,
+                ),
+              ),
+            Image.asset(
+              'assets/images/paystack.png',
               package: 'flutter_paystack',
-              height: 16,
-            ),
-          ),
-        Image.asset(
-          'assets/images/paystack.png',
-          package: 'flutter_paystack',
-          height: 15,
+              height: 15,
+            )
+          ],
         )
       ],
     );
