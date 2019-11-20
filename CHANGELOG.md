@@ -1,3 +1,10 @@
+## 1.0.2
+
+* Made plugin theme customizable
+* Switched deprecated UIWebView for WKWebView for iOS
+* Added a customizable company logo
+* Displayed "Secured by Paystack" at bottom of payment prompt
+
 ## 1.0.1+1
 
 * Bumped dependencies versions
