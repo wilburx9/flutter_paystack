@@ -76,6 +76,35 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   @override
   Widget buildChild(BuildContext context) {
+    var securedWidget = Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      runAlignment: WrapAlignment.center,
+      alignment: WrapAlignment.center,
+      children: <Widget>[
+        Icon(Icons.lock, size: 10),
+        Padding(
+          padding: EdgeInsetsDirectional.only(end: 5, start: 3),
+          child: Text(
+            "Sucured by",
+            style: TextStyle(fontSize: 10),
+          ),
+        ),
+        if (widget.logo != null)
+          Padding(
+            padding: EdgeInsetsDirectional.only(end: 3),
+            child: Image.asset(
+              'assets/images/paystack_icon.png',
+              package: 'flutter_paystack',
+              height: 16,
+            ),
+          ),
+        Image.asset(
+          'assets/images/paystack.png',
+          package: 'flutter_paystack',
+          height: 15,
+        )
+      ],
+    );
     return new CustomAlertDialog(
       expanded: true,
       fullscreen: widget.fullscreen,
@@ -87,11 +116,17 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           child: new Container(
               padding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-              child: _showProcessingError()
-                  ? _buildErrorWidget()
-                  : _paymentSuccessful
-                      ? _buildSuccessfulWidget()
-                      : _methodWidgets[_currentIndex].child),
+              child: Column(
+                children: <Widget>[
+                  _showProcessingError()
+                      ? _buildErrorWidget()
+                      : _paymentSuccessful
+                          ? _buildSuccessfulWidget()
+                          : _methodWidgets[_currentIndex].child,
+                  SizedBox(height: 20),
+                  securedWidget
+                ],
+              )),
         ),
       ),
     );
@@ -191,7 +226,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             children: <Widget>[
               if (widget.logo == null)
                 Image.asset(
-                  'assets/images/paystack_logo.png',
+                  'assets/images/paystack_icon.png',
                   package: 'flutter_paystack',
                   width: 25,
                 )

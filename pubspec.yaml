@@ -18,17 +18,7 @@ flutter:
     pluginClass: FlutterPaystackPlugin
 
   assets:
-   - assets/images/visa.png
-   - assets/images/jcb.png
-   - assets/images/verve.png
-   - assets/images/discover.png
-   - assets/images/american_express.png
-   - assets/images/dinners_club.png
-   - assets/images/mastercard.png
-   - assets/images/paystack_logo.png
-   - assets/images/successful.png
-   - assets/images/otp.png
-   - assets/images/dob.png
+   - assets/images/
 
 
 

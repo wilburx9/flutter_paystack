@@ -1,5 +1,6 @@
 name: flutter_paystack_example
 description: Demonstrates how to use the flutter_paystack plugin.
+version: 1.0.0+1
 
 dependencies:
   flutter:
