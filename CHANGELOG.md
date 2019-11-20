@@ -1,3 +1,7 @@
+## 1.0.2+1
+
+* Corrected typo
+
 ## 1.0.2
 
 * Made plugin theme customizable
