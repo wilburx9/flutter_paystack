@@ -5,15 +5,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
-import 'package:flutter_paystack/src/model/card.dart';
-import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/transaction.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
+import 'package:flutter_paystack/src/model/card.dart';
+import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/widgets/birthday_widget.dart';
 import 'package:flutter_paystack/src/widgets/card_widget.dart';
 import 'package:flutter_paystack/src/widgets/otp_widget.dart';
 import 'package:flutter_paystack/src/widgets/pin_widget.dart';
-import 'package:flutter_paystack/src/common/utils.dart';
 
 abstract class BaseTransactionManager {
   static bool processing = false;
@@ -88,13 +88,9 @@ abstract class BaseTransactionManager {
     }
   }
 
-  setProcessingOff() {
-    processing = false;
-  }
+  setProcessingOff() => processing = false;
 
-  setProcessingOn() {
-    processing = true;
-  }
+  setProcessingOn() => processing = true;
 
   getCardInfoFrmUI(PaymentCard currentCard) async {
     PaymentCard newCard = await showDialog<PaymentCard>(

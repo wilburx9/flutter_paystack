@@ -210,7 +210,3 @@ Experienced an issue or want to report a bug? Please, [report it here](https://g
 ## :trophy: Credits
 Thanks to the authors of Paystack [iOS](https://github.com/PaystackHQ/paystack-ios) and [Android](https://github.com/PaystackHQ/paystack-android) SDKS. I leveraged on their work to bring this plugin to fruition.
 
-## :fire: Apps Using this plugin
-1. **EasyDispatch** - [Play Store](https://play.google.com/store/apps/details?id=com.ncktech.easydispatch) | [App Store](https://itunes.apple.com/us/app/apple-store/id1413887430)
-
-To to add your app here, just shoot me an email on faradaywilly(at)gmail.com.
