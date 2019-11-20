@@ -119,10 +119,6 @@ class PaystackPlugin {
   ///
   /// [charge] - the charge object.
   ///
-  /// [onSuccess] - Called when the payment completes successfully
-  ///
-  /// [onValidated] - Called when the payment completes with an unrecoverable error
-  ///
   /// [method] - The payment method to use(card, bank). It defaults to
   /// [CheckoutMethod.selectable] to allow the user to select. For [CheckoutMethod.bank]
   ///  or [CheckoutMethod.selectable], it is
@@ -135,11 +131,15 @@ class PaystackPlugin {
   /// * You can also pass the [PaymentCard] object and we'll use it to prepopulate the
   /// card  fields if card payment is being used
   ///
+  /// [fullscreen] - Whether to display the payment in a full screen dialog or not
+  ///
+  /// [logo] - The widget to display at the top left of the payment prompt. Defaults to an Image widget with Paystack's logo.
   static Future<CheckoutResponse> checkout(
     BuildContext context, {
     @required Charge charge,
     CheckoutMethod method = CheckoutMethod.selectable,
     bool fullscreen = false,
+    Widget logo,
   }) async {
     assert(context != null, 'context must not be null');
     assert(
@@ -148,8 +148,13 @@ class PaystackPlugin {
         'the user '
         'to select the checkout option');
     assert(fullscreen != null, 'fillscreen must not be null');
-    return Paystack(publicKey).checkout(context,
-        charge: charge, method: method, fullscreen: fullscreen);
+    return Paystack(publicKey).checkout(
+      context,
+      charge: charge,
+      method: method,
+      fullscreen: fullscreen,
+      logo: logo,
+    );
   }
 }
 
@@ -193,6 +198,7 @@ class Paystack {
     @required Charge charge,
     @required CheckoutMethod method,
     @required bool fullscreen,
+    Widget logo,
   }) async {
     assert(() {
       Utils.validateChargeAndKey(charge);
@@ -219,6 +225,7 @@ class Paystack {
               method: method,
               charge: charge,
               fullscreen: fullscreen,
+              logo: logo,
             ));
     return response == null ? CheckoutResponse.defaults() : response;
   }

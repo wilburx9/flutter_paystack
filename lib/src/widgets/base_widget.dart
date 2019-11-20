@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/model/checkout_response.dart';
-import 'package:flutter_paystack/src/widgets/common/custom_theme.dart';
 
 abstract class BaseState<T extends StatefulWidget> extends State<T> {
   bool isProcessing = false;
@@ -13,11 +12,9 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
 
   @override
   Widget build(BuildContext context) {
-    return new CustomTheme(
-      child: new WillPopScope(
-        onWillPop: _onWillPop,
-        child: buildChild(context),
-      ),
+    return new WillPopScope(
+      onWillPop: _onWillPop,
+      child: buildChild(context),
     );
   }
 
@@ -80,7 +77,7 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
 
     bool exit = await showDialog<bool>(
           context: context,
-          builder: (BuildContext context) => new CustomTheme(child: dialog),
+          builder: (BuildContext context) => dialog,
         ) ??
         false;
 

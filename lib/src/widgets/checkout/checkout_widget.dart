@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' hide ErrorWidget;
-import 'package:flutter_paystack/src/model/checkout_response.dart';
+import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/src/common/paystack.dart';
-import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
+import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/widgets/base_widget.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/card_checkout.dart';
@@ -11,7 +11,6 @@ import 'package:flutter_paystack/src/widgets/checkout/checkout_method.dart';
 import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
 import 'package:flutter_paystack/src/widgets/error_widget.dart';
 import 'package:flutter_paystack/src/widgets/sucessful_widget.dart';
-import 'package:flutter_paystack/src/common/utils.dart';
 
 const kFullTabHeight = 74.0;
 
@@ -19,11 +18,14 @@ class CheckoutWidget extends StatefulWidget {
   final CheckoutMethod method;
   final Charge charge;
   final bool fullscreen;
+  final Widget logo;
 
-  CheckoutWidget(
-      {@required this.method,
-      @required this.charge,
-      @required this.fullscreen});
+  CheckoutWidget({
+    @required this.method,
+    @required this.charge,
+    @required this.fullscreen,
+    @required this.logo,
+  });
 
   @override
   _CheckoutWidgetState createState() => _CheckoutWidgetState(charge);
@@ -96,6 +98,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   }
 
   Widget _buildTitle() {
+    final accentColor = Theme.of(context).accentColor;
     var emailAndAmount = new Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
@@ -123,9 +126,9 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                   ),
                   new Flexible(
                       child: new Text(Utils.formatAmount(_charge.amount),
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 15.0,
-                              color: MyColors.green,
+                              color: Theme.of(context).textTheme.body2.color,
                               fontWeight: FontWeight.w500)))
                 ],
               )
@@ -144,14 +147,14 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                 controller: _tabController,
                 isScrollable: true,
                 unselectedLabelColor: Colors.black54,
-                labelColor: MyColors.green,
+                labelColor: accentColor,
                 labelStyle:
                     new TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
                 indicator: new ShapeDecoration(
-                  shape: const RoundedRectangleBorder(
+                  shape: RoundedRectangleBorder(
                         borderRadius: tabBorderRadius,
                         side: BorderSide(
-                          color: MyColors.green,
+                          color: accentColor,
                           width: 1.0,
                         ),
                       ) +
@@ -186,10 +189,16 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              new Image.asset('assets/images/paystack_logo.png',
-                  width: 25.0, package: 'flutter_paystack'),
+              if (widget.logo == null)
+                Image.asset(
+                  'assets/images/paystack_logo.png',
+                  package: 'flutter_paystack',
+                  width: 25,
+                )
+              else
+                widget.logo,
               new SizedBox(
-                width: 50.0,
+                width: 50,
               ),
               new Expanded(child: emailAndAmount),
             ],

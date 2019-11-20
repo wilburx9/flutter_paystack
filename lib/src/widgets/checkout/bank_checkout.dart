@@ -2,17 +2,16 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/model/checkout_response.dart';
-import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/transaction.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
+import 'package:flutter_paystack/src/model/charge.dart';
+import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/transaction/bank_transaction_manager.dart';
-import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
 import 'package:flutter_paystack/src/widgets/buttons.dart';
 import 'package:flutter_paystack/src/widgets/checkout/base_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 import 'package:flutter_paystack/src/widgets/input/account_field.dart';
-import 'package:flutter_paystack/src/common/utils.dart';
 
 class BankCheckout extends StatefulWidget {
   final Charge charge;
@@ -78,12 +77,9 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
                   width: 50.0,
                   height: 50.0,
                   margin: const EdgeInsets.symmetric(vertical: 30.0),
-                  child: new Theme(
-                      data: Theme.of(context)
-                          .copyWith(accentColor: MyColors.green),
-                      child: new CircularProgressIndicator(
-                        strokeWidth: 3.0,
-                      )),
+                  child: new CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                  ),
                 ),
               );
               break;
@@ -140,15 +136,15 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
             ),
             new DropdownButtonHideUnderline(
                 child: new InputDecorator(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 isDense: true,
                 enabledBorder: const OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.grey, width: 0.5)),
-                focusedBorder: const OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: MyColors.green, width: 1.0)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Theme.of(context).accentColor, width: 1.0)),
                 hintText: 'Tap here to choose',
               ),
               isEmpty: _currentBank == null,
@@ -185,7 +181,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
                         new SizedBox(
                           height: 20.0,
                         ),
-                        new GreenButton(
+                        new AccentButton(
                             onPressed: _validateInputs,
                             showProgress: _loading,
                             text: 'Verify Account')
@@ -266,7 +262,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
     _futureBanks = Utils.getSupportedBanks();
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
-      child: new GreenButton(
+      child: new AccentButton(
           onPressed: () => setState(() {}),
           showProgress: false,
           text: 'Display banks'),

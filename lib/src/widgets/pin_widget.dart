@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
 import 'package:flutter_paystack/src/widgets/base_widget.dart';
 import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
 import 'package:flutter_paystack/src/widgets/input/pin_field.dart';
@@ -60,24 +59,28 @@ class _PinWidgetState extends BaseState<PinWidget> {
   }
 
   Widget buildStar() {
-    Icon star([Color color = Colors.white]) {
-      return new Icon(
-        Icons.star,
-        color: color,
-        size: 12.0,
-      );
-    }
+    Icon star(Color color) => new Icon(
+          Icons.star,
+          color: color,
+          size: 12.0,
+        );
 
     return new Container(
       padding: const EdgeInsets.fromLTRB(6.0, 15.0, 6.0, 6.0),
-      decoration: const BoxDecoration(
-          color: MyColors.navyBlue,
+      decoration: BoxDecoration(
+          color: Theme.of(context).primaryColorDark,
           borderRadius: const BorderRadius.all(Radius.circular(5.0))),
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[star(), star(), star(), star(MyColors.lightBlue)],
+        children: List.generate(
+            _startCount,
+            (i) => star(i == (_startCount - 1)
+                ? Theme.of(context).accentColor
+                : Theme.of(context).primaryColorLight)),
       ),
     );
   }
 }
+
+const _startCount = 4;

@@ -54,9 +54,10 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
                 heightBox,
                 new OtpField(
                   onSaved: (String value) => _otp = value,
+                  borderColor: Theme.of(context).accentColor,
                 ),
                 heightBox,
-                new GreenButton(
+                new AccentButton(
                   onPressed: _validateInputs,
                   text: 'Authorize',
                 ),

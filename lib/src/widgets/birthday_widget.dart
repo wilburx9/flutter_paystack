@@ -70,7 +70,7 @@ class _BirthdayWidgetState extends BaseState<BirthdayWidget> {
             ),
             _pickedDate == null
                 ? new Container()
-                : new GreenButton(onPressed: _onAuthorize, text: 'Authorize'),
+                : new AccentButton(onPressed: _onAuthorize, text: 'Authorize'),
             new Container(
               padding:
                   new EdgeInsets.only(top: _pickedDate == null ? 15.0 : 20.0),

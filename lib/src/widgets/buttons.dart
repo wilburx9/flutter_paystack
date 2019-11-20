@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
 
 class WhiteButton extends _BaseButton {
   final bool flat;
@@ -23,29 +22,36 @@ class WhiteButton extends _BaseButton {
               fontSize: 14.0,
               color: Colors.black87.withOpacity(0.8),
               fontWeight: bold ? FontWeight.bold : FontWeight.normal),
-          topColor: Colors.white,
-          bottomColor: flat ? Colors.white : Colors.white70,
+          color: Colors.white,
           borderSide: flat
               ? BorderSide.none
               : const BorderSide(color: Colors.grey, width: 0.5),
         );
 }
 
-class GreenButton extends _BaseButton {
-  GreenButton({
-    @required VoidCallback onPressed,
-    @required String text,
-    bool showProgress = false,
-  }) : super(
-          onPressed: onPressed,
-          showProgress: showProgress,
-          topColor: MyColors.topGreen,
-          bottomColor: MyColors.bottomGreen,
-          borderSide: BorderSide.none,
-          textStyle: const TextStyle(
-              fontSize: 14.0, color: Colors.white, fontWeight: FontWeight.bold),
-          text: text,
-        );
+class AccentButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String text;
+  final bool showProgress;
+
+  AccentButton({
+    @required this.onPressed,
+    @required this.text,
+    this.showProgress = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _BaseButton(
+      onPressed: onPressed,
+      showProgress: showProgress,
+      color: Theme.of(context).accentColor,
+      borderSide: BorderSide.none,
+      textStyle: const TextStyle(
+          fontSize: 14.0, color: Colors.white, fontWeight: FontWeight.bold),
+      text: text,
+    );
+  }
 }
 
 class _BaseButton extends StatelessWidget {
@@ -53,8 +59,7 @@ class _BaseButton extends StatelessWidget {
   final String text;
   final bool showProgress;
   final TextStyle textStyle;
-  final Color topColor;
-  final Color bottomColor;
+  final Color color;
   final BorderSide borderSide;
   final IconData iconData;
   final Widget child;
@@ -64,8 +69,7 @@ class _BaseButton extends StatelessWidget {
     @required this.showProgress,
     @required this.text,
     @required this.textStyle,
-    @required this.topColor,
-    @required this.bottomColor,
+    @required this.color,
     @required this.borderSide,
     this.iconData,
     this.child,
@@ -87,11 +91,9 @@ class _BaseButton extends StatelessWidget {
         height: 50.0,
         alignment: Alignment.center,
         decoration: new BoxDecoration(
-            borderRadius: borderRadius,
-            gradient: new LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[topColor, bottomColor])),
+          borderRadius: borderRadius,
+          color: color,
+        ),
         child: new Container(
           width: double.infinity,
           height: double.infinity,

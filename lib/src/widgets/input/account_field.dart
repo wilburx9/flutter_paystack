@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-
 import 'package:flutter_paystack/src/widgets/input/base_field.dart';
 
 class AccountField extends BaseTextField {
@@ -19,10 +18,5 @@ class AccountField extends BaseTextField {
   static String _validate(String value) {
     if (value == null || value.trim().isEmpty) return Strings.invalidAcc;
     return value.length == 10 ? null : Strings.invalidAcc;
-  }
-
-  @override
-  createState() {
-    return super.createState();
   }
 }

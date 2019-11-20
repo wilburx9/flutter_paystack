@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/src/common/card_utils.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/widgets/buttons.dart';
-import 'package:flutter_paystack/src/widgets/input/number_field.dart';
 import 'package:flutter_paystack/src/widgets/input/cvc_field.dart';
 import 'package:flutter_paystack/src/widgets/input/date_field.dart';
-import 'package:flutter_paystack/src/common/card_utils.dart';
+import 'package:flutter_paystack/src/widgets/input/number_field.dart';
 
 class CardInput extends StatefulWidget {
   final String text;
@@ -85,7 +85,7 @@ class _CardInputState extends State<CardInput> {
             new SizedBox(
               height: 20.0,
             ),
-            new GreenButton(
+            new AccentButton(
                 onPressed: _validateInputs,
                 text: widget.text,
                 showProgress: _validated),

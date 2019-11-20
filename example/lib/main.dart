@@ -239,8 +239,12 @@ class _HomePageState extends State<HomePage> {
       charge.reference = _getReference();
     }
 
-    CheckoutResponse response = await PaystackPlugin.checkout(context,
-        method: _method, charge: charge, fullscreen: false);
+    CheckoutResponse response = await PaystackPlugin.checkout(
+      context,
+      method: _method,
+      charge: charge,
+      fullscreen: false,
+    );
     print('Response = $response');
     setState(() => _inProgress = false);
     _updateStatus(response.reference, '$response');

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
 
 class OtpField extends TextFormField {
-  OtpField({FormFieldSetter<String> onSaved})
+  OtpField({FormFieldSetter<String> onSaved, @required Color borderColor})
       : super(
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
@@ -27,11 +26,10 @@ class OtpField extends TextFormField {
             hintText: 'OTP',
             hintStyle: const TextStyle(color: Colors.grey, fontSize: 14.0),
             contentPadding: const EdgeInsets.all(10.0),
-            enabledBorder: const OutlineInputBorder(
+            enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(color: Colors.grey, width: 0.5)),
-            focusedBorder: const OutlineInputBorder(
-                borderSide:
-                    const BorderSide(color: MyColors.lightBlue, width: 1.0)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: borderColor, width: 1.0)),
           ),
         );
 }

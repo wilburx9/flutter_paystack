@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack/src/widgets/animated_widget.dart';
-import 'package:flutter_paystack/src/widgets/common/my_colors.dart';
 import 'package:flutter_paystack/src/common/utils.dart';
+import 'package:flutter_paystack/src/widgets/animated_widget.dart';
 
 class SuccessfulWidget extends StatefulWidget {
   final int amount;
@@ -68,6 +67,7 @@ class _SuccessfulWidgetState extends State<SuccessfulWidget>
 
   @override
   Widget build(BuildContext context) {
+    final accentColor = Theme.of(context).accentColor;
     return new Container(
       child: new CustomAnimatedWidget(
         controller: _mainController,
@@ -77,7 +77,7 @@ class _SuccessfulWidgetState extends State<SuccessfulWidget>
             sizedBox,
             new Image.asset(
               'assets/images/successful.png',
-              color: MyColors.green,
+              color: accentColor,
               width: 50.0,
               package: 'flutter_paystack',
             ),
@@ -106,8 +106,8 @@ class _SuccessfulWidgetState extends State<SuccessfulWidget>
               opacity: _opacity,
               child: new Text(
                 _countdownAnim.value.toString(),
-                style: const TextStyle(
-                    color: MyColors.green,
+                style: TextStyle(
+                    color: accentColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 25.0),
               ),
