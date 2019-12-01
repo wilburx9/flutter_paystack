@@ -146,85 +146,91 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 _verticalSizeBox,
-                _inProgress
-                    ? new Container(
-                        alignment: Alignment.center,
-                        height: 50.0,
-                        child: Platform.isIOS
-                            ? new CupertinoActivityIndicator()
-                            : new CircularProgressIndicator(),
-                      )
-                    : new Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          _getPlatformButton(
-                              'Charge Card', () => _startAfreshCharge()),
-                          _verticalSizeBox,
-                          _border,
-                          new SizedBox(
-                            height: 40.0,
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    accentColor: green,
+                    primaryColorLight: Colors.white,
+                    primaryColorDark: navyBlue,
+                    textTheme: Theme.of(context).textTheme.copyWith(
+                          body2: TextStyle(
+                            color: lightBlue,
                           ),
-                          new Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              new Flexible(
-                                  flex: 3,
-                                  child: new DropdownButtonHideUnderline(
-                                      child: new InputDecorator(
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      isDense: true,
-                                      hintText: 'Checkout method',
-                                    ),
-                                    isEmpty: _method == null,
-                                    child: new DropdownButton<CheckoutMethod>(
-                                      value: _method,
-                                      isDense: true,
-                                      onChanged: (CheckoutMethod value) {
-                                        setState(() {
-                                          _method = value;
-                                        });
-                                      },
-                                      items: banks.map((String value) {
-                                        return new DropdownMenuItem<
-                                            CheckoutMethod>(
-                                          value: _parseStringToMethod(value),
-                                          child: new Text(value),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ))),
-                              _horizontalSizeBox,
-                              new Flexible(
-                                flex: 2,
-                                child: Theme(
-                                  data: Theme.of(context).copyWith(
-                                    accentColor: green,
-                                    primaryColorLight: Colors.white,
-                                    primaryColorDark: navyBlue,
-                                    textTheme:
-                                        Theme.of(context).textTheme.copyWith(
-                                              body2: TextStyle(
-                                                color: lightBlue,
-                                              ),
-                                            ),
-                                  ),
-                                  child: Builder(
-                                    builder: (context) => new Container(
-                                      width: double.infinity,
-                                      child: _getPlatformButton(
-                                        'Checkout',
-                                        () => _handleCheckout(context),
+                        ),
+                  ),
+                  child: Builder(
+                    builder: (context) {
+                      return _inProgress
+                          ? new Container(
+                              alignment: Alignment.center,
+                              height: 50.0,
+                              child: Platform.isIOS
+                                  ? new CupertinoActivityIndicator()
+                                  : new CircularProgressIndicator(),
+                            )
+                          : new Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                _getPlatformButton(
+                                    'Charge Card', () => _startAfreshCharge()),
+                                _verticalSizeBox,
+                                _border,
+                                new SizedBox(
+                                  height: 40.0,
+                                ),
+                                new Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    new Flexible(
+                                      flex: 3,
+                                      child: new DropdownButtonHideUnderline(
+                                        child: new InputDecorator(
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            isDense: true,
+                                            hintText: 'Checkout method',
+                                          ),
+                                          isEmpty: _method == null,
+                                          child: new DropdownButton<
+                                              CheckoutMethod>(
+                                            value: _method,
+                                            isDense: true,
+                                            onChanged: (CheckoutMethod value) {
+                                              setState(() {
+                                                _method = value;
+                                              });
+                                            },
+                                            items: banks.map((String value) {
+                                              return new DropdownMenuItem<
+                                                  CheckoutMethod>(
+                                                value:
+                                                    _parseStringToMethod(value),
+                                                child: new Text(value),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      )
+                                    _horizontalSizeBox,
+                                    new Flexible(
+                                      flex: 2,
+                                      child: new Container(
+                                        width: double.infinity,
+                                        child: _getPlatformButton(
+                                          'Checkout',
+                                          () => _handleCheckout(context),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            );
+                    },
+                  ),
+                )
               ],
             ),
           ),
