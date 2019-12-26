@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:async/async.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
-import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:http/http.dart' as http;
@@ -52,13 +51,15 @@ class Utils {
         'have set a $keyType key. Check http://paystack.co for more';
   }
 
-  static validatePlatformSpecificInfo() {}
+  static NumberFormat _currencyFormatter;
 
-  static final _currencyFormatter = new NumberFormat.currency(
-      locale: Strings.nigerianLocale, name: 'NGN\u{0020} ');
+  static setCurrencyFormatter(String currency, String locale) =>
+      _currencyFormatter =
+          NumberFormat.currency(locale: locale, name: '$currency\u{0020}');
 
-  static String formatAmount(num amountInKobo) {
-    return _currencyFormatter.format((amountInKobo / 100));
+  static String formatAmount(num amountInBase) {
+    if (_currencyFormatter == null) throw "Currency formatter not initalized.";
+    return _currencyFormatter.format((amountInBase / 100));
   }
 
   static validateChargeAndKey(Charge charge) {

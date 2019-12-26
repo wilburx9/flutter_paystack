@@ -50,7 +50,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   @override
   void initState() {
     super.initState();
-    _initMethods();
+    _init();
+    _initPaymentMethods();
     _currentIndex = _getCurrentTab();
     _showTabs = widget.method == CheckoutMethod.selectable ? true : false;
     _tabController = new TabController(
@@ -264,7 +265,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     });
   }
 
-  void _initMethods() {
+  void _initPaymentMethods() {
     _methodWidgets = [
       new MethodItem(
           text: 'Card',
@@ -344,7 +345,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   }
 
   Widget _buildErrorWidget() {
-    _initMethods();
+    _initPaymentMethods();
     void _resetShowTabs() {
       _response = null; // Reset the response
       _showTabs = widget.method == CheckoutMethod.selectable ? true : false;
@@ -406,6 +407,10 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
       response.card.nullifyNumber();
     }
     return response;
+  }
+
+  _init() {
+    Utils.setCurrencyFormatter(_charge.currency, _charge.locale);
   }
 }
 

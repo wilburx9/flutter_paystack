@@ -84,7 +84,7 @@ class PaystackPlugin {
     Utils.hasPublicKey();
   }
 
-  /// Make payment by chargingg the user's card
+  /// Make payment by charging the user's card
   ///
   /// [context] - the widgets BuildContext
   ///
