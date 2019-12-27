@@ -2,7 +2,8 @@ name: Build and Test
 
 on: [push, pull_request]
 jobs: 
-  build-and-test: 
+  build-and-test:
+    name: build-and-test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1 
@@ -11,10 +12,14 @@ jobs:
         java-version: '12.x'
     - uses: subosito/flutter-action@v1
       with:
-        channel: 'stable' 
-    - run: flutter pub get
-    - run: flutter build aot
-    # Analyze our Dart code
-    - run: flutter analyze
-    # Run our tests
-    - run: flutter test
+        channel: 'stable'
+    - name: Install dependencies 
+      run: flutter pub get
+    - name: Analyze Dart code
+      run: flutter analyze
+    - name: Run tests
+      run: flutter test
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.CODECOV_TOKEN }}
