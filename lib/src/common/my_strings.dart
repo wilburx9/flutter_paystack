@@ -10,6 +10,7 @@ class Strings {
   static const String cancel = 'Cancel';
   static const String unKnownError = 'Unknown Error';
   static const String nigerianLocale = 'en_NG';
+  static const String ngn = 'NGN';
   static const String noAccessCodeReference =
       'Pass either an access code or transaction '
       'reference';

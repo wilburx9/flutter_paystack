@@ -1,15 +1,14 @@
 import 'package:flutter_paystack/src/common/exceptions.dart';
+import 'package:flutter_paystack/src/common/my_strings.dart';
+import 'package:flutter_paystack/src/common/string_utils.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
-import 'package:flutter_paystack/src/common/string_utils.dart';
 
 class Charge {
   PaymentCard card;
   String _email;
   String _accessCode;
   BankAccount _account;
-
-  /// Amount in kobo
   int _amount = 0;
   Map<String, dynamic> _metadata;
   List<Map<String, dynamic>> _customFields;
@@ -23,6 +22,9 @@ class Charge {
   String _plan;
   bool _localStarted = false;
   bool _remoteStarted = false;
+
+  /// The locale used for formatting amount in the UI prompt. Defaults to [Strings.nigerianLocale]
+  String locale;
 
   _beforeLocalSet(String fieldName) {
     assert(() {
@@ -53,6 +55,8 @@ class Charge {
     this._additionalParameters = {};
     this._customFields = [];
     this._metadata['custom_fields'] = this._customFields;
+    this.locale = Strings.nigerianLocale;
+    this._currency = Strings.ngn;
   }
 
   addParameter(String key, String value) {
@@ -78,6 +82,7 @@ class Charge {
 
   String get currency => _currency;
 
+  /// ISO 4217 payment currency code (e.g USD). Defaults to [Strings.ngn]
   set currency(String value) {
     _beforeLocalSet('currency');
     _currency = value;
@@ -99,6 +104,7 @@ class Charge {
 
   Bearer get bearer => _bearer;
 
+  /// Who bears Paystack charges? [Bearer.Account] or [Bearer.SubAccount]
   set bearer(Bearer value) {
     _beforeLocalSet('bearer');
     _bearer = value;
@@ -149,6 +155,7 @@ class Charge {
 
   String get email => _email;
 
+  /// The email of the customer
   set email(String value) {
     // _beforeLocalSet('email');  Not needed because of PaystackPlugin.checkout. Email
     // is needed for the checkout ui even after setting access code.
@@ -160,8 +167,7 @@ class Charge {
 
   int get amount => _amount;
 
-  /// Set amount
-  /// [value] amount in kobo
+  /// Amount to pay in base currency. Must be a valid positive number
   set amount(int value) {
     // _beforeLocalSet('amount'); Not needed because of PaystackPlugin.checkout. Amount
     // is needed for the checkout ui even after setting access code.

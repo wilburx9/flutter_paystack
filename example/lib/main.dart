@@ -250,7 +250,7 @@ class _HomePageState extends State<HomePage> {
     setState(() => _inProgress = true);
     _formKey.currentState.save();
     Charge charge = Charge()
-      ..amount = 10000
+      ..amount = 10000 // In base currency
       ..email = 'customer@email.com'
       ..card = _getCardFromUI();
 
@@ -285,10 +285,9 @@ class _HomePageState extends State<HomePage> {
       // Set transaction params directly in app (note that these params
       // are only used if an access_code is not set. In debug mode,
       // setting them after setting an access code would throw an exception
-      // 1 NGN = 100Kobo
-      // x NGN  = 2000
+
       charge
-        ..amount = 10000
+        ..amount = 10000 // In base currency
         ..email = 'customer@email.com'
         ..reference = _getReference()
         ..putCustomField('Charged From', 'Flutter SDK');
