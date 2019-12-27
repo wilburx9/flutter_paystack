@@ -4,6 +4,8 @@ on: [push, pull_request]
 jobs: 
   build-and-test:
     name: build-and-test
+    env:
+      PAYSTACK_TEST_PUBLIC_KEY: ${{ secrets.PAYSTACK_TEST_PUBLIC_KEY }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1 
