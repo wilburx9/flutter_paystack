@@ -14,8 +14,9 @@ class FlutterPaystackPlugin(val appContext: Context, val authDelegate: AuthDeleg
   companion object {
     @JvmStatic
     fun registerWith(registrar: Registrar) {
+      val activity = registrar.activity() ?: return
       val channel = MethodChannel(registrar.messenger(), "flutter_paystack")
-      val authDelegate = AuthDelegate(activity = registrar.activity())
+      val authDelegate = AuthDelegate(activity = activity)
       val plugin = FlutterPaystackPlugin(appContext = registrar.context(), authDelegate = authDelegate)
       channel.setMethodCallHandler(plugin)
     }
@@ -27,7 +28,7 @@ class FlutterPaystackPlugin(val appContext: Context, val authDelegate: AuthDeleg
     when (call.method) {
       "getDeviceId" -> {
         result.success("androidsdk_" + Settings.Secure.getString(appContext.contentResolver,
-                Settings.Secure.ANDROID_ID))
+          Settings.Secure.ANDROID_ID))
       }
       "getUserAgent" -> {
         result.success("Android_" + Build.VERSION.SDK_INT + "_Paystack_" + BuildConfig.VERSION_NAME)
