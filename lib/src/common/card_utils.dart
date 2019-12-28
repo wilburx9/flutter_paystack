@@ -1,8 +1,6 @@
 import 'package:flutter_paystack/src/common/exceptions.dart';
-import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/common/string_utils.dart';
-
-const cardConcatenateValue = '*';
+import 'package:flutter_paystack/src/model/card.dart';
 
 class CardUtils {
   static bool isWholeNumberPositive(String value) {
@@ -19,7 +17,11 @@ class CardUtils {
     return true;
   }
 
+  /// Returns true if both [year] and [month] has passed.
+  /// Please, see the documentation for [hasYearPassed] and [convertYearTo4Digits]
+  /// for nuances
   static bool hasMonthPassed(int year, int month) {
+    if (year == null || month == null) return true;
     var now = DateTime.now();
     // The month has passed if:
     // 1. The year is in the past. In that case, we just assume that the month
@@ -30,19 +32,24 @@ class CardUtils {
   }
 
   static bool isValidMonth(int month) {
-    return (month > 0) && (month < 13);
+    return month != null && month > 0 && month < 13;
   }
 
+  /// Returns true if [year] is has passed.
+  /// It calls [convertYearTo4Digits] on [year] so two digits year will be
+  /// prepended with  "20":
+  ///
+  ///     var v = hasYearPassed(94);
+  ///     print(v); // false because 94 is converted to 2094, and 2094 is in the future
   static bool hasYearPassed(int year) {
     int fourDigitsYear = convertYearTo4Digits(year);
     var now = DateTime.now();
-    // The year has passed if the year we are currently is more than card's
-    // year
+    // The year has passed if the year we are currently is more than card's year
     return fourDigitsYear < now.year;
   }
 
   static bool isNotExpired(int year, int month) {
-    if (month > 12 || year > 2999) {
+    if ((year == null || month == null) || (month > 12 && year > 2999)) {
       return false;
     }
     // It has not expired if both the year and date has not passed
@@ -50,11 +57,22 @@ class CardUtils {
   }
 
   /// Convert the two-digit year to four-digit year if necessary
+  /// When [year] is in the range of >=0  and < 100, it appends "20" to it:
+  ///
+  ///     var c = convertYearTo4Digits(10);
+  ///     print(c); // 2010;
+  ///
+  ///     var x = convertYearTo4Digits(1);
+  ///     print(x); // 2001
+  ///
+  /// If the year is not in the specified range above, it returns it as it is:
+  ///
+  ///     var v = convertYearTo4Digits(2333);
+  ///     print(v); // 2333
   static int convertYearTo4Digits(int year) {
+    if (year == null) return 0;
     if (year < 100 && year >= 0) {
-      var now = DateTime.now();
-      String currentYear = now.year.toString();
-      String prefix = currentYear.substring(0, currentYear.length - 2);
+      String prefix = "20";
       year = int.parse('$prefix${year.toString().padLeft(2, '0')}');
     }
     return year;
@@ -68,13 +86,9 @@ class CardUtils {
     return text.replaceAll(regExp, '');
   }
 
-  /// Checks if the card has expired.
-  /// Returns true if the card has expired; false otherwise
-  static bool validExpiryDate(int expiryMonth, int expiryYear) {
-    return !(expiryMonth == null || expiryYear == null) &&
-        isNotExpired(expiryYear, expiryMonth);
-  }
-
+  /// Concatenates card number, cvv, month and year using "*" as the separator.
+  ///
+  /// Note: The card details are not validated.
   static String concatenateCardFields(PaymentCard card) {
     if (card == null) {
       throw new CardException("Card cannot be null");
@@ -82,10 +96,9 @@ class CardUtils {
 
     String number = StringUtils.nullify(card.number);
     String cvc = StringUtils.nullify(card.cvc);
-    int expiryMonth = card.expiryMonth;
-    int expiryYear = card.expiryYear;
+    int expiryMonth = card.expiryMonth ?? 0;
+    int expiryYear = card.expiryYear ?? 0;
 
-    String cardString;
     var cardFields = [
       number,
       cvc,
@@ -94,24 +107,23 @@ class CardUtils {
     ];
 
     if (!StringUtils.isEmpty(number)) {
-      for (int i = 0; i < cardFields.length; i++) {
-        if (i == 0 && cardFields.length > 1) {
-          cardString = '${cardFields[i]}$cardConcatenateValue';
-        } else if (i == cardFields.length - 1) {
-          cardString += cardFields[i];
-        } else {
-          cardString = '$cardString${cardFields[i]}$cardConcatenateValue';
-        }
-      }
-      return cardString;
+      return cardFields.join("*");
     } else {
       throw new CardException(
           'Invalid card details: Card number is empty or null');
     }
   }
 
+  /// Accepts a forward-slash("/") separated string and returns a 2 sized int list of
+  /// the first number before the "/" and the last number after the "/
   static List<int> getExpiryDate(String value) {
+    if (value == null) return [-1, -1];
     var split = value.split(new RegExp(r'(\/)'));
-    return [int.parse(split[0]), int.parse(split[1])];
+    var month = int.tryParse(split[0]) ?? -1;
+    if (split.length == 1) {
+      return [month, -1];
+    }
+    var year = int.tryParse(split[split.length - 1]) ?? -1;
+    return [month, year];
   }
 }

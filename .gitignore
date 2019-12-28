@@ -10,3 +10,4 @@ build/
 .gradle
 *.iml
 /example/ios/Podfile.lock
+/coverage/

@@ -46,18 +46,16 @@ class DateField extends BaseTextField {
     // The value contains a forward slash if the month and year has been
     // entered.
     if (value.contains(new RegExp(r'(\/)'))) {
-      var split = value.split(new RegExp(r'(\/)'));
-      // The value before the slash is the month while the value to right of
-      // it is the year.
-      month = int.parse(split[0]);
-      year = int.parse(split[1]);
+      final date = CardUtils.getExpiryDate(value);
+      month = date[0];
+      year = date[1];
     } else {
       // Only the month was entered
       month = int.parse(value.substring(0, (value.length)));
       year = -1; // Lets use an invalid year intentionally
     }
 
-    if (!CardUtils.validExpiryDate(month, year)) {
+    if (!CardUtils.isNotExpired(year, month)) {
       return Strings.invalidExpiry;
     }
     return null;
