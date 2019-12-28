@@ -154,7 +154,7 @@ class PaymentCard {
         expiryMonth != null &&
         expiryYear != null &&
         validNumber(null) &&
-        CardUtils.validExpiryDate(expiryMonth, expiryYear) &&
+        CardUtils.isNotExpired(expiryYear, expiryMonth) &&
         validCVC(null);
   }
 
