@@ -14,6 +14,7 @@ import 'package:flutter_paystack/src/model/checkout_response.dart';
 import 'package:flutter_paystack/src/transaction/card_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 
+// TODO: Remove use of static publicKey and use a constructor for initialization
 class PaystackPlugin {
   static bool _sdkInitialized = false;
   static String _publicKey;
@@ -68,6 +69,11 @@ class PaystackPlugin {
     }
   }
 
+  static dispose() {
+    _publicKey = null;
+    _sdkInitialized = false;
+  }
+
   static bool get sdkInitialized => _sdkInitialized;
 
   static String get publicKey {
@@ -79,9 +85,6 @@ class PaystackPlugin {
   static void _performChecks() {
     //validate that sdk has been initialized
     Utils.validateSdkInitialized();
-
-    //validate public keys
-    Utils.hasPublicKey();
   }
 
   /// Make payment by charging the user's card

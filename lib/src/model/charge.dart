@@ -1,6 +1,5 @@
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/common/string_utils.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 
@@ -161,9 +160,6 @@ class Charge {
   set email(String value) {
     // _beforeLocalSet('email');  Not needed because of PaystackPlugin.checkout. Email
     // is needed for the checkout ui even after setting access code.
-    if (!StringUtils.isValidEmail(value)) {
-      throw InvalidEmailException(value);
-    }
     _email = value;
   }
 
@@ -173,9 +169,6 @@ class Charge {
   set amount(int value) {
     // _beforeLocalSet('amount'); Not needed because of PaystackPlugin.checkout. Amount
     // is needed for the checkout ui even after setting access code.
-    if (value <= 0) {
-      throw InvalidAmountException(value);
-    }
     _amount = value;
   }
 }
