@@ -1,6 +1,6 @@
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/models/card.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:meta/meta.dart';
 

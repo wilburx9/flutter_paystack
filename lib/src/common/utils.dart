@@ -3,9 +3,10 @@ import 'dart:convert';
 
 import 'package:async/async.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
+import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/string_utils.dart';
+import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';

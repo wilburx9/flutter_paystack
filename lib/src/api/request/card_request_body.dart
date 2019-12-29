@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter_paystack/src/api/request/base_request_body.dart';
-import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
+import 'package:flutter_paystack/src/api/request/base_request_body.dart';
 import 'package:flutter_paystack/src/common/card_utils.dart';
 import 'package:flutter_paystack/src/common/crypto.dart';
+import 'package:flutter_paystack/src/models/charge.dart';
 
 class CardRequestBody extends BaseRequestBody {
   static const String fieldClientData = "clientdata";
