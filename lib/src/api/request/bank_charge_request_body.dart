@@ -1,5 +1,5 @@
 import 'package:flutter_paystack/src/api/request/base_request_body.dart';
-import 'package:flutter_paystack/src/model/charge.dart';
+import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 
 class BankChargeRequestBody extends BaseRequestBody {

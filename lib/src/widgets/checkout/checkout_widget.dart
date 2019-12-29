@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/utils.dart';
-import 'package:flutter_paystack/src/model/card.dart';
-import 'package:flutter_paystack/src/model/charge.dart';
-import 'package:flutter_paystack/src/model/checkout_response.dart';
+import 'package:flutter_paystack/src/models/card.dart';
+import 'package:flutter_paystack/src/models/charge.dart';
+import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/widgets/base_widget.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/card_checkout.dart';
