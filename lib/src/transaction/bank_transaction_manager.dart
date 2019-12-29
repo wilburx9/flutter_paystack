@@ -6,9 +6,9 @@ import 'package:flutter_paystack/src/api/request/bank_charge_request_body.dart';
 import 'package:flutter_paystack/src/api/service/bank_service.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/model/charge.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
-import 'package:flutter_paystack/src/common/transaction.dart';
+import 'package:flutter_paystack/src/model/charge.dart';
+import 'package:flutter_paystack/src/model/transaction.dart';
 import 'package:flutter_paystack/src/transaction/base_transaction_manager.dart';
 
 class BankTransactionManager extends BaseTransactionManager {
