@@ -64,10 +64,12 @@ class PaymentCard {
 
   String get type {
     // If type is empty and the number isn't empty
-    if (StringUtils.isEmpty(_type) && !StringUtils.isEmpty(number)) {
-      for (var cardType in cardTypes) {
-        if (cardType.hasFullMatch(number)) {
-          return cardType.toString();
+    if (StringUtils.isEmpty(_type)) {
+      if (!StringUtils.isEmpty(number)) {
+        for (var cardType in cardTypes) {
+          if (cardType.hasFullMatch(number)) {
+            return cardType.toString();
+          }
         }
       }
       return CardType.unknown;
@@ -161,9 +163,8 @@ class PaymentCard {
   /// Validates the CVC or CVV of a card.
   /// Returns true if CVC is valid and false otherwise
   bool validCVC(String cardCvc) {
-    if (cardCvc == null) {
-      cardCvc = this.cvc;
-    }
+    cardCvc ??= this.cvc;
+
     if (cardCvc == null || cardCvc.trim().isEmpty) return false;
 
     var cvcValue = cardCvc.trim();
@@ -171,7 +172,7 @@ class PaymentCard {
         ((_type == null && cvcValue.length >= 3 && cvcValue.length <= 4) ||
             (CardType.americanExpress == _type && cvcValue.length == 4) ||
             (CardType.americanExpress != _type && cvcValue.length == 3));
-    return !(!CardUtils.isWholeNumberPositive(cvcValue) || !validLength);
+    return (CardUtils.isWholeNumberPositive(cvcValue) && validLength);
   }
 
   /// Validates the number of the card
@@ -279,7 +280,8 @@ abstract class CardType {
   static final startingPatternAmericanExpress = RegExp(r'((34)|(37))');
   static final startingPatternDinersClub =
       RegExp(r'((30[0-5])|(3[89])|(36)|(3095))');
-  static final startingPatternJCB = RegExp(r'(352[89]|35[3-8][0-9])');
+  static final startingPatternJCB =
+      RegExp(r'(2131)|(1800)(352[89])|(35[3-8]*[0-9])');
   static final startingPatternVerve = RegExp(r'((506(0|1))|(507(8|9))|(6500))');
   static final startingPatternDiscover = RegExp(r'((6[45])|(6011))');
 
