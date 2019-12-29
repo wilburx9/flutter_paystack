@@ -5,6 +5,7 @@ import 'package:async/async.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
+import 'package:flutter_paystack/src/common/string_utils.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -35,14 +36,6 @@ class Utils {
       throw new PaystackSdkNotInitializedException(
           'Paystack SDK has not been initialized. The SDK has'
           ' to be initialized before use');
-    }
-  }
-
-  static hasPublicKey() {
-    var publicKey = PaystackPlugin.publicKey;
-    if (publicKey == null || publicKey.isEmpty) {
-      throw PaystackException(
-          'No Public key found, please set the Public key.');
     }
   }
 
@@ -77,7 +70,7 @@ class Utils {
     if (charge.amount == null || charge.amount.isNegative) {
       throw new InvalidAmountException(charge.amount);
     }
-    if (charge.email == null || charge.email.isEmpty) {
+    if (!StringUtils.isValidEmail(charge.email)) {
       throw new InvalidEmailException(charge.email);
     }
   }

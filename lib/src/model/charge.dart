@@ -1,15 +1,18 @@
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
-import 'package:flutter_paystack/src/common/string_utils.dart';
 import 'package:flutter_paystack/src/model/card.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 
 class Charge {
   PaymentCard card;
-  String _email;
+
+  /// The email of the customer
+  String email;
   String _accessCode;
   BankAccount _account;
-  int _amount = 0;
+
+  /// Amount to pay in base currency. Must be a valid positive number
+  int amount = 0;
   Map<String, dynamic> _metadata;
   List<Map<String, dynamic>> _customFields;
   bool _hasMeta = false;
@@ -51,7 +54,7 @@ class Charge {
 
   Charge() {
     this._metadata = {};
-    this._amount = -1;
+    this.amount = -1;
     this._additionalParameters = {};
     this._customFields = [];
     this._metadata['custom_fields'] = this._customFields;
@@ -82,7 +85,9 @@ class Charge {
 
   String get currency => _currency;
 
-  /// ISO 4217 payment currency code (e.g USD). Defaults to [Strings.ngn]
+  /// ISO 4217 payment currency code (e.g USD). Defaults to [Strings.ngn].
+  ///
+  /// If you're setting this value, also set [locale] for better formatting.
   set currency(String value) {
     _beforeLocalSet('currency');
     _currency = value;
@@ -151,30 +156,6 @@ class Charge {
     }
 
     return _metadata.toString();
-  }
-
-  String get email => _email;
-
-  /// The email of the customer
-  set email(String value) {
-    // _beforeLocalSet('email');  Not needed because of PaystackPlugin.checkout. Email
-    // is needed for the checkout ui even after setting access code.
-    if (!StringUtils.isValidEmail(value)) {
-      throw InvalidEmailException(value);
-    }
-    _email = value;
-  }
-
-  int get amount => _amount;
-
-  /// Amount to pay in base currency. Must be a valid positive number
-  set amount(int value) {
-    // _beforeLocalSet('amount'); Not needed because of PaystackPlugin.checkout. Amount
-    // is needed for the checkout ui even after setting access code.
-    if (value <= 0) {
-      throw InvalidAmountException(value);
-    }
-    _amount = value;
   }
 }
 
