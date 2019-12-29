@@ -82,7 +82,9 @@ class Charge {
 
   String get currency => _currency;
 
-  /// ISO 4217 payment currency code (e.g USD). Defaults to [Strings.ngn]
+  /// ISO 4217 payment currency code (e.g USD). Defaults to [Strings.ngn].
+  ///
+  /// If you're setting this value, also set [locale] for better formatting.
   set currency(String value) {
     _beforeLocalSet('currency');
     _currency = value;
