@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/models/card.dart';
@@ -155,7 +157,7 @@ class Charge {
       return null;
     }
 
-    return _metadata.toString();
+    return jsonEncode(_metadata);
   }
 }
 
