@@ -15,6 +15,6 @@ class Strings {
       'Pass either an access code or transaction '
       'reference';
   static const String sthWentWrong = 'Something went wrong.';
-  static const String userTerminated = 'Transactio terminated';
+  static const String userTerminated = 'Transaction terminated';
   static const String unKnownResponse = 'Unknown server response';
 }
