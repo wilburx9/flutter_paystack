@@ -91,6 +91,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
               padding: EdgeInsetsDirectional.only(start: 3),
               child: Text(
                 "Secured by",
+                key: Key("SecuredBy"),
                 style: TextStyle(fontSize: 10),
               ),
             )
@@ -106,12 +107,14 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                 padding: EdgeInsetsDirectional.only(end: 3),
                 child: Image.asset(
                   'assets/images/paystack_icon.png',
+                  key: Key("PaystackBottomIcon"),
                   package: 'flutter_paystack',
                   height: 16,
                 ),
               ),
             Image.asset(
               'assets/images/paystack.png',
+              key: Key("PaystackLogo"),
               package: 'flutter_paystack',
               height: 15,
             )
@@ -241,11 +244,15 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
               if (widget.logo == null)
                 Image.asset(
                   'assets/images/paystack_icon.png',
+                  key: Key("PaystackIcon"),
                   package: 'flutter_paystack',
                   width: 25,
                 )
               else
-                widget.logo,
+                SizedBox(
+                  key: Key("Logo"),
+                  child: widget.logo,
+                ),
               new SizedBox(
                 width: 50,
               ),
@@ -272,6 +279,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           text: 'Card',
           icon: Icons.credit_card,
           child: new CardCheckout(
+            key: Key("CardCheckout"),
             charge: _charge,
             onProcessingChange: _onProcessingChange,
             onResponse: _onPaymentResponse,

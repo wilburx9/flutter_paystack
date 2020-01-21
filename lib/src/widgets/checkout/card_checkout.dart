@@ -19,11 +19,12 @@ class CardCheckout extends StatefulWidget {
   final ValueChanged<PaymentCard> onCardChange;
 
   CardCheckout({
+    Key key,
     @required this.charge,
     @required this.onResponse,
     @required this.onProcessingChange,
     @required this.onCardChange,
-  });
+  }) : super(key: key);
 
   @override
   _CardCheckoutState createState() => _CardCheckoutState(charge, onResponse);
