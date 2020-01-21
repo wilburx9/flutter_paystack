@@ -49,7 +49,7 @@ class CardUtils {
   }
 
   static bool isNotExpired(int year, int month) {
-    if ((year == null || month == null) || (month > 12 && year > 2999)) {
+    if ((year == null || month == null) || (month > 12 || year > 2999)) {
       return false;
     }
     // It has not expired if both the year and date has not passed
