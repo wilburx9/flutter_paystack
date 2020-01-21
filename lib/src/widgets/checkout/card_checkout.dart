@@ -46,13 +46,15 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
       child: new Column(
         children: <Widget>[
           new Text(
-            'Enter your card details to pay',
+            Strings.cardInputInstruction,
+            key: Key("InstructionKey"),
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
           new SizedBox(
             height: 20.0,
           ),
           new CardInput(
+            key: Key("CardInput"),
             buttonText: 'Pay $amountText',
             card: _charge.card,
             onValidated: _onCardValidated,
