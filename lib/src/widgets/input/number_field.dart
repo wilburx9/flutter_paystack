@@ -8,11 +8,13 @@ import 'package:flutter_paystack/src/widgets/input/base_field.dart';
 
 class NumberField extends BaseTextField {
   NumberField(
-      {@required PaymentCard card,
+      {Key key,
+      @required PaymentCard card,
       @required TextEditingController controller,
       @required FormFieldSetter<String> onSaved,
       @required Widget suffix})
       : super(
+          key: key,
           labelText: 'CARD NUMBER',
           hintText: '0000 0000 0000 0000',
           controller: controller,

@@ -26,41 +26,42 @@ class _CardInputWidgetState extends BaseState<CardInputWidget> {
   @override
   Widget buildChild(BuildContext context) {
     return new CustomAlertDialog(
-        content: new SingleChildScrollView(
-      child: new Container(
-        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-        alignment: Alignment.center,
-        child: new Column(
-          children: <Widget>[
-            new Text(
-              'Please, provide valid card details.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            new SizedBox(
-              height: 35.0,
-            ),
-            new CardInput(
-              text: 'Continue',
-              card: widget.card,
-              onValidated: _onCardValidated,
-            ),
-            new SizedBox(
-              height: 10.0,
-            ),
-            new Container(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: new WhiteButton(
-                onPressed: onCancelPress,
-                text: 'Cancel',
-                flat: true,
-                bold: true,
+      content: new SingleChildScrollView(
+        child: new Container(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          alignment: Alignment.center,
+          child: new Column(
+            children: <Widget>[
+              new Text(
+                'Please, provide valid card details.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w500),
               ),
-            ),
-          ],
+              new SizedBox(
+                height: 35.0,
+              ),
+              new CardInput(
+                buttonText: 'Continue',
+                card: widget.card,
+                onValidated: _onCardValidated,
+              ),
+              new SizedBox(
+                height: 10.0,
+              ),
+              new Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: new WhiteButton(
+                  onPressed: onCancelPress,
+                  text: 'Cancel',
+                  flat: true,
+                  bold: true,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   void _onCardValidated(PaymentCard card) {

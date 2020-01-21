@@ -14,6 +14,7 @@ import 'package:flutter_paystack/src/widgets/sucessful_widget.dart';
 
 const kFullTabHeight = 74.0;
 
+// TODO: Enable hiding of email and amount in the UI
 class CheckoutWidget extends StatefulWidget {
   final CheckoutMethod method;
   final Charge charge;

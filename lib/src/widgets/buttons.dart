@@ -35,10 +35,11 @@ class AccentButton extends StatelessWidget {
   final bool showProgress;
 
   AccentButton({
+    Key key,
     @required this.onPressed,
     @required this.text,
     this.showProgress = false,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -53,7 +53,7 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
             height: 20.0,
           ),
           new CardInput(
-            text: 'Pay $amountText',
+            buttonText: 'Pay $amountText',
             card: _charge.card,
             onValidated: _onCardValidated,
           ),
