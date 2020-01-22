@@ -1,3 +1,8 @@
+## 1.0.3+1
+* Fixed issue with wrong plugin class in pubspec.yaml (#45)
+* Added spaces to initial string for card number field
+
+
 ## 1.0.3
 * Fixed issue with using disposed context(#26)
 * Removed hardcoded currency text in the checkout prompt (#30)

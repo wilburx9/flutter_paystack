@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 
 class CardMonthInputFormatter extends TextInputFormatter {
   String previousText;
@@ -42,16 +43,7 @@ class CardNumberInputFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    var buffer = new StringBuffer();
-    for (int i = 0; i < text.length; i++) {
-      buffer.write(text[i]);
-      var nonZeroIndex = i + 1;
-      if (nonZeroIndex % 4 == 0 && nonZeroIndex != text.length) {
-        buffer.write('  '); // Add double spaces.
-      }
-    }
-
-    var string = buffer.toString();
+    var string = Utils.addSpaces(text);
     return newValue.copyWith(
         text: string,
         selection: new TextSelection.collapsed(offset: string.length));
