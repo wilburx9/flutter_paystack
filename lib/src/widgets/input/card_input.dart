@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/common/card_utils.dart';
+import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:flutter_paystack/src/models/card.dart';
 import 'package:flutter_paystack/src/widgets/buttons.dart';
 import 'package:flutter_paystack/src/widgets/input/cvc_field.dart';
@@ -36,8 +37,9 @@ class _CardInputState extends State<CardInput> {
     super.initState();
     numberController = new TextEditingController();
     numberController.addListener(_getCardTypeFrmNumber);
-    numberController.text =
-        _card != null && _card.number != null ? _card.number : null;
+    if (_card?.number != null) {
+      numberController.text = Utils.addSpaces(_card.number);
+    }
   }
 
   @override

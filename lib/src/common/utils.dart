@@ -51,4 +51,17 @@ class Utils {
       throw new InvalidEmailException(charge.email);
     }
   }
+
+  /// Add double spaces after every 4th character
+  static String addSpaces(String text) {
+    var buffer = new StringBuffer();
+    for (int i = 0; i < text.length; i++) {
+      buffer.write(text[i]);
+      var nonZeroIndex = i + 1;
+      if (nonZeroIndex % 4 == 0 && nonZeroIndex != text.length) {
+        buffer.write('  '); // Add double spaces.
+      }
+    }
+    return buffer.toString();
+  }
 }

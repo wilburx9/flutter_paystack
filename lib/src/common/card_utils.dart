@@ -78,6 +78,7 @@ class CardUtils {
     return year;
   }
 
+  /// Removes non numerical characters from the string
   static String getCleanedNumber(String text) {
     if (text == null) {
       return '';
