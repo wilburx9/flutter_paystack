@@ -23,10 +23,10 @@ flutter:
   plugin:
     platforms:
       android:
-        package: io.flutter.plugins.webviewflutter
-        pluginClass: WebViewFlutterPlugin
+        package: co.paystack.flutterpaystack
+        pluginClass:  FlutterPaystackPlugin
       ios:
-        pluginClass: FLTWebViewFlutterPlugin
+        pluginClass:  FlutterPaystackPlugin
 
   assets:
    - assets/images/
