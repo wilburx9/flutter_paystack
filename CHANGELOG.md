@@ -1,6 +1,16 @@
+## 1.0.3
+* Fixed issue with using disposed context(#26)
+* Removed hardcoded currency text in the checkout prompt (#30)
+* Fixed issue where plugin crashes app in headless service (#31)
+* Converted charge metadata to json format (thanks to Itope84)
+* Fixed issue with validating past months
+* Added option to hide email and/or amount in checkout prompt
+* Made the example main.dart more usable
+* Wrote unit tests and widget tests
+
 ## 1.0.2+1
 
-* Corrected typo
+* Corrected typo in "Secured by" text
 
 ## 1.0.2
 
