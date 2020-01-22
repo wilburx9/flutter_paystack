@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_paystack/src/api/service/bank_service.dart';
+import 'package:flutter_paystack/src/api/service/card_service.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/platform_info.dart';
@@ -37,18 +39,11 @@ class PaystackPlugin {
       return true;
     }());
 
-    // do all the init work here
-
     //check if sdk is actually initialized
     if (sdkInitialized) {
       return PaystackPlugin._();
     } else {
       _publicKey = publicKey;
-
-      // If private key is not null, it implies that checkout will be used.
-      // Hence, let's get the list of supported banks. We won't wait for the result. If it
-      // completes successfully, fine. If it fails, we'll retry in BankCheckout
-      Utils.getSupportedBanks();
 
       // Using cascade notation to build the platform specific info
       try {
@@ -198,6 +193,7 @@ class _Paystack {
       }
 
       new CardTransactionManager(
+              service: CardService(),
               charge: charge,
               context: context,
               beforeValidate: beforeValidate,
@@ -244,6 +240,8 @@ class _Paystack {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) => new CheckoutWidget(
+        bankService: BankService(),
+        cardsService: CardService(),
         method: method,
         charge: charge,
         fullscreen: fullscreen,

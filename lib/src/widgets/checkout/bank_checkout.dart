@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/src/api/service/bank_service.dart';
+import 'package:flutter_paystack/src/api/service/contracts/banks_service_contract.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
-import 'package:flutter_paystack/src/common/utils.dart';
+import 'package:flutter_paystack/src/models/bank.dart';
 import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/models/transaction.dart';
@@ -17,11 +19,13 @@ class BankCheckout extends StatefulWidget {
   final Charge charge;
   final OnResponse<CheckoutResponse> onResponse;
   final ValueChanged<bool> onProcessingChange;
+  final BankServiceContract service;
 
   BankCheckout({
     @required this.charge,
     @required this.onResponse,
     @required this.onProcessingChange,
+    @required this.service,
   });
 
   @override
@@ -33,7 +37,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
   AnimationController _controller;
   Animation<double> _animation;
   var _autoValidate = false;
-  Future _futureBanks;
+  Future<List<Bank>> _futureBanks;
   Bank _currentBank;
   BankAccount _account;
   var _loading = false;
@@ -43,7 +47,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
 
   @override
   void initState() {
-    _futureBanks = Utils.getSupportedBanks();
+    _futureBanks = widget.service.fetchSupportedBanks();
     _controller = new AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
     _animation = new Tween(begin: 0.7, end: 1.0).animate(
@@ -66,7 +70,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
   Widget buildAnimatedChild() {
     return Container(
       alignment: Alignment.center,
-      child: new FutureBuilder(
+      child: new FutureBuilder<List<Bank>>(
         future: _futureBanks,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           Widget widget;
@@ -249,6 +253,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
 
     new BankTransactionManager(
             charge: widget.charge,
+            service: widget.service,
             context: context,
             onSuccess: handleOnSuccess,
             onError: handleOnError,
@@ -257,9 +262,9 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
   }
 
   Widget retryButton() {
-    Utils.banksMemo = null;
-    Utils.banksMemo = new AsyncMemoizer();
-    _futureBanks = Utils.getSupportedBanks();
+    banksMemo = null;
+    banksMemo = new AsyncMemoizer();
+    _futureBanks = widget.service.fetchSupportedBanks();
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
       child: new AccentButton(
@@ -273,40 +278,5 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
     setState(() {
       // Rebuild in order to animate views.
     });
-  }
-}
-
-class Bank {
-  String name;
-  int id;
-
-  Bank(this.name, this.id);
-
-  @override
-  String toString() {
-    return 'Bank{name: $name, id: $id}';
-  }
-}
-
-class BankAccount {
-  Bank bank;
-  String number;
-
-  BankAccount(this.bank, this.number);
-
-  bool isValid() {
-    if (number == null || number.length < 10) {
-      return false;
-    }
-
-    if (bank == null || bank.id == null) {
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  String toString() {
-    return 'BankAccount{bank: $bank, number: $number}';
   }
 }

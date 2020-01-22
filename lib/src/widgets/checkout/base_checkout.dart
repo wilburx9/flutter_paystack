@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
+import 'package:flutter_paystack/src/models/bank.dart';
 import 'package:flutter_paystack/src/models/card.dart';
 import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/widgets/animated_widget.dart';
-import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 
 abstract class BaseCheckoutMethodState<T extends StatefulWidget>

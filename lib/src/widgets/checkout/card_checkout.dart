@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/src/api/service/contracts/cards_service_contract.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
@@ -18,6 +19,7 @@ class CardCheckout extends StatefulWidget {
   final ValueChanged<bool> onProcessingChange;
   final ValueChanged<PaymentCard> onCardChange;
   final bool hideAmount;
+  final CardServiceContract service;
 
   CardCheckout({
     Key key,
@@ -25,6 +27,7 @@ class CardCheckout extends StatefulWidget {
     @required this.onResponse,
     @required this.onProcessingChange,
     @required this.onCardChange,
+    @required this.service,
     this.hideAmount = false,
   }) : super(key: key);
 
@@ -120,6 +123,7 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
     new CardTransactionManager(
             charge: charge,
             context: context,
+            service: widget.service,
             beforeValidate: (transaction) => handleBeforeValidate(transaction),
             onSuccess: (transaction) => handleOnSuccess(transaction),
             onError: (error, transaction) => handleOnError(error, transaction))

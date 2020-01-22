@@ -16,6 +16,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   matcher: ^0.12.6
+  mockito: ^4.1.1
+
 
 flutter:
   plugin:

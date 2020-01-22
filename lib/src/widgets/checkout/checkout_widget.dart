@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart' hide ErrorWidget;
+import 'package:flutter_paystack/src/api/service/contracts/banks_service_contract.dart';
+import 'package:flutter_paystack/src/api/service/contracts/cards_service_contract.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:flutter_paystack/src/models/card.dart';
@@ -21,10 +23,14 @@ class CheckoutWidget extends StatefulWidget {
   final Widget logo;
   final bool hideEmail;
   final bool hideAmount;
+  final BankServiceContract bankService;
+  final CardServiceContract cardsService;
 
   CheckoutWidget({
     @required this.method,
     @required this.charge,
+    @required this.bankService,
+    @required this.cardsService,
     this.fullscreen = false,
     this.logo,
     this.hideEmail = false,
@@ -284,6 +290,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           icon: Icons.credit_card,
           child: new CardCheckout(
             key: Key("CardCheckout"),
+            service: widget.cardsService,
             charge: _charge,
             onProcessingChange: _onProcessingChange,
             onResponse: _onPaymentResponse,
@@ -296,13 +303,15 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             },
           )),
       new MethodItem(
-          text: 'Bank',
-          icon: Icons.account_balance,
-          child: new BankCheckout(
-            charge: _charge,
-            onResponse: _onPaymentResponse,
-            onProcessingChange: _onProcessingChange,
-          ))
+        text: 'Bank',
+        icon: Icons.account_balance,
+        child: new BankCheckout(
+          charge: _charge,
+          service: widget.bankService,
+          onResponse: _onPaymentResponse,
+          onProcessingChange: _onProcessingChange,
+        ),
+      )
     ];
   }
 
