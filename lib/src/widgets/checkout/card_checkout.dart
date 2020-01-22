@@ -17,6 +17,7 @@ class CardCheckout extends StatefulWidget {
   final OnResponse<CheckoutResponse> onResponse;
   final ValueChanged<bool> onProcessingChange;
   final ValueChanged<PaymentCard> onCardChange;
+  final bool hideAmount;
 
   CardCheckout({
     Key key,
@@ -24,6 +25,7 @@ class CardCheckout extends StatefulWidget {
     @required this.onResponse,
     @required this.onProcessingChange,
     @required this.onCardChange,
+    this.hideAmount = false,
   }) : super(key: key);
 
   @override
@@ -56,7 +58,7 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
           ),
           new CardInput(
             key: Key("CardInput"),
-            buttonText: 'Pay $amountText',
+            buttonText: widget.hideAmount ? "Continue" : 'Pay $amountText',
             card: _charge.card,
             onValidated: _onCardValidated,
           ),

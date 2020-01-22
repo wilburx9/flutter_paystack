@@ -29,29 +29,6 @@ class Charge {
   /// The locale used for formatting amount in the UI prompt. Defaults to [Strings.nigerianLocale]
   String locale;
 
-  _beforeLocalSet(String fieldName) {
-    assert(() {
-      if (_remoteStarted) {
-        throw new ChargeException(
-            'You cannot set $fieldName after specifying an '
-            'access code');
-      }
-      return true;
-    }());
-    _localStarted = true;
-  }
-
-  _beforeRemoteSet() {
-    assert(() {
-      if (_localStarted) {
-        throw new ChargeException('You can not set access code when providing '
-            'transaction parameters in app');
-      }
-      return true;
-    }());
-    _remoteStarted = true;
-  }
-
   Charge() {
     this._metadata = {};
     this.amount = -1;
@@ -63,7 +40,6 @@ class Charge {
   }
 
   addParameter(String key, String value) {
-    _beforeLocalSet(key);
     this._additionalParameters[key] = value;
   }
 
@@ -72,14 +48,12 @@ class Charge {
   String get accessCode => _accessCode;
 
   set accessCode(String value) {
-    _beforeRemoteSet();
     _accessCode = value;
   }
 
   String get plan => _plan;
 
   set plan(String value) {
-    _beforeLocalSet('plan');
     _plan = value;
   }
 
@@ -89,21 +63,18 @@ class Charge {
   ///
   /// If you're setting this value, also set [locale] for better formatting.
   set currency(String value) {
-    _beforeLocalSet('currency');
     _currency = value;
   }
 
   String get reference => _reference;
 
   set reference(String value) {
-    _beforeLocalSet('reference');
     _reference = value;
   }
 
   int get transactionCharge => _transactionCharge;
 
   set transactionCharge(int value) {
-    _beforeLocalSet('transaction charge');
     _transactionCharge = value;
   }
 
@@ -111,14 +82,12 @@ class Charge {
 
   /// Who bears Paystack charges? [Bearer.Account] or [Bearer.SubAccount]
   set bearer(Bearer value) {
-    _beforeLocalSet('bearer');
     _bearer = value;
   }
 
   String get subAccount => _subAccount;
 
   set subAccount(String value) {
-    _beforeLocalSet('subaccount');
     _subAccount = value;
   }
 
@@ -133,13 +102,11 @@ class Charge {
   }
 
   putMetaData(String name, dynamic value) {
-    _beforeLocalSet('metadata');
     this._metadata[name] = value;
     this._hasMeta = true;
   }
 
   putCustomField(String displayName, String value) {
-    _beforeLocalSet('custom field');
     var customMap = {
       'value': value,
       'display_name': displayName,

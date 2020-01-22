@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-MaterialApp buildWidget(Widget child) {
+MaterialApp buildTestWidget(Widget child) {
   return MaterialApp(
     home: Material(
       child: child,

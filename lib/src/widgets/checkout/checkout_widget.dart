@@ -14,18 +14,21 @@ import 'package:flutter_paystack/src/widgets/sucessful_widget.dart';
 
 const kFullTabHeight = 74.0;
 
-// TODO: Enable hiding of email and amount in the UI
 class CheckoutWidget extends StatefulWidget {
   final CheckoutMethod method;
   final Charge charge;
   final bool fullscreen;
   final Widget logo;
+  final bool hideEmail;
+  final bool hideAmount;
 
   CheckoutWidget({
     @required this.method,
     @required this.charge,
-    @required this.fullscreen,
-    @required this.logo,
+    this.fullscreen = false,
+    this.logo,
+    this.hideEmail = false,
+    this.hideAmount = false,
   });
 
   @override
@@ -151,88 +154,43 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   Widget _buildTitle() {
     final accentColor = Theme.of(context).accentColor;
-    var emailAndAmount = new Column(
+    var emailAndAmount = Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
-        _charge.email != null
-            ? new Text(
-                _charge.email,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Colors.grey, fontSize: 12.0),
-              )
-            : new Container(),
-        _charge.amount == null || _charge.amount.isNegative
-            ? new Container()
-            : new Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const Text(
-                    'Pay',
-                    style:
-                        const TextStyle(fontSize: 14.0, color: Colors.black54),
-                  ),
-                  new SizedBox(
-                    width: 5.0,
-                  ),
-                  new Flexible(
-                      child: new Text(Utils.formatAmount(_charge.amount),
-                          style: TextStyle(
-                              fontSize: 15.0,
-                              color: Theme.of(context).textTheme.body2.color,
-                              fontWeight: FontWeight.w500)))
-                ],
-              )
+        if (!widget.hideEmail && _charge.email != null)
+          Text(
+            _charge.email,
+            key: Key("ChargeEmail"),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.grey, fontSize: 12.0),
+          ),
+        if (!widget.hideAmount &&
+            (_charge.amount != null || !_charge.amount.isNegative))
+          Row(
+            key: Key("DisplayAmount"),
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text(
+                'Pay',
+                style: const TextStyle(fontSize: 14.0, color: Colors.black54),
+              ),
+              SizedBox(
+                width: 5.0,
+              ),
+              Flexible(
+                  child: Text(Utils.formatAmount(_charge.amount),
+                      style: TextStyle(
+                          fontSize: 15.0,
+                          color: Theme.of(context).textTheme.body2.color,
+                          fontWeight: FontWeight.w500)))
+            ],
+          )
       ],
     );
-    var checkoutMethods = _showTabs
-        ? new AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            vsync: this,
-            curve: Curves.fastOutSlowIn,
-            child: new Container(
-              color: Colors.grey.withOpacity(0.1),
-              height: _tabHeight,
-              alignment: Alignment.center,
-              child: new TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                unselectedLabelColor: Colors.black54,
-                labelColor: accentColor,
-                labelStyle:
-                    new TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
-                indicator: new ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                        borderRadius: tabBorderRadius,
-                        side: BorderSide(
-                          color: accentColor,
-                          width: 1.0,
-                        ),
-                      ) +
-                      const RoundedRectangleBorder(
-                        borderRadius: tabBorderRadius,
-                        side: BorderSide(
-                          color: Colors.transparent,
-                          width: 6.0,
-                        ),
-                      ),
-                ),
-                tabs: _methodWidgets.map<Tab>((MethodItem m) {
-                  return new Tab(
-                    text: m.text,
-                    icon: new Icon(
-                      m.icon,
-                      size: 24.0,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          )
-        : new Container();
 
-    return new Column(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         new Container(
@@ -260,8 +218,54 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             ],
           ),
         ),
-        checkoutMethods
+        if (_showTabs) buildCheckoutMethods(accentColor)
       ],
+    );
+  }
+
+  Widget buildCheckoutMethods(Color accentColor) {
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+      curve: Curves.fastOutSlowIn,
+      child: new Container(
+        color: Colors.grey.withOpacity(0.1),
+        height: _tabHeight,
+        alignment: Alignment.center,
+        child: new TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          unselectedLabelColor: Colors.black54,
+          labelColor: accentColor,
+          labelStyle:
+              new TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
+          indicator: new ShapeDecoration(
+            shape: RoundedRectangleBorder(
+                  borderRadius: tabBorderRadius,
+                  side: BorderSide(
+                    color: accentColor,
+                    width: 1.0,
+                  ),
+                ) +
+                const RoundedRectangleBorder(
+                  borderRadius: tabBorderRadius,
+                  side: BorderSide(
+                    color: Colors.transparent,
+                    width: 6.0,
+                  ),
+                ),
+          ),
+          tabs: _methodWidgets.map<Tab>((MethodItem m) {
+            return new Tab(
+              text: m.text,
+              icon: new Icon(
+                m.icon,
+                size: 24.0,
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
@@ -283,6 +287,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             charge: _charge,
             onProcessingChange: _onProcessingChange,
             onResponse: _onPaymentResponse,
+            hideAmount: widget.hideAmount,
             onCardChange: (PaymentCard card) {
               _charge.card.number = card.number;
               _charge.card.cvc = card.cvc;

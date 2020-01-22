@@ -1,18 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
-import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 import 'package:flutter_paystack/src/widgets/input/card_input.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../common/widget_builder.dart';
 
 void main() {
-  group("$CheckoutWidget", () {
+  group("$CardInput", () {
     final buttonText = "Pay NGN 300";
     final paymentCard = PaymentCard.empty();
 
-    final cardInputWidget = buildWidget(CardInput(
+    final cardInputWidget = buildTestWidget(CardInput(
       buttonText: buttonText,
       card: paymentCard,
       onValidated: (v) {},

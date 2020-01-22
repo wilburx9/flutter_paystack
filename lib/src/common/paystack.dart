@@ -107,7 +107,7 @@ class PaystackPlugin {
 
     _performChecks();
 
-    Paystack(publicKey).chargeCard(
+    _Paystack(publicKey).chargeCard(
         context: context,
         charge: charge,
         beforeValidate: beforeValidate,
@@ -136,35 +136,52 @@ class PaystackPlugin {
   ///
   /// [fullscreen] - Whether to display the payment in a full screen dialog or not
   ///
-  /// [logo] - The widget to display at the top left of the payment prompt. Defaults to an Image widget with Paystack's logo.
+  /// [logo] - The widget to display at the top left of the payment prompt.
+  /// Defaults to an Image widget with Paystack's logo.
+  ///
+  /// [hideEmail] - Whether to hide the email from the user. When
+  /// `false` and an email is passed to the [charge] object, the email
+  /// will be displayed at the top right edge of the UI prompt. Defaults to
+  /// `false`
+  ///
+  /// [hideAmount]  - Whether to hide the user from the  payment prompt.
+  /// When `false` the payment amount and currency is displayed at the
+  /// top of payment prompt, just under the email. Also the payment
+  /// call-to-action will display the amount, otherwise it will display
+  /// "Continue". Defaults to `false`
   static Future<CheckoutResponse> checkout(
     BuildContext context, {
     @required Charge charge,
     CheckoutMethod method = CheckoutMethod.selectable,
     bool fullscreen = false,
     Widget logo,
+    bool hideEmail = false,
+    bool hideAmount = false,
   }) async {
     assert(context != null, 'context must not be null');
     assert(
         method != null,
         'method must not be null. You can pass CheckoutMethod.selectable if you want '
-        'the user '
-        'to select the checkout option');
+        'the user to select the checkout option');
     assert(fullscreen != null, 'fillscreen must not be null');
-    return Paystack(publicKey).checkout(
+    assert(hideAmount != null, 'hideAmount must not be null');
+    assert(hideEmail != null, 'hideEmail must not be null');
+    return _Paystack(publicKey).checkout(
       context,
       charge: charge,
       method: method,
       fullscreen: fullscreen,
       logo: logo,
+      hideAmount: hideAmount,
+      hideEmail: hideEmail,
     );
   }
 }
 
-class Paystack {
+class _Paystack {
   String _publicKey;
 
-  Paystack(this._publicKey);
+  _Paystack(this._publicKey);
 
   chargeCard(
       {@required BuildContext context,
@@ -202,6 +219,8 @@ class Paystack {
     @required CheckoutMethod method,
     @required bool fullscreen,
     Widget logo,
+    bool hideEmail,
+    bool hideAmount,
   }) async {
     assert(() {
       Utils.validateChargeAndKey(charge);
@@ -222,14 +241,17 @@ class Paystack {
     }());
 
     CheckoutResponse response = await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) => new CheckoutWidget(
-              method: method,
-              charge: charge,
-              fullscreen: fullscreen,
-              logo: logo,
-            ));
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => new CheckoutWidget(
+        method: method,
+        charge: charge,
+        fullscreen: fullscreen,
+        logo: logo,
+        hideAmount: hideAmount,
+        hideEmail: hideEmail,
+      ),
+    );
     return response == null ? CheckoutResponse.defaults() : response;
   }
 }
