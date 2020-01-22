@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/src/api/service/contracts/cards_service_contract.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
@@ -17,13 +18,18 @@ class CardCheckout extends StatefulWidget {
   final OnResponse<CheckoutResponse> onResponse;
   final ValueChanged<bool> onProcessingChange;
   final ValueChanged<PaymentCard> onCardChange;
+  final bool hideAmount;
+  final CardServiceContract service;
 
   CardCheckout({
+    Key key,
     @required this.charge,
     @required this.onResponse,
     @required this.onProcessingChange,
     @required this.onCardChange,
-  });
+    @required this.service,
+    this.hideAmount = false,
+  }) : super(key: key);
 
   @override
   _CardCheckoutState createState() => _CardCheckoutState(charge, onResponse);
@@ -46,14 +52,16 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
       child: new Column(
         children: <Widget>[
           new Text(
-            'Enter your card details to pay',
+            Strings.cardInputInstruction,
+            key: Key("InstructionKey"),
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
           new SizedBox(
             height: 20.0,
           ),
           new CardInput(
-            text: 'Pay $amountText',
+            key: Key("CardInput"),
+            buttonText: widget.hideAmount ? "Continue" : 'Pay $amountText',
             card: _charge.card,
             onValidated: _onCardValidated,
           ),
@@ -115,6 +123,7 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
     new CardTransactionManager(
             charge: charge,
             context: context,
+            service: widget.service,
             beforeValidate: (transaction) => handleBeforeValidate(transaction),
             onSuccess: (transaction) => handleOnSuccess(transaction),
             onError: (error, transaction) => handleOnError(error, transaction))

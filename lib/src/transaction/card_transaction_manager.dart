@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 import 'package:flutter_paystack/src/api/request/card_request_body.dart';
 import 'package:flutter_paystack/src/api/request/validate_request_body.dart';
-import 'package:flutter_paystack/src/api/service/card_service.dart';
+import 'package:flutter_paystack/src/api/service/contracts/cards_service_contract.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
@@ -15,11 +15,12 @@ import 'package:flutter_paystack/src/transaction/base_transaction_manager.dart';
 class CardTransactionManager extends BaseTransactionManager {
   ValidateRequestBody validateRequestBody;
   CardRequestBody chargeRequestBody;
-  CardService service;
+  final CardServiceContract service;
   var _invalidDataSentRetries = 0;
 
   CardTransactionManager({
     @required Charge charge,
+    @required this.service,
     @required BuildContext context,
     @required OnTransactionChange<Transaction> onSuccess,
     @required OnTransactionError<Object, Transaction> onError,
@@ -33,7 +34,6 @@ class CardTransactionManager extends BaseTransactionManager {
 
   @override
   postInitiate() async {
-    service = new CardService();
     chargeRequestBody = await CardRequestBody.getChargeRequestBody(charge);
     validateRequestBody = ValidateRequestBody();
   }

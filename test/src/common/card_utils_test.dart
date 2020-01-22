@@ -131,6 +131,7 @@ void main() {
         Case(inp: [2020, 05], out: true),
         Case(inp: [24, null], out: false),
         Case(inp: [null, null], out: false),
+        Case(inp: [45, 67], out: false),
       ];
       cases.forEach((c) {
         test("${c.inp} returns ${c.out}", () {

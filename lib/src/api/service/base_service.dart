@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_paystack/src/common/platform_info.dart';
 
-class BaseApiService {
+mixin BaseApiService {
   final Map<String, String> headers = {
     HttpHeaders.contentTypeHeader: 'application/x-www-form-urlencoded',
     HttpHeaders.userAgentHeader: PlatformInfo().userAgent,
@@ -11,9 +11,7 @@ class BaseApiService {
     'X-Paystack-Build': PlatformInfo().paystackBuild,
     'X-PAYSTACK-USER-AGENT':
         jsonEncode({'lang': Platform.isIOS ? 'objective-c' : 'kotlin'}),
-    'bindings_version': Platform.isIOS
-        ? '3.0.5' // Latest version of Paystack official iOS SDK
-        : '3.0.10', // Latest version of Paystack official Android SDK
+    'bindings_version': "1.0.2+1", // TODO: Update for every new versions
     'X-FLUTTER-USER-AGENT': jsonEncode({'version': '1.0.0'})
   };
   final String baseUrl = 'https://standard.paystack.co';

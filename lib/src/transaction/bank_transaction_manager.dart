@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 import 'package:flutter_paystack/src/api/request/bank_charge_request_body.dart';
-import 'package:flutter_paystack/src/api/service/bank_service.dart';
+import 'package:flutter_paystack/src/api/service/contracts/banks_service_contract.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
@@ -13,9 +13,10 @@ import 'package:flutter_paystack/src/transaction/base_transaction_manager.dart';
 
 class BankTransactionManager extends BaseTransactionManager {
   BankChargeRequestBody chargeRequestBody;
-  BankService service;
+  final BankServiceContract service;
 
   BankTransactionManager({
+    @required this.service,
     @required Charge charge,
     @required BuildContext context,
     @required OnTransactionChange<Transaction> onSuccess,
@@ -37,7 +38,6 @@ class BankTransactionManager extends BaseTransactionManager {
   @override
   postInitiate() {
     chargeRequestBody = new BankChargeRequestBody(charge);
-    service = new BankService();
   }
 
   @override

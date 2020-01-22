@@ -247,6 +247,11 @@ class _HomePageState extends State<HomePage> {
       _showMessage('Select checkout method first');
       return;
     }
+
+    if (_method != CheckoutMethod.card && _isLocal) {
+      _showMessage('Select server initialization method at the top');
+      return;
+    }
     setState(() => _inProgress = true);
     _formKey.currentState.save();
     Charge charge = Charge()
@@ -254,23 +259,29 @@ class _HomePageState extends State<HomePage> {
       ..email = 'customer@email.com'
       ..card = _getCardFromUI();
 
-    if (!_isLocal()) {
+    if (!_isLocal) {
       var accessCode = await _fetchAccessCodeFrmServer(_getReference());
       charge.accessCode = accessCode;
     } else {
       charge.reference = _getReference();
     }
 
-    CheckoutResponse response = await PaystackPlugin.checkout(
-      context,
-      method: _method,
-      charge: charge,
-      fullscreen: false,
-      logo: MyLogo(),
-    );
-    print('Response = $response');
-    setState(() => _inProgress = false);
-    _updateStatus(response.reference, '$response');
+    try {
+      CheckoutResponse response = await PaystackPlugin.checkout(
+        context,
+        method: _method,
+        charge: charge,
+        fullscreen: false,
+        logo: MyLogo(),
+      );
+      print('Response = $response');
+      setState(() => _inProgress = false);
+      _updateStatus(response.reference, '$response');
+    } catch (e) {
+      setState(() => _inProgress = false);
+      _showMessage("Check console for error");
+      rethrow;
+    }
   }
 
   _startAfreshCharge() async {
@@ -281,7 +292,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() => _inProgress = true);
 
-    if (_isLocal()) {
+    if (_isLocal) {
       // Set transaction params directly in app (note that these params
       // are only used if an access_code is not set. In debug mode,
       // setting them after setting an access code would throw an exception
@@ -411,6 +422,7 @@ class _HomePageState extends State<HomePage> {
     String url = '$backendUrl/new-access-code';
     String accessCode;
     try {
+      print("Access code url = $url");
       http.Response response = await http.get(url);
       accessCode = response.body;
       print('Response for access code = $accessCode');
@@ -457,9 +469,7 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  bool _isLocal() {
-    return _radioValue == 0;
-  }
+  bool get _isLocal => _radioValue == 0;
 }
 
 var banks = ['Selectable', 'Bank', 'Card'];

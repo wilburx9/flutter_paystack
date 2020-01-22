@@ -4,11 +4,13 @@ import 'dart:io';
 
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 import 'package:flutter_paystack/src/api/service/base_service.dart';
+import 'package:flutter_paystack/src/api/service/contracts/cards_service_contract.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:http/http.dart' as http;
 
-class CardService extends BaseApiService {
+class CardService with BaseApiService implements CardServiceContract {
+  @override
   Future<TransactionApiResponse> chargeCard(Map<String, String> fields) async {
     var url = '$baseUrl/charge/mobile_charge';
 
@@ -32,6 +34,7 @@ class CardService extends BaseApiService {
     }
   }
 
+  @override
   Future<TransactionApiResponse> validateCharge(
       Map<String, String> fields) async {
     var url = '$baseUrl/charge/validate';
