@@ -1,54 +1,52 @@
 package co.paystack.flutterpaystack
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.os.Build
-import android.provider.Settings
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
+import android.app.Activity
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.PluginRegistry
 
-class FlutterPaystackPlugin(val appContext: Context, val authDelegate: AuthDelegate) : MethodCallHandler {
-  companion object {
-    @JvmStatic
-    fun registerWith(registrar: Registrar) {
-      val activity = registrar.activity() ?: return
-      val channel = MethodChannel(registrar.messenger(), "flutter_paystack")
-      val authDelegate = AuthDelegate(activity = activity)
-      val plugin = FlutterPaystackPlugin(appContext = registrar.context(), authDelegate = authDelegate)
-      channel.setMethodCallHandler(plugin)
-    }
-  }
 
-  @SuppressLint("HardwareIds")
-  override fun onMethodCall(call: MethodCall, result: Result) {
+class FlutterPaystackPlugin : FlutterPlugin, ActivityAware {
 
-    when (call.method) {
-      "getDeviceId" -> {
-        result.success("androidsdk_" + Settings.Secure.getString(appContext.contentResolver,
-          Settings.Secure.ANDROID_ID))
-      }
-      "getUserAgent" -> {
-        result.success("Android_" + Build.VERSION.SDK_INT + "_Paystack_" + BuildConfig.VERSION_NAME)
-      }
+    private var pluginBinding: FlutterPlugin.FlutterPluginBinding? = null
+    private var methodCallHandler: MethodCallHandlerImpl? = null
 
-      "getVersionCode" -> {
-        result.success(BuildConfig.VERSION_CODE.toString())
-      }
-
-      "getAuthorization" -> {
-        authDelegate.handleAuthorization(result, call)
-      }
-      "getEncryptedData" -> {
-        val encryptedData = Crypto.encrypt(call.argument<String>("stringData").toString())
-        result.success(encryptedData)
-      }
-
-      else -> result.notImplemented()
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        pluginBinding = binding
     }
 
-  }
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        pluginBinding = null
+    }
+
+    private fun setupMethodHandler(messenger: BinaryMessenger?, activity: Activity) {
+        methodCallHandler = MethodCallHandlerImpl(messenger, activity)
+    }
+
+
+    override fun onDetachedFromActivity() {
+        methodCallHandler?.disposeHandler()
+        methodCallHandler = null
+    }
+
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        setupMethodHandler(pluginBinding?.binaryMessenger, binding.activity)
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() = onDetachedFromActivity()
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) = onAttachedToActivity(binding)
+
+    companion object {
+
+        @JvmStatic
+        fun registerWith(registrar: PluginRegistry.Registrar) {
+            val plugin = FlutterPaystackPlugin()
+            plugin.setupMethodHandler(registrar.messenger(), registrar.activity())
+        }
+    }
 
 }

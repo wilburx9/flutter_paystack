@@ -6,7 +6,7 @@ import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
-  static const MethodChannel channel = const MethodChannel('flutter_paystack');
+  static const MethodChannel channel = const MethodChannel('plugins.wilburt/flutter_paystack');
 
   static validateSdkInitialized() {
     if (!PaystackPlugin.sdkInitialized) {
