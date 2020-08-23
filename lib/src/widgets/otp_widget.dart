@@ -20,11 +20,6 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
   String _otp;
   var heightBox = const SizedBox(height: 20.0);
 
-  @override
-  void initState() {
-    confirmationMessage = 'Do you want cancel OTP?';
-    super.initState();
-  }
 
   @override
   Widget buildChild(BuildContext context) {
