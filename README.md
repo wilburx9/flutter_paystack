@@ -97,56 +97,20 @@ You can then create a `Charge` object with the access code and card details. The
       expiryMonth: expiryMonth,
       expiryYear: expiryYear,
     );
-
-    // Using Cascade notation (similar to Java's builder pattern)
-//    return PaymentCard(
-//        number: cardNumber,
-//        cvc: cvv,
-//        expiryMonth: expiryMonth,
-//        expiryYear: expiryYear)
-//      ..name = 'Segun Chukwuma Adamu'
-//      ..country = 'Nigeria'
-//      ..addressLine1 = 'Ikeja, Lagos'
-//      ..addressPostalCode = '100001';
-
-    // Using optional parameters
-//    return PaymentCard(
-//        number: cardNumber,
-//        cvc: cvv,
-//        expiryMonth: expiryMonth,
-//        expiryYear: expiryYear,
-//        name: 'Ismail Adebola Emeka',
-//        addressCountry: 'Nigeria',
-//        addressLine1: '90, Nnebisi Road, Asaba, Deleta State');
   }
 
-  _chargeCard(String accessCode) {
+  _chargeCard(String accessCode) async {
     var charge = Charge()
       ..accessCode = accessCode
       ..card = _getCardFromUI();
 
-    PaystackPlugin.chargeCard(context,
-        charge: charge,
-        beforeValidate: (transaction) => handleBeforeValidate(transaction),
-        onSuccess: (transaction) => handleOnSuccess(transaction),
-        onError: (error, transaction) => handleOnError(error, transaction));
-  }
-
-  handleBeforeValidate(Transaction transaction) {
-    // This is called only before requesting OTP
-    // Save reference so you may send to server if error occurs with OTP
-  }
-
-  handleOnError(Object e, Transaction transaction) {
-    // If an access code has expired, simply ask your server for a new one
-    // and restart the charge instead of displaying error
-  }
-
-
-  handleOnSuccess(Transaction transaction) {
-    // This is called only after transaction is successful
+    final response = await PaystackPlugin.chargeCard(context, charge: charge);
+    // Use the response
   }
 ```
+The transaction is successful if `response.status` is true. Please, see the documentation 
+of [CheckoutResponse](https://pub.dev/documentation/flutter_paystack/latest/flutter_paystack/CheckoutResponse-class.html)
+for more information. 
 
 
 

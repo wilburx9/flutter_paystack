@@ -1,3 +1,11 @@
+## 1.0.4
+* Implemented support for V2 Android embedding
+* Removed instances of deprecated Flutter APIs
+* Updated dependencies
+* Fixed issues #47 and #48
+* Deprecated callbacks in the `chargeCard` function.
+
+
 ## 1.0.3+1
 * Fixed issue with wrong plugin class in pubspec.yaml (#45)
 * Added spaces to initial string for card number field
