@@ -5,7 +5,7 @@ import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('flutter_paystack');
+  const MethodChannel channel = MethodChannel('plugins.wilburt/flutter_paystack');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
