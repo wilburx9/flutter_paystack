@@ -93,13 +93,6 @@ class PaystackPlugin {
   /// [context] - the widgets BuildContext
   ///
   /// [charge] - the charge object.
-  ///
-  /// [beforeValidate] - Called before validation
-  ///
-  /// [onSuccess] - Called when the payment is completes successfully
-  ///
-  /// [onError] - Called when the payment completes with an unrecoverable error
-  ///
 
   static Future<CheckoutResponse> chargeCard(
       BuildContext context,
