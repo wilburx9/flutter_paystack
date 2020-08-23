@@ -80,6 +80,12 @@ class PaystackPlugin {
   static void _performChecks() {
     //validate that sdk has been initialized
     Utils.validateSdkInitialized();
+    //check for null value, and length and starts with pk_
+    if (_publicKey == null ||
+        _publicKey.isEmpty ||
+        !_publicKey.startsWith("pk_")) {
+      throw new AuthenticationException(Utils.getKeyErrorMsg('public'));
+    }
   }
 
   /// Make payment by charging the user's card
@@ -87,22 +93,21 @@ class PaystackPlugin {
   /// [context] - the widgets BuildContext
   ///
   /// [charge] - the charge object.
-  ///
-  /// [beforeValidate] - Called before validation
-  ///
-  /// [onSuccess] - Called when the payment is completes successfully
-  ///
-  /// [onError] - Called when the payment completes with an unrecoverable error
-  static chargeCard(BuildContext context,
-      {@required Charge charge,
-      @required OnTransactionChange<Transaction> beforeValidate,
-      @required OnTransactionChange<Transaction> onSuccess,
-      @required OnTransactionError<Object, Transaction> onError}) {
-    assert(context != null, 'context must not be null');
 
+  static Future<CheckoutResponse> chargeCard(
+      BuildContext context,
+      {@required
+          Charge charge,
+      @Deprecated("Use the CheckoutResponse from this function instead. Will be removed in 1.1.0")
+          OnTransactionChange<Transaction> beforeValidate,
+      @Deprecated("Use the CheckoutResponse from this function instead. Will be removed in 1.1.0")
+          OnTransactionChange<Transaction> onSuccess,
+      @Deprecated("Use the CheckoutResponse from this function instead. Will be removed in 1.1.0")
+          OnTransactionError<Object, Transaction> onError}) {
+    assert(context != null, 'context must not be null');
     _performChecks();
 
-    _Paystack(publicKey).chargeCard(
+    return _Paystack().chargeCard(
         context: context,
         charge: charge,
         beforeValidate: beforeValidate,
@@ -158,10 +163,10 @@ class PaystackPlugin {
         method != null,
         'method must not be null. You can pass CheckoutMethod.selectable if you want '
         'the user to select the checkout option');
-    assert(fullscreen != null, 'fillscreen must not be null');
+    assert(fullscreen != null, 'fullscreen must not be null');
     assert(hideAmount != null, 'hideAmount must not be null');
     assert(hideEmail != null, 'hideEmail must not be null');
-    return _Paystack(publicKey).checkout(
+    return _Paystack().checkout(
       context,
       charge: charge,
       method: method,
@@ -173,40 +178,66 @@ class PaystackPlugin {
   }
 }
 
+// TODO: Remove beforeValidate, onSuccess, and onError in v1.1.0
 class _Paystack {
-  String _publicKey;
-
-  _Paystack(this._publicKey);
-
-  chargeCard(
+  Future<CheckoutResponse> chargeCard(
       {@required BuildContext context,
       @required Charge charge,
-      @required OnTransactionChange<Transaction> beforeValidate,
-      @required OnTransactionChange<Transaction> onSuccess,
-      @required OnTransactionError<Object, Transaction> onError}) {
+      OnTransactionChange<Transaction> beforeValidate,
+      OnTransactionChange<Transaction> onSuccess,
+      OnTransactionError<Object, Transaction> onError}) {
+    final completer = Completer<CheckoutResponse>();
     try {
-      //check for null value, and length and starts with pk_
-      if (_publicKey == null ||
-          _publicKey.isEmpty ||
-          !_publicKey.startsWith("pk_")) {
-        throw new AuthenticationException(Utils.getKeyErrorMsg('public'));
-      }
+      final manager = new CardTransactionManager(
+          service: CardService(),
+          charge: charge,
+          context: context,
+          beforeValidate: (t) {
+            if (beforeValidate != null) beforeValidate(t);
+          },
+          onSuccess: (t) {
+            completer.complete(CheckoutResponse(
+                message: t.message,
+                reference: t.reference,
+                status: true,
+                card: charge.card..nullifyNumber(),
+                method: CheckoutMethod.card,
+                verify: true));
 
-      new CardTransactionManager(
-              service: CardService(),
-              charge: charge,
-              context: context,
-              beforeValidate: beforeValidate,
-              onSuccess: onSuccess,
-              onError: onError)
-          .chargeCard();
+            if (onSuccess != null) onSuccess(t);
+            t?.message;
+          },
+          onError: (o, t) {
+            completer.complete(CheckoutResponse(
+                message: o.toString(),
+                reference: t.reference,
+                status: false,
+                card: charge.card..nullifyNumber(),
+                method: CheckoutMethod.card,
+                verify: !(o is PaystackException)));
+
+            if (onError != null) onError(o, t);
+          });
+
+      manager.chargeCard();
     } catch (e) {
-      if (e is AuthenticationException) {
-        rethrow;
+      final message = e is PaystackException ? e.message : Strings.sthWentWrong;
+      completer.complete(CheckoutResponse(
+          message: message,
+          reference: charge.reference,
+          status: false,
+          card: charge.card..nullifyNumber(),
+          method: CheckoutMethod.card,
+          verify: !(e is PaystackException)));
+
+      if (onError != null) {
+        if (e is AuthenticationException) {
+          rethrow;
+        }
+        onError(e, null);
       }
-      assert(onError != null);
-      onError(e, null);
     }
+    return completer.future;
   }
 
   Future<CheckoutResponse> checkout(

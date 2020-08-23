@@ -37,7 +37,7 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
 
     var dialog = Platform.isIOS
         ? new CupertinoAlertDialog(
-            title: text,
+            content: text,
             actions: <Widget>[
               new CupertinoDialogAction(
                 child: const Text('Yes'),

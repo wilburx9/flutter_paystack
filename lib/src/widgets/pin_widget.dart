@@ -15,7 +15,7 @@ class _PinWidgetState extends BaseState<PinWidget> {
 
   @override
   void initState() {
-    confirmationMessage = 'Do you want cancel PIN?';
+    confirmationMessage = 'Do you want to cancel PIN input?';
     super.initState();
   }
 

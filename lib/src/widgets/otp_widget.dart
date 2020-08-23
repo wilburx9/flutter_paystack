@@ -20,11 +20,6 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
   String _otp;
   var heightBox = const SizedBox(height: 20.0);
 
-  @override
-  void initState() {
-    confirmationMessage = 'Do you want cancel OTP?';
-    super.initState();
-  }
 
   @override
   Widget buildChild(BuildContext context) {
@@ -52,9 +47,12 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
                   ),
                 ),
                 heightBox,
-                new OtpField(
-                  onSaved: (String value) => _otp = value,
-                  borderColor: Theme.of(context).accentColor,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: new OtpField(
+                    onSaved: (String value) => _otp = value,
+                    borderColor: Theme.of(context).accentColor,
+                  ),
                 ),
                 heightBox,
                 new AccentButton(

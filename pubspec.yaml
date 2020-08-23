@@ -1,21 +1,21 @@
 name: flutter_paystack
 description: A Flutter plugin for making payments via Paystack Payment Gateway. Completely supports Android and iOS.
-version: 1.0.3+1
+version: 1.0.4
 author: Wilberforce Uwadiegwu <faradaywilly@gmail.com>
 homepage: https://github.com/wilburt/flutter_paystack
 
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.12.0+2
-  intl: ^0.16.0
-  meta: ^1.1.7
-  async: ^2.3.0
+  http: ^0.12.2
+  intl: ^0.16.1
+  meta: ^1.1.8
+  async: ^2.4.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  matcher: ^0.12.6
+  matcher: ^0.12.8
   mockito: ^4.1.1
 
 
@@ -35,4 +35,4 @@ flutter:
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
-  flutter: ">=1.10.0 <2.0.0"
+  flutter: ">=1.20.2 <2.0.0"
