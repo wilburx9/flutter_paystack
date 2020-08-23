@@ -9,8 +9,7 @@ class OtpField extends TextFormField {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black87,
-            fontSize: 25.0,
-            letterSpacing: 15.0,
+            fontSize: 25.0
           ),
           autofocus: true,
           inputFormatters: [
@@ -23,8 +22,9 @@ class OtpField extends TextFormField {
           decoration: new InputDecoration(
             border: OutlineInputBorder(),
             isDense: true,
-            hintText: 'OTP',
-            hintStyle: const TextStyle(color: Colors.grey, fontSize: 14.0),
+            hintText: 'ENTER',
+            hintStyle: const TextStyle(
+                color: Colors.grey, fontSize: 14.0),
             contentPadding: const EdgeInsets.all(10.0),
             enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(color: Colors.grey, width: 0.5)),

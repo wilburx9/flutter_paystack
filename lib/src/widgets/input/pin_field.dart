@@ -15,7 +15,7 @@ class _PinFieldState extends State<PinField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150.0,
+      margin: EdgeInsets.symmetric(horizontal: 10),
       child: new TextField(
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
@@ -34,8 +34,12 @@ class _PinFieldState extends State<PinField> {
         decoration: new InputDecoration(
           border: OutlineInputBorder(),
           isDense: true,
-          hintText: 'PIN',
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: 14.0),
+          hintText: 'ENTER PIN',
+          hintStyle: const TextStyle(
+            color: Colors.grey,
+            fontSize: 14.0,
+            letterSpacing: 0,
+          ),
           contentPadding: const EdgeInsets.all(10.0),
           enabledBorder: const OutlineInputBorder(
               borderSide: const BorderSide(color: Colors.grey, width: 0.5)),

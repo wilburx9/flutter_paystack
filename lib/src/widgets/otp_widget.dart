@@ -52,9 +52,12 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
                   ),
                 ),
                 heightBox,
-                new OtpField(
-                  onSaved: (String value) => _otp = value,
-                  borderColor: Theme.of(context).accentColor,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: new OtpField(
+                    onSaved: (String value) => _otp = value,
+                    borderColor: Theme.of(context).accentColor,
+                  ),
                 ),
                 heightBox,
                 new AccentButton(
