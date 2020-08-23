@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                     primaryColorLight: Colors.white,
                     primaryColorDark: navyBlue,
                     textTheme: Theme.of(context).textTheme.copyWith(
-                      bodyText2: TextStyle(
+                          bodyText2: TextStyle(
                             color: lightBlue,
                           ),
                         ),
@@ -311,40 +311,24 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  _chargeCard(Charge charge) {
-    // This is called only before requesting OTP
-    // Save reference so you may send to server if error occurs with OTP
-    handleBeforeValidate(Transaction transaction) {
-      _updateStatus(transaction.reference, 'validating...');
+  _chargeCard(Charge charge) async {
+    final response = await PaystackPlugin.chargeCard(context, charge: charge);
+
+    final reference = response.reference;
+
+    // Checking if the transaction is successful
+    if (response.status) {
+      _verifyOnServer(reference);
+      return;
     }
 
-    handleOnError(Object e, Transaction transaction) {
-      // If an access code has expired, simply ask your server for a new one
-      // and restart the charge instead of displaying error
-      if (e is ExpiredAccessCodeException) {
-        _startAfreshCharge();
-        _chargeCard(charge);
-        return;
-      }
-
-      if (transaction.reference != null) {
-        _verifyOnServer(transaction.reference);
-      } else {
-        setState(() => _inProgress = false);
-        _updateStatus(transaction.reference, e.toString());
-      }
+    // The transaction failed. Checking if we should verify the transaction
+    if (response.verify) {
+      _verifyOnServer(reference);
+    } else {
+      setState(() => _inProgress = false);
+      _updateStatus(reference, response.message);
     }
-
-    // This is called only after transaction is successful
-    handleOnSuccess(Transaction transaction) {
-      _verifyOnServer(transaction.reference);
-    }
-
-    PaystackPlugin.chargeCard(context,
-        charge: charge,
-        beforeValidate: (transaction) => handleBeforeValidate(transaction),
-        onSuccess: (transaction) => handleOnSuccess(transaction),
-        onError: (error, transaction) => handleOnError(error, transaction));
   }
 
   String _getReference() {

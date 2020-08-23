@@ -27,8 +27,10 @@ class CheckoutResponse {
   /// The means of payment. It may return [CheckoutMethod.bank] or [CheckoutMethod.card]
   CheckoutMethod method;
 
-  /// If the transaction should be verified. See https://developers.paystack.co/v2.0/reference#verify-transaction
-  /// This might return true regardless whether a transaction fails or not.
+  /// If the transaction should be verified. See https://developers.paystack.co/v2.0/reference#verify-transaction.
+  /// This is usually false for transactions that didn't reach Paystack before terminating
+  ///
+  /// It might return true regardless whether a transaction fails or not.
   bool verify;
 
   CheckoutResponse.defaults() {
