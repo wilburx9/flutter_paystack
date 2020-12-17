@@ -36,6 +36,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         versionCode 21
         versionName "3.0.10"
+        buildConfigField 'int', 'VERSION_CODE', "21"
+        buildConfigField 'String', 'VERSION_NAME', "\"3.0.10\""
     }
     lintOptions {
         disable 'InvalidPackage'
