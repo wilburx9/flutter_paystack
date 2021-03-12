@@ -50,14 +50,16 @@ class CustomAlertDialog extends StatelessWidget {
       ),
     ));
 
-    return buildContent(children);
+    return buildContent(context, children);
   }
 
-  Widget buildContent(List<Widget> children) {
+  Widget buildContent(context, List<Widget> children) {
     Widget widget;
     if (fullscreen) {
       widget = new Material(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.light
+            ? Colors.white
+            : Colors.grey,
         child: new Container(
             child: onCancelPress == null
                 ? new Padding(

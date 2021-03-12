@@ -1,3 +1,6 @@
+## 1.0.4+1
+* Downgraded minimum Flutter version to 1.20.1
+
 ## 1.0.4
 * Implemented support for V2 Android embedding
 * Removed instances of deprecated Flutter APIs
