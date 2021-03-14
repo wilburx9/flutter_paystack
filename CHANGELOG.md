@@ -1,3 +1,11 @@
+## 1.0.5 (Breaking change)
+* Supported sound null-safety
+* Resolved build failure due to unresolved VERSION_NAME and VERSION_CODE
+* Fixed issue with dark mode (courtesy of nuelsoft)
+* Switched static initialization for instance initialization of the plugin
+* Upgraded all native and cross-platform dependencies
+
+
 ## 1.0.4+1
 * Downgraded minimum Flutter version to 1.20.1
 
