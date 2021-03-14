@@ -24,11 +24,11 @@ import 'package:flutter_paystack/flutter_paystack.dart';
 
 class _PaymentPageState extends State<PaymentPage> {
   var publicKey = '[YOUR_PAYSTACK_PUBLIC_KEY]';
+  final plugin = PaystackPlugin();
 
   @override
   void initState() {
-    PaystackPlugin.initialize(
-            publicKey: publicKey);
+    plugin.initialize(publicKey: publicKey);
   }
 }
 ```
@@ -57,7 +57,7 @@ There are two ways of making payment with the plugin.
        ..reference = _getReference()
         // or ..accessCode = _getAccessCodeFrmInitialization()
        ..email = 'customer@email.com';
-     CheckoutResponse response = await PaystackPlugin.checkout(
+     CheckoutResponse response = await plugin.checkout(
        context context,
        method: CheckoutMethod.card, // Defaults to CheckoutMethod.selectable
        charge: charge,
@@ -67,11 +67,11 @@ There are two ways of making payment with the plugin.
 Please, note that an `accessCode` is required if the method is
 `CheckoutMethod.bank` or `CheckoutMethod.selectable`.
 
- `PaystackPlugin.checkout()` returns the state and details of the
+ `plugin.checkout()` returns the state and details of the
  payment in an instance of `CheckoutResponse` .
  
  
- It is recommended that when `PaystackPlugin.checkout()` returns, the
+ It is recommended that when `plugin.checkout()` returns, the
  payment should be
  [verified](https://developers.paystack.co/v2.0/reference#verify-transaction)
  on your backend.
@@ -86,7 +86,7 @@ You can choose to initialize the payment locally or via your backend.
 on your backend.
 
 1.b If everything goes well, the initialization request returns a response with an `access_code`.
-You can then create a `Charge` object with the access code and card details. The `charge` is in turn passed to the ` PaystackPlugin.chargeCard()` function for payment:
+You can then create a `Charge` object with the access code and card details. The `charge` is in turn passed to the `plugin.chargeCard()` function for payment:
 
 ```dart
   PaymentCard _getCardFromUI() {
@@ -104,7 +104,7 @@ You can then create a `Charge` object with the access code and card details. The
       ..accessCode = accessCode
       ..card = _getCardFromUI();
 
-    final response = await PaystackPlugin.chargeCard(context, charge: charge);
+    final response = await plugin.chargeCard(context, charge: charge);
     // Use the response
   }
 ```
@@ -115,7 +115,7 @@ for more information.
 
 
 #### 2. Initialize Locally
-Just send the payment details to  `PaystackPlugin.chargeCard`
+Just send the payment details to  `plugin.chargeCard`
 ```dart
       // Set transaction params directly in app (note that these params
       // are only used if an access_code is not set. In debug mode,
