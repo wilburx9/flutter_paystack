@@ -23,31 +23,31 @@ class CardRequestBody extends BaseRequestBody {
   static const String fieldPlan = "plan";
 
   String _clientData;
-  String _last4;
-  String _publicKey;
-  String _accessCode;
-  String _email;
+  String? _last4;
+  String? _publicKey;
+  String? _accessCode;
+  String? _email;
   String _amount;
-  String _reference;
-  String _subAccount;
-  String _transactionCharge;
-  String _bearer;
-  String _handle;
-  String _metadata;
-  String _currency;
-  String _plan;
-  Map<String, String> _additionalParameters;
+  String? _reference;
+  String? _subAccount;
+  String? _transactionCharge;
+  String? _bearer;
+  String? _handle;
+  String? _metadata;
+  String? _currency;
+  String? _plan;
+  Map<String, String?>? _additionalParameters;
 
   CardRequestBody._(Charge charge, String clientData)
       : this._clientData = clientData,
-        this._last4 = charge.card.last4Digits,
+        this._last4 = charge.card!.last4Digits,
         this._publicKey = PaystackPlugin.publicKey,
         this._email = charge.email,
         this._amount = charge.amount.toString(),
         this._reference = charge.reference,
         this._subAccount = charge.subAccount,
         this._transactionCharge =
-            charge.transactionCharge != null && charge.transactionCharge > 0
+            charge.transactionCharge != null && charge.transactionCharge! > 0
                 ? charge.transactionCharge.toString()
                 : null,
         this._bearer = charge.bearer != null ? getBearer(charge.bearer) : null,
@@ -66,8 +66,9 @@ class CardRequestBody extends BaseRequestBody {
     this._handle = await Crypto.encrypt(pin);
   }
 
-  static getBearer(Bearer bearer) {
-    String bearerStr;
+  static String? getBearer(Bearer? bearer) {
+    if (bearer == null) return null;
+    String? bearerStr;
     switch (bearer) {
       case Bearer.SubAccount:
         bearerStr = "subaccount";
@@ -80,48 +81,24 @@ class CardRequestBody extends BaseRequestBody {
   }
 
   @override
-  Map<String, String> paramsMap() {
+  Map<String, String?> paramsMap() {
     // set values will override additional params provided
-    Map<String, String> params = _additionalParameters;
+    Map<String, String?> params = _additionalParameters!;
     params[fieldPublicKey] = _publicKey;
     params[fieldClientData] = _clientData;
     params[fieldLast4] = _last4;
-    if (_accessCode != null) {
-      params[fieldAccessCode] = _accessCode;
-    }
-    if (_email != null) {
-      params[fieldEmail] = _email;
-    }
-    if (_amount != null) {
-      params[fieldAmount] = _amount;
-    }
-    if (_handle != null) {
-      params[fieldHandle] = _handle;
-    }
-    if (_reference != null) {
-      params[fieldReference] = _reference;
-    }
-    if (_subAccount != null) {
-      params[fieldSubAccount] = _subAccount;
-    }
-    if (_transactionCharge != null) {
-      params[fieldTransactionCharge] = _transactionCharge;
-    }
-    if (_bearer != null) {
-      params[fieldBearer] = _bearer;
-    }
-    if (_metadata != null) {
-      params[fieldMetadata] = _metadata;
-    }
-    if (_plan != null) {
-      params[fieldPlan] = _plan;
-    }
-    if (_currency != null) {
-      params[fieldCurrency] = _currency;
-    }
-    if (device != null) {
-      params[fieldDevice] = device;
-    }
-    return params;
+    params[fieldAccessCode] = _accessCode;
+    params[fieldEmail] = _email;
+    params[fieldAmount] = _amount;
+    params[fieldHandle] = _handle;
+    params[fieldReference] = _reference;
+    params[fieldSubAccount] = _subAccount;
+    params[fieldTransactionCharge] = _transactionCharge;
+    params[fieldBearer] = _bearer;
+    params[fieldMetadata] = _metadata;
+    params[fieldPlan] = _plan;
+    params[fieldCurrency] = _currency;
+    params[fieldDevice] = device;
+    return params..removeWhere((key, value) => value == null || value.isEmpty);
   }
 }

@@ -7,17 +7,17 @@ class ErrorWidget extends StatelessWidget {
   final TickerProvider vSync;
   final AnimationController controller;
   final CheckoutMethod method;
-  final String text;
-  final VoidCallback payWithBank;
-  final VoidCallback tryAnotherCard;
-  final VoidCallback startOverWithCard;
+  final String? text;
+  final VoidCallback? payWithBank;
+  final VoidCallback? tryAnotherCard;
+  final VoidCallback? startOverWithCard;
   final bool isCardPayment;
 
   ErrorWidget({
-    @required this.text,
-    @required this.vSync,
-    @required this.method,
-    @required this.isCardPayment,
+    required this.text,
+    required this.vSync,
+    required this.method,
+    required this.isCardPayment,
     this.payWithBank,
     this.tryAnotherCard,
     this.startOverWithCard,
@@ -48,7 +48,7 @@ class ErrorWidget extends StatelessWidget {
             ),
             new SizedBox(height: 10.0),
             new Text(
-              text,
+              text!,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.black54,

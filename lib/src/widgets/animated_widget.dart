@@ -6,15 +6,15 @@ class CustomAnimatedWidget extends StatelessWidget {
   final Widget child;
 
   CustomAnimatedWidget(
-      {@required this.child, @required AnimationController controller})
+      {required this.child, required AnimationController controller})
       : _animation = new CurvedAnimation(
           parent: controller,
           curve: Curves.fastOutSlowIn,
         );
 
-  final Tween slideTween =
-      new Tween<Offset>(begin: const Offset(0.0, 0.02), end: Offset.zero);
-  final Tween scaleTween = new Tween<double>(begin: 1.04, end: 1.0);
+  final Tween<Offset> slideTween =
+      Tween(begin: const Offset(0.0, 0.02), end: Offset.zero);
+  final Tween<double> scaleTween = Tween(begin: 1.04, end: 1.0);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class CustomAnimatedWidget extends StatelessWidget {
 
 abstract class BaseAnimatedState<T extends StatefulWidget> extends BaseState<T>
     with TickerProviderStateMixin {
-  AnimationController controller;
+  late AnimationController controller;
 
   @override
   void initState() {

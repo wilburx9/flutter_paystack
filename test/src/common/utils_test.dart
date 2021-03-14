@@ -33,7 +33,7 @@ void main() {
 
       test("returns normally when PaystackPlugin is initialized", () async {
         await PaystackPlugin.initialize(
-            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"]);
+            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "");
         expect(() => Utils.validateSdkInitialized(), returnsNormally);
         PaystackPlugin.dispose();
       });
@@ -59,14 +59,6 @@ void main() {
 
     group("#validateChargeAndKey", () {
       test(
-          "throws PaystackSdkNotInitializedException when called with null charge and PaystackPlugin is not initialized",
-          () {
-        expect(() => Utils.validateChargeAndKey(null),
-            throwsA(TypeMatcher<PaystackSdkNotInitializedException>()));
-        PaystackPlugin.dispose();
-      });
-
-      test(
           "throws PaystackSdkNotInitializedException when called with charge and PaystackPlugin is not initialized",
           () {
         expect(() {
@@ -75,15 +67,6 @@ void main() {
             ..amount = 100;
           return Utils.validateChargeAndKey(charge);
         }, throwsA(TypeMatcher<PaystackSdkNotInitializedException>()));
-        PaystackPlugin.dispose();
-      });
-
-      test(
-          "throws AuthenticationException when called with null charge and PaystackPlugin is initialized with invalid key",
-          () async {
-        await PaystackPlugin.initialize(publicKey: "ytryuiuyuiuyfg");
-        expect(() => Utils.validateChargeAndKey(null),
-            throwsA(TypeMatcher<AuthenticationException>()));
         PaystackPlugin.dispose();
       });
 
@@ -100,20 +83,10 @@ void main() {
       });
 
       test(
-          "throws PaystackException when called with null charge and PaystackPlugin is initialized with valid key",
-          () async {
-        await PaystackPlugin.initialize(
-            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"]);
-        expect(() => Utils.validateChargeAndKey(null),
-            throwsA(TypeMatcher<PaystackException>()));
-        PaystackPlugin.dispose();
-      });
-
-      test(
           "throws InvalidAmountException when called with null amount and PaystackPlugin is initialized with valid key",
           () async {
         await PaystackPlugin.initialize(
-            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"]);
+            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "");
         expect(() => Utils.validateChargeAndKey(Charge()..email = "you@u.com"),
             throwsA(TypeMatcher<InvalidAmountException>()));
         PaystackPlugin.dispose();
@@ -123,7 +96,7 @@ void main() {
           "throws InvalidAmountException when called with negative amount and PaystackPlugin is initialized with valid key",
           () async {
         await PaystackPlugin.initialize(
-            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"]);
+            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "");
         expect(() {
           var charge = Charge()
             ..email = "you@u.com"
@@ -137,7 +110,7 @@ void main() {
           "throws InvalidAmountException when called with valid amount, null email and PaystackPlugin is initialized with valid key",
           () async {
         await PaystackPlugin.initialize(
-            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"]);
+            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "");
         expect(() {
           var charge = Charge()..amount = 10;
           return Utils.validateChargeAndKey(charge);
@@ -149,7 +122,7 @@ void main() {
           "throws InvalidAmountException when called with valid amount, invalid email and PaystackPlugin is initialized with valid key",
           () async {
         await PaystackPlugin.initialize(
-            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"]);
+            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "");
         var charge = Charge()
           ..amount = 10
           ..email = "8yu";
@@ -162,7 +135,7 @@ void main() {
           "returns normally when called with valid charge and PaystackPlugin is initialized with valid key",
           () async {
         await PaystackPlugin.initialize(
-            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"]);
+            publicKey: Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "");
         var charge = Charge()
           ..amount = 10
           ..email = "8yu@h.go";

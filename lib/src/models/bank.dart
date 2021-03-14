@@ -1,6 +1,6 @@
 class Bank {
-  String name;
-  int id;
+  String? name;
+  int? id;
 
   Bank(this.name, this.id);
 
@@ -11,17 +11,17 @@ class Bank {
 }
 
 class BankAccount {
-  Bank bank;
-  String number;
+  Bank? bank;
+  String? number;
 
   BankAccount(this.bank, this.number);
 
   bool isValid() {
-    if (number == null || number.length < 10) {
+    if (number == null || number!.length < 10) {
       return false;
     }
 
-    if (bank == null || bank.id == null) {
+    if (bank == null || bank!.id == null) {
       return false;
     }
     return true;

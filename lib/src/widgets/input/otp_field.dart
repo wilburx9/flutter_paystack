@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class OtpField extends TextFormField {
-  OtpField({FormFieldSetter<String> onSaved, @required Color borderColor})
+  OtpField({FormFieldSetter<String>? onSaved, required Color borderColor})
       : super(
           keyboardType: TextInputType.text,
           textCapitalization: TextCapitalization.none,
@@ -15,7 +15,7 @@ class OtpField extends TextFormField {
           autofocus: true,
           maxLines: 1,
           onSaved: onSaved,
-          validator: (String value) => value.isEmpty ? 'Enter OTP' : null,
+          validator: (String? value) => value!.isEmpty ? 'Enter OTP' : null,
           obscureText: false,
           decoration: new InputDecoration(
             border: OutlineInputBorder(),

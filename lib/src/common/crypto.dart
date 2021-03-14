@@ -7,7 +7,7 @@ class Crypto {
     var completer = Completer<String>();
 
     try {
-      String result = await Utils.channel
+      String? result = await Utils.channel
           .invokeMethod('getEncryptedData', {"stringData": data});
       completer.complete(result);
     } on PlatformException catch (e) {

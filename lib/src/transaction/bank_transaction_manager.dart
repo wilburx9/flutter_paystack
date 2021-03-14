@@ -8,31 +8,22 @@ import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/models/charge.dart';
-import 'package:flutter_paystack/src/models/transaction.dart';
+import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/transaction/base_transaction_manager.dart';
 
 class BankTransactionManager extends BaseTransactionManager {
-  BankChargeRequestBody chargeRequestBody;
+  BankChargeRequestBody? chargeRequestBody;
   final BankServiceContract service;
 
   BankTransactionManager({
-    @required this.service,
-    @required Charge charge,
-    @required BuildContext context,
-    @required OnTransactionChange<Transaction> onSuccess,
-    @required OnTransactionError<Object, Transaction> onError,
-    @required OnTransactionChange<Transaction> beforeValidate,
-  }) : super(
-          charge: charge,
-          context: context,
-          onSuccess: onSuccess,
-          onError: onError,
-          beforeValidate: beforeValidate,
-        );
+    required this.service,
+    required Charge charge,
+    required BuildContext context,
+  }) : super(charge: charge, context: context);
 
-  chargeBank() async {
+  Future<CheckoutResponse> chargeBank() async {
     await initiate();
-    sendCharge();
+    return sendCharge();
   }
 
   @override
@@ -41,71 +32,72 @@ class BankTransactionManager extends BaseTransactionManager {
   }
 
   @override
-  void sendChargeOnServer() {
-    _getTransactionId();
+  Future<CheckoutResponse> sendChargeOnServer() {
+    return _getTransactionId();
   }
 
-  _getTransactionId() async {
-    String id = await service.getTransactionId(chargeRequestBody.accessCode);
+  Future<CheckoutResponse> _getTransactionId() async {
+    String? id = await service.getTransactionId(chargeRequestBody!.accessCode);
     if (id == null || id.isEmpty) {
-      notifyProcessingError('Unable to verify access code');
-      return;
+      return notifyProcessingError('Unable to verify access code');
     }
 
-    chargeRequestBody.transactionId = id;
-    _chargeAccount();
+    chargeRequestBody!.transactionId = id;
+    return _chargeAccount();
   }
 
-  _chargeAccount() {
+  Future<CheckoutResponse> _chargeAccount() {
     Future<TransactionApiResponse> future =
         service.chargeBank(chargeRequestBody);
-    handleServerResponse(future);
+    return handleServerResponse(future);
   }
 
-  void _sendTokenToServer() {
+  Future<CheckoutResponse> _sendTokenToServer() {
     Future<TransactionApiResponse> future = service.validateToken(
-        chargeRequestBody, chargeRequestBody.tokenParams());
-    handleServerResponse(future);
+        chargeRequestBody, chargeRequestBody!.tokenParams());
+    return handleServerResponse(future);
   }
 
   @override
-  handleApiResponse(TransactionApiResponse response) {
+  Future<CheckoutResponse> handleApiResponse(
+      TransactionApiResponse response) async {
     var auth = response.auth;
 
     if (response.status == 'success') {
       setProcessingOff();
-      onSuccess(transaction);
-      return;
+      return onSuccess(transaction);
     }
 
     if (auth == 'failed' || auth == 'timeout') {
-      notifyProcessingError(new ChargeException(response.message));
-      return;
+      return notifyProcessingError(new ChargeException(response.message));
     }
 
     if (auth == 'birthday') {
-      getBirthdayFrmUI(response);
-      return;
+      return getBirthdayFrmUI(response);
     }
 
     if (auth == 'payment_token' || auth == 'registration_token') {
-      getOtpFrmUI(response: response);
-      return;
+      return getOtpFrmUI(response: response);
     }
 
-    notifyProcessingError(
+    return notifyProcessingError(
         PaystackException(response.message ?? Strings.unKnownResponse));
   }
 
   @override
-  void handleOtpInput(String token, TransactionApiResponse response) {
-    chargeRequestBody.token = token;
-    _sendTokenToServer();
+  Future<CheckoutResponse> handleOtpInput(
+      String token, TransactionApiResponse? response) {
+    chargeRequestBody!.token = token;
+    return _sendTokenToServer();
   }
 
   @override
-  void handleBirthdayInput(String birthday, TransactionApiResponse response) {
-    chargeRequestBody.birthday = birthday;
-    _chargeAccount();
+  Future<CheckoutResponse> handleBirthdayInput(
+      String birthday, TransactionApiResponse response) {
+    chargeRequestBody!.birthday = birthday;
+    return _chargeAccount();
   }
+
+  @override
+  CheckoutMethod checkoutMethod() => CheckoutMethod.bank;
 }

@@ -8,9 +8,9 @@ import 'package:flutter_paystack/src/widgets/input/base_field.dart';
 
 class DateField extends BaseTextField {
   DateField({
-    Key key,
-    @required PaymentCard card,
-    @required FormFieldSetter<String> onSaved,
+    Key? key,
+    required PaymentCard? card,
+    required FormFieldSetter<String> onSaved,
   }) : super(
           key: key,
           labelText: 'CARD EXPIRY',
@@ -19,13 +19,13 @@ class DateField extends BaseTextField {
           initialValue: _getInitialExpiryMonth(card),
           onSaved: onSaved,
           inputFormatters: [
-            WhitelistingTextInputFormatter.digitsOnly,
+            FilteringTextInputFormatter.digitsOnly,
             new LengthLimitingTextInputFormatter(4),
             new CardMonthInputFormatter()
           ],
         );
 
-  static String _getInitialExpiryMonth(PaymentCard card) {
+  static String? _getInitialExpiryMonth(PaymentCard? card) {
     if (card == null) {
       return null;
     }
@@ -39,8 +39,8 @@ class DateField extends BaseTextField {
     }
   }
 
-  static String validateDate(String value) {
-    if (value.isEmpty) {
+  static String? validateDate(String? value) {
+    if (value == null || value.isEmpty) {
       return Strings.invalidExpiry;
     }
 
@@ -48,7 +48,7 @@ class DateField extends BaseTextField {
     int month;
     // The value contains a forward slash if the month and year has been
     // entered.
-    if (value.contains(new RegExp(r'(\/)'))) {
+    if (value.contains(new RegExp(r'(/)'))) {
       final date = CardUtils.getExpiryDate(value);
       month = date[0];
       year = date[1];
