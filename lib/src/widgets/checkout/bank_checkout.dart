@@ -19,12 +19,14 @@ class BankCheckout extends StatefulWidget {
   final OnResponse<CheckoutResponse> onResponse;
   final ValueChanged<bool> onProcessingChange;
   final BankServiceContract service;
+  final String publicKey;
 
   BankCheckout({
     required this.charge,
     required this.onResponse,
     required this.onProcessingChange,
     required this.service,
+    required this.publicKey,
   });
 
   @override
@@ -216,9 +218,10 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
       charge: widget.charge,
       service: widget.service,
       context: context,
+      publicKey: widget.publicKey
     ).chargeBank();
 
-   if (!mounted) return;
+    if (!mounted) return;
 
     setState(() => _loading = false);
     onResponse(response);

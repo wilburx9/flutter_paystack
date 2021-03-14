@@ -19,6 +19,7 @@ class CardCheckout extends StatefulWidget {
   final ValueChanged<PaymentCard?> onCardChange;
   final bool hideAmount;
   final CardServiceContract service;
+  final String publicKey;
 
   CardCheckout({
     Key? key,
@@ -27,6 +28,7 @@ class CardCheckout extends StatefulWidget {
     required this.onProcessingChange,
     required this.onCardChange,
     required this.service,
+    required this.publicKey,
     this.hideAmount = false,
   }) : super(key: key);
 
@@ -85,9 +87,11 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
 
   void _chargeCard(Charge charge) async {
     final response = await CardTransactionManager(
-            charge: charge, context: context, service: widget.service)
-        .chargeCard();
+      charge: charge,
+      context: context,
+      service: widget.service,
+      publicKey: widget.publicKey,
+    ).chargeCard();
     onResponse(response);
   }
-
 }

@@ -25,12 +25,14 @@ class CheckoutWidget extends StatefulWidget {
   final bool hideAmount;
   final BankServiceContract bankService;
   final CardServiceContract cardsService;
+  final String publicKey;
 
   CheckoutWidget({
     required this.method,
     required this.charge,
     required this.bankService,
     required this.cardsService,
+    required this.publicKey,
     this.fullscreen = false,
     this.logo,
     this.hideEmail = false,
@@ -289,6 +291,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           icon: Icons.credit_card,
           child: new CardCheckout(
             key: Key("CardCheckout"),
+            publicKey: widget.publicKey,
             service: widget.cardsService,
             charge: _charge,
             onProcessingChange: _onProcessingChange,
@@ -306,6 +309,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
         text: 'Bank',
         icon: Icons.account_balance,
         child: new BankCheckout(
+          publicKey: widget.publicKey,
           charge: _charge,
           service: widget.bankService,
           onResponse: _onPaymentResponse,

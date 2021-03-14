@@ -7,6 +7,7 @@ import 'package:flutter_paystack/src/api/service/card_service.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/platform_info.dart';
+import 'package:flutter_paystack/src/common/string_utils.dart';
 import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:flutter_paystack/src/models/card.dart';
 import 'package:flutter_paystack/src/models/charge.dart';
@@ -14,12 +15,9 @@ import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/transaction/card_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 
-// TODO: Remove use of static publicKey and use a constructor for initialization
 class PaystackPlugin {
-  static bool _sdkInitialized = false;
-  static late String _publicKey;
-
-  PaystackPlugin._();
+  bool _sdkInitialized = false;
+  String _publicKey = "";
 
   /// Initialize the Paystack object. It should be called as early as possible
   /// (preferably in initState() of the Widget.
@@ -29,7 +27,7 @@ class PaystackPlugin {
   /// use [checkout] and you want this plugin to initialize the transaction for you.
   /// Please check [checkout] for more information
   ///
-  static Future<PaystackPlugin> initialize({required String publicKey}) async {
+  initialize({required String publicKey}) async {
     assert(() {
       if (publicKey.isEmpty) {
         throw new PaystackException('publicKey cannot be null or empty');
@@ -37,50 +35,45 @@ class PaystackPlugin {
       return true;
     }());
 
-    //check if sdk is actually initialized
-    if (sdkInitialized) {
-      return PaystackPlugin._();
-    } else {
-      _publicKey = publicKey;
+    if (sdkInitialized) return;
 
-      // Using cascade notation to build the platform specific info
-      try {
-        String? userAgent = await Utils.channel.invokeMethod('getUserAgent');
-        String? paystackBuild =
-            await Utils.channel.invokeMethod('getVersionCode');
-        String? deviceId = await Utils.channel.invokeMethod('getDeviceId');
-        PlatformInfo()
-          ..userAgent = userAgent
-          ..paystackBuild = paystackBuild
-          ..deviceId = deviceId;
+    this._publicKey = publicKey;
 
-        _sdkInitialized = true;
-        return PaystackPlugin._();
-      } on PlatformException {
-        rethrow;
-      }
+    // Using cascade notation to build the platform specific info
+    try {
+      String? userAgent = await Utils.channel.invokeMethod('getUserAgent');
+      String? paystackBuild =
+          await Utils.channel.invokeMethod('getVersionCode');
+      String? deviceId = await Utils.channel.invokeMethod('getDeviceId');
+      PlatformInfo()
+        ..userAgent = userAgent
+        ..paystackBuild = paystackBuild
+        ..deviceId = deviceId;
+
+      _sdkInitialized = true;
+    } on PlatformException {
+      rethrow;
     }
   }
 
-  static dispose() {
+  dispose() {
     _publicKey = "";
     _sdkInitialized = false;
   }
 
-  static bool get sdkInitialized => _sdkInitialized;
+  bool get sdkInitialized => _sdkInitialized;
 
-  static String get publicKey {
+  String get publicKey {
     // Validate that the sdk has been initialized
-    Utils.validateSdkInitialized();
+    _validateSdkInitialized();
     return _publicKey;
   }
 
-  static void _performChecks() {
+  void _performChecks() {
     //validate that sdk has been initialized
-    Utils.validateSdkInitialized();
+    _validateSdkInitialized();
     //check for null value, and length and starts with pk_
-    if (_publicKey.isEmpty ||
-        !_publicKey.startsWith("pk_")) {
+    if (_publicKey.isEmpty || !_publicKey.startsWith("pk_")) {
       throw new AuthenticationException(Utils.getKeyErrorMsg('public'));
     }
   }
@@ -91,11 +84,11 @@ class PaystackPlugin {
   ///
   /// [charge] - the charge object.
 
-  static Future<CheckoutResponse> chargeCard(BuildContext context,
+  Future<CheckoutResponse> chargeCard(BuildContext context,
       {required Charge charge}) {
     _performChecks();
 
-    return _Paystack().chargeCard(context: context, charge: charge);
+    return _Paystack(publicKey).chargeCard(context: context, charge: charge);
   }
 
   /// Make payment using Paystack's checkout form. The plugin will handle the whole
@@ -127,12 +120,12 @@ class PaystackPlugin {
   /// will be displayed at the top right edge of the UI prompt. Defaults to
   /// `false`
   ///
-  /// [hideAmount]  - Whether to hide the user from the  payment prompt.
+  /// [hideAmount]  - Whether to hide the amount from the  payment prompt.
   /// When `false` the payment amount and currency is displayed at the
   /// top of payment prompt, just under the email. Also the payment
   /// call-to-action will display the amount, otherwise it will display
   /// "Continue". Defaults to `false`
-  static Future<CheckoutResponse> checkout(
+  Future<CheckoutResponse> checkout(
     BuildContext context, {
     required Charge charge,
     CheckoutMethod method = CheckoutMethod.selectable,
@@ -141,7 +134,7 @@ class PaystackPlugin {
     bool hideEmail = false,
     bool hideAmount = false,
   }) async {
-    return _Paystack().checkout(
+    return _Paystack(publicKey).checkout(
       context,
       charge: charge,
       method: method,
@@ -151,16 +144,29 @@ class PaystackPlugin {
       hideEmail: hideEmail,
     );
   }
+
+  _validateSdkInitialized() {
+    if (!sdkInitialized) {
+      throw new PaystackSdkNotInitializedException(
+          'Paystack SDK has not been initialized. The SDK has'
+          ' to be initialized before use');
+    }
+  }
 }
 
 class _Paystack {
+  final String publicKey;
+
+  _Paystack(this.publicKey);
+
   Future<CheckoutResponse> chargeCard(
       {required BuildContext context, required Charge charge}) {
     return new CardTransactionManager(
-      service: CardService(),
-      charge: charge,
-      context: context,
-    ).chargeCard();
+            service: CardService(),
+            charge: charge,
+            context: context,
+            publicKey: publicKey)
+        .chargeCard();
   }
 
   Future<CheckoutResponse> checkout(
@@ -173,7 +179,7 @@ class _Paystack {
     Widget? logo,
   }) async {
     assert(() {
-      Utils.validateChargeAndKey(charge);
+      _validateChargeAndKey(charge);
       switch (method) {
         case CheckoutMethod.card:
           if (charge.accessCode == null && charge.reference == null) {
@@ -194,6 +200,7 @@ class _Paystack {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) => new CheckoutWidget(
+        publicKey: publicKey,
         bankService: BankService(),
         cardsService: CardService(),
         method: method,
@@ -205,6 +212,15 @@ class _Paystack {
       ),
     );
     return response == null ? CheckoutResponse.defaults() : response;
+  }
+
+  _validateChargeAndKey(Charge charge) {
+    if (charge.amount.isNegative) {
+      throw new InvalidAmountException(charge.amount);
+    }
+    if (!StringUtils.isValidEmail(charge.email)) {
+      throw new InvalidEmailException(charge.email);
+    }
   }
 }
 

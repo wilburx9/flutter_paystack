@@ -17,17 +17,17 @@ import 'package:flutter_paystack/src/widgets/otp_widget.dart';
 import 'package:flutter_paystack/src/widgets/pin_widget.dart';
 
 abstract class BaseTransactionManager {
-  static bool processing = false;
+  bool processing = false;
   final Charge charge;
   final BuildContext context;
   final Transaction transaction = Transaction();
+  final String publicKey;
 
-  BaseTransactionManager({required this.charge, required this.context});
+  BaseTransactionManager({required this.charge, required this.context, required this.publicKey});
 
   initiate() async {
-    if (BaseTransactionManager.processing) {
-      throw ProcessingException();
-    }
+    if (processing) throw ProcessingException();
+
     setProcessingOn();
     await postInitiate();
   }

@@ -18,17 +18,19 @@ class CardTransactionManager extends BaseTransactionManager {
   final CardServiceContract service;
   var _invalidDataSentRetries = 0;
 
-  CardTransactionManager({
-    required Charge charge,
-    required this.service,
-    required BuildContext context,
-  })   : assert(charge.card != null,
+  CardTransactionManager(
+      {required Charge charge,
+      required this.service,
+      required BuildContext context,
+      required String publicKey})
+      : assert(charge.card != null,
             'please add a card to the charge before ' 'calling chargeCard'),
-        super(charge: charge, context: context);
+        super(charge: charge, context: context, publicKey: publicKey);
 
   @override
   postInitiate() async {
-    chargeRequestBody = await CardRequestBody.getChargeRequestBody(charge);
+    chargeRequestBody =
+        await CardRequestBody.getChargeRequestBody(publicKey, charge);
     validateRequestBody = ValidateRequestBody();
   }
 

@@ -24,7 +24,7 @@ class CardRequestBody extends BaseRequestBody {
 
   String _clientData;
   String? _last4;
-  String? _publicKey;
+  final String? _publicKey;
   String? _accessCode;
   String? _email;
   String _amount;
@@ -38,10 +38,9 @@ class CardRequestBody extends BaseRequestBody {
   String? _plan;
   Map<String, String?>? _additionalParameters;
 
-  CardRequestBody._(Charge charge, String clientData)
+  CardRequestBody._(this._publicKey, Charge charge, String clientData)
       : this._clientData = clientData,
         this._last4 = charge.card!.last4Digits,
-        this._publicKey = PaystackPlugin.publicKey,
         this._email = charge.email,
         this._amount = charge.amount.toString(),
         this._reference = charge.reference,
@@ -57,9 +56,10 @@ class CardRequestBody extends BaseRequestBody {
         this._accessCode = charge.accessCode,
         this._additionalParameters = charge.additionalParameters;
 
-  static Future<CardRequestBody> getChargeRequestBody(Charge charge) async {
+  static Future<CardRequestBody> getChargeRequestBody(
+      String publicKey, Charge charge) async {
     return Crypto.encrypt(CardUtils.concatenateCardFields(charge.card))
-        .then((clientData) => CardRequestBody._(charge, clientData));
+        .then((clientData) => CardRequestBody._(publicKey, charge, clientData));
   }
 
   addPin(String pin) async {

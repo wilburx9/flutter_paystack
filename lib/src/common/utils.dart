@@ -1,20 +1,8 @@
 import 'package:flutter/services.dart';
-import 'package:flutter_paystack/src/common/exceptions.dart';
-import 'package:flutter_paystack/src/common/paystack.dart';
-import 'package:flutter_paystack/src/common/string_utils.dart';
-import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
   static const MethodChannel channel = const MethodChannel('plugins.wilburt/flutter_paystack');
-
-  static validateSdkInitialized() {
-    if (!PaystackPlugin.sdkInitialized) {
-      throw new PaystackSdkNotInitializedException(
-          'Paystack SDK has not been initialized. The SDK has'
-          ' to be initialized before use');
-    }
-  }
 
   static String getKeyErrorMsg(String keyType) {
     return 'Invalid $keyType key. You must use a valid $keyType key. Ensure that you '
@@ -30,22 +18,6 @@ class Utils {
   static String formatAmount(num amountInBase) {
     if (_currencyFormatter == null) throw "Currency formatter not initialized.";
     return _currencyFormatter!.format((amountInBase / 100));
-  }
-
-  static validateChargeAndKey(Charge charge) {
-    String publicKey = PaystackPlugin.publicKey;
-
-    if (publicKey.isEmpty ||
-        !publicKey.startsWith("pk_")) {
-      throw new AuthenticationException(Utils.getKeyErrorMsg('public'));
-    }
-
-    if (charge.amount.isNegative) {
-      throw new InvalidAmountException(charge.amount);
-    }
-    if (!StringUtils.isValidEmail(charge.email)) {
-      throw new InvalidEmailException(charge.email);
-    }
   }
 
   /// Add double spaces after every 4th character
