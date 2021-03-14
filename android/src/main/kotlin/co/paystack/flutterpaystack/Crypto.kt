@@ -4,7 +4,6 @@ import android.util.Base64
 
 import java.security.KeyFactory
 import java.security.NoSuchAlgorithmException
-import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.X509EncodedKeySpec
@@ -43,34 +42,13 @@ object Crypto {
 
         return cipherText
     }
-
-    @Throws(SecurityException::class)
-    fun encrypt(text: String, publicKey: String): String {
-        return String(Base64.encode(encrypt(text, getPublicKeyFromString(publicKey)), Base64.NO_WRAP))
-    }
+    
 
     @Throws(SecurityException::class)
     fun encrypt(text: String): String {
         return String(Base64.encode(encrypt(text, getPublicKeyFromString(PAYSTACK_RSA_PUBLIC_KEY)), Base64.NO_WRAP))
     }
-
-    private fun decrypt(text: ByteArray, key: PrivateKey): String {
-        var decryptedText: ByteArray? = null
-
-        try {
-            // get an RSA cipher object
-            val cipher = Cipher.getInstance(CIPHER)
-
-            //init cipher and decrypt the text using the private key
-            cipher.init(Cipher.DECRYPT_MODE, key)
-            decryptedText = cipher.doFinal(text)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-
-        return String(decryptedText ?: ByteArray(0))
-    }
-
+    
 
     @Throws(SecurityException::class)
     private fun getPublicKeyFromString(pubKey: String): PublicKey {

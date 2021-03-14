@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import kotlinx.android.synthetic.main.co_paystack_android____activity_auth.*
 
 /**
  * Created by Wilberforce on 29/07/18 at 18:47.
@@ -19,10 +18,12 @@ class AuthActivity : Activity() {
 
     private val si = AuthSingleton.instance
     private var responseJson: String? = null
+    private var webView: WebView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.co_paystack_android____activity_auth)
+        webView = findViewById(R.id.webView)
         title = "Authorize your card"
         setup()
     }
@@ -40,7 +41,7 @@ class AuthActivity : Activity() {
 
     @SuppressLint("SetJavaScriptEnabled", "AddJavascriptInterface")
     private fun setup() {
-        webView!!.keepScreenOn = true
+        webView?.keepScreenOn = true
 
         abstract class AuthResponseJI {
             abstract fun processContent(aContent: String)
@@ -64,8 +65,8 @@ class AuthActivity : Activity() {
 
         class JIFactory {
 
-            internal val ji: AuthResponseJI
-                get() = if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            val ji: AuthResponseJI
+                get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     AuthResponse17JI()
                 } else {
                     AuthResponseLegacyJI()
@@ -73,10 +74,10 @@ class AuthActivity : Activity() {
         }
 
 
-        webView!!.settings.javaScriptEnabled = true
-        webView!!.settings.javaScriptCanOpenWindowsAutomatically = true
-        webView!!.addJavascriptInterface(JIFactory().ji, "INTERFACE")
-        webView!!.webViewClient = object : WebViewClient() {
+        webView?.settings?.javaScriptEnabled = true
+        webView?.settings?.javaScriptCanOpenWindowsAutomatically = true
+        webView?.addJavascriptInterface(JIFactory().ji, "INTERFACE")
+        webView?.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
                 if (url.contains(API_URL + "charge/three_d_response/")) {
                     view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementById('return').innerText);")
@@ -88,15 +89,13 @@ class AuthActivity : Activity() {
             }
         }
 
-        webView!!.loadUrl(si.url)
+        webView?.loadUrl(si.url)
     }
 
     public override fun onDestroy() {
         super.onDestroy()
-        if (webView != null) {
-            webView!!.stopLoading()
-            webView!!.removeJavascriptInterface("INTERFACE")
-        }
+        webView?.stopLoading()
+        webView?.removeJavascriptInterface("INTERFACE")
         handleResponse()
     }
 

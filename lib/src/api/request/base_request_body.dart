@@ -1,4 +1,4 @@
-import 'package:flutter_paystack/src/common/platform_info.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 
 abstract class BaseRequestBody {
   final fieldDevice = 'device';
@@ -13,7 +13,7 @@ abstract class BaseRequestBody {
   String? get device => _device;
 
   _setDeviceId() {
-    String deviceId = PlatformInfo().deviceId ?? '';
+    String deviceId = PaystackPlugin.platformInfo.deviceId;
     this._device = deviceId;
   }
 }

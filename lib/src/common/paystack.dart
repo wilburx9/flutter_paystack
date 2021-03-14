@@ -18,6 +18,7 @@ import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 class PaystackPlugin {
   bool _sdkInitialized = false;
   String _publicKey = "";
+  static late PlatformInfo platformInfo;
 
   /// Initialize the Paystack object. It should be called as early as possible
   /// (preferably in initState() of the Widget.
@@ -41,15 +42,8 @@ class PaystackPlugin {
 
     // Using cascade notation to build the platform specific info
     try {
-      String? userAgent = await Utils.channel.invokeMethod('getUserAgent');
-      String? paystackBuild =
-          await Utils.channel.invokeMethod('getVersionCode');
-      String? deviceId = await Utils.channel.invokeMethod('getDeviceId');
-      PlatformInfo()
-        ..userAgent = userAgent
-        ..paystackBuild = paystackBuild
-        ..deviceId = deviceId;
 
+      platformInfo = await PlatformInfo.fromMethodChannel(Utils.methodChannel);
       _sdkInitialized = true;
     } on PlatformException {
       rethrow;

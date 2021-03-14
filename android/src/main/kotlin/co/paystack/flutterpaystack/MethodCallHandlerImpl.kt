@@ -28,14 +28,6 @@ class MethodCallHandlerImpl(messenger: BinaryMessenger?, private val activity: A
                 val deviceId = Settings.Secure.getString(activity?.contentResolver, Settings.Secure.ANDROID_ID)
                 result.success("androidsdk_$deviceId")
             }
-            "getUserAgent" -> {
-                result.success("Android_" + Build.VERSION.SDK_INT + "_Paystack_" + BuildConfig.VERSION_NAME)
-            }
-
-            "getVersionCode" -> {
-                result.success(BuildConfig.VERSION_CODE.toString())
-            }
-
             "getAuthorization" -> {
                 authDelegate?.handleAuthorization(result, call)
             }

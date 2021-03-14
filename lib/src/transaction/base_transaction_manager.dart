@@ -121,7 +121,7 @@ abstract class BaseTransactionManager {
 
   Future<CheckoutResponse> getAuthFrmUI(String? url) async {
     String result =
-        await (Utils.channel.invokeMethod('getAuthorization', {"authUrl": url})
+        await (Utils.methodChannel.invokeMethod('getAuthorization', {"authUrl": url})
             as FutureOr<String>);
     TransactionApiResponse apiResponse;
     try {
