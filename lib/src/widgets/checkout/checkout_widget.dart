@@ -141,20 +141,24 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
       title: _buildTitle(),
       content: new Container(
         child: new SingleChildScrollView(
-          child: new Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-              child: Column(
-                children: <Widget>[
-                  _showProcessingError()
-                      ? _buildErrorWidget()
-                      : _paymentSuccessful
-                          ? _buildSuccessfulWidget()
-                          : _methodWidgets[_currentIndex!].child,
-                  SizedBox(height: 20),
-                  securedWidget
-                ],
-              )),
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            behavior: HitTestBehavior.translucent,
+            child: new Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 10.0),
+                child: Column(
+                  children: <Widget>[
+                    _showProcessingError()
+                        ? _buildErrorWidget()
+                        : _paymentSuccessful
+                            ? _buildSuccessfulWidget()
+                            : _methodWidgets[_currentIndex!].child,
+                    SizedBox(height: 20),
+                    securedWidget
+                  ],
+                )),
+          ),
         ),
       ),
     );
@@ -334,6 +338,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   void _onPaymentResponse(CheckoutResponse response) {
     _response = response;
+    if (!mounted) return;
     if (response.status == true) {
       _onPaymentSuccess();
     } else {

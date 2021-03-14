@@ -72,10 +72,10 @@ class CardTransactionManager extends BaseTransactionManager {
     }
   }
 
-  _validateChargeOnServer() {
+  Future<CheckoutResponse> _validateChargeOnServer() {
     Map<String, String?> params = validateRequestBody.paramsMap();
     Future<TransactionApiResponse> future = service.validateCharge(params);
-    handleServerResponse(future);
+    return handleServerResponse(future);
   }
 
   Future<CheckoutResponse> _reQueryChargeOnServer() {

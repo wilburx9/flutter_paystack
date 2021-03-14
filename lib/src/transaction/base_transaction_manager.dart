@@ -23,7 +23,11 @@ abstract class BaseTransactionManager {
   final Transaction transaction = Transaction();
   final String publicKey;
 
-  BaseTransactionManager({required this.charge, required this.context, required this.publicKey});
+  BaseTransactionManager({
+    required this.charge,
+    required this.context,
+    required this.publicKey,
+  });
 
   initiate() async {
     if (processing) throw ProcessingException();
@@ -120,15 +124,17 @@ abstract class BaseTransactionManager {
   }
 
   Future<CheckoutResponse> getAuthFrmUI(String? url) async {
-    String result =
-        await (Utils.methodChannel.invokeMethod('getAuthorization', {"authUrl": url})
-            as FutureOr<String>);
-    TransactionApiResponse apiResponse;
-    try {
-      Map<String, dynamic> responseMap = json.decode(result);
-      apiResponse = TransactionApiResponse.fromMap(responseMap);
-    } catch (e) {
-      apiResponse = TransactionApiResponse.unknownServerResponse();
+    TransactionApiResponse apiResponse =
+        TransactionApiResponse.unknownServerResponse();
+
+    String? result = await Utils.methodChannel
+        .invokeMethod<String>('getAuthorization', {"authUrl": url});
+
+    if (result != null) {
+      try {
+        Map<String, dynamic> responseMap = json.decode(result);
+        apiResponse = TransactionApiResponse.fromMap(responseMap);
+      } catch (e) {}
     }
     return _initApiResponse(apiResponse);
   }

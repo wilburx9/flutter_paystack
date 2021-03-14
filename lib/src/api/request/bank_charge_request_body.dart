@@ -19,7 +19,7 @@ class BankChargeRequestBody extends BaseRequestBody {
   Map<String, String?> paramsMap() {
     var map = {fieldDevice: device, 'account_number': account.number};
     map['birthday'] = _birthday;
-    return map;
+    return map..removeWhere((key, value) => value == null || value.isEmpty);
   }
 
   set token(String value) => _token = value;

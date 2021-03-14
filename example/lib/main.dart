@@ -36,7 +36,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _scaffoldKey = new GlobalKey<ScaffoldMessengerState>();
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final _verticalSizeBox = const SizedBox(height: 20.0);
   final _horizontalSizeBox = const SizedBox(width: 10.0);
@@ -437,12 +437,13 @@ class _HomePageState extends State<HomePage> {
 
   _showMessage(String message,
       [Duration duration = const Duration(seconds: 4)]) {
-    _scaffoldKey.currentState?.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
       content: new Text(message),
       duration: duration,
       action: new SnackBarAction(
           label: 'CLOSE',
-          onPressed: () => _scaffoldKey.currentState?.removeCurrentSnackBar()),
+          onPressed: () =>
+              ScaffoldMessenger.of(context).removeCurrentSnackBar()),
     ));
   }
 
