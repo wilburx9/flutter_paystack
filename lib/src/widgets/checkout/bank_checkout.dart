@@ -38,7 +38,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
   late AnimationController _controller;
   late Animation<double> _animation;
   var _autoValidate = AutovalidateMode.disabled;
-  Future<List<Bank>?>? _futureBanks;
+  late Future<List<Bank>?>? _futureBanks;
   Bank? _currentBank;
   BankAccount? _account;
   var _loading = false;

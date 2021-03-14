@@ -10,5 +10,5 @@ abstract class BankServiceContract {
   Future<TransactionApiResponse> validateToken(
       BankChargeRequestBody? requestBody, Map<String, String?> fields);
 
-  Future<List<Bank>?> fetchSupportedBanks();
+  Future<List<Bank>?>? fetchSupportedBanks();
 }

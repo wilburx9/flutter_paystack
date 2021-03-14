@@ -14,13 +14,9 @@ import '../../common/widget_builder.dart';
 class MockedCardService extends Mock implements CardServiceContract {}
 
 void main() {
-  late String publicKey;
-
-  setUp(() {
-    publicKey = Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "";
-  });
-
   group("$CardCheckout", () {
+    String publicKey = Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "";
+
     final charge = Charge()
       ..amount = 20000
       ..currency = "USD"
