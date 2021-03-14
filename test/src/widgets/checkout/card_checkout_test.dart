@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutter_paystack/src/api/service/contracts/cards_service_contract.dart';
@@ -13,6 +15,8 @@ class MockedCardService extends Mock implements CardServiceContract {}
 
 void main() {
   group("$CardCheckout", () {
+    String publicKey = Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "";
+
     final charge = Charge()
       ..amount = 20000
       ..currency = "USD"
@@ -22,6 +26,7 @@ void main() {
 
     final checkoutWidget = buildTestWidget(
       CardCheckout(
+        publicKey: publicKey,
         charge: charge,
         service: MockedCardService(),
         onResponse: (v) {},
@@ -62,6 +67,7 @@ void main() {
       testWidgets("displays the \"Continue\" when `hideAmount` is true",
           (tester) async {
         await tester.pumpWidget(buildTestWidget(CardCheckout(
+          publicKey: publicKey,
           charge: charge,
           service: MockedCardService(),
           onResponse: (v) {},

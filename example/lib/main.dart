@@ -40,22 +40,23 @@ class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormState>();
   final _verticalSizeBox = const SizedBox(height: 20.0);
   final _horizontalSizeBox = const SizedBox(width: 10.0);
+  final plugin = PaystackPlugin();
   var _border = new Container(
     width: double.infinity,
     height: 1.0,
     color: Colors.red,
   );
   int _radioValue = 0;
-  CheckoutMethod _method;
+  CheckoutMethod _method = CheckoutMethod.selectable;
   bool _inProgress = false;
-  String _cardNumber;
-  String _cvv;
-  int _expiryMonth = 0;
-  int _expiryYear = 0;
+  String? _cardNumber;
+  String? _cvv;
+  int? _expiryMonth;
+  int? _expiryYear;
 
   @override
   void initState() {
-    PaystackPlugin.initialize(publicKey: paystackPublicKey);
+    plugin.initialize(publicKey: paystackPublicKey);
     super.initState();
   }
 
@@ -105,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                     border: const UnderlineInputBorder(),
                     labelText: 'Card number',
                   ),
-                  onSaved: (String value) => _cardNumber = value,
+                  onSaved: (String? value) => _cardNumber = value,
                 ),
                 _verticalSizeBox,
                 new Row(
@@ -118,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                           border: const UnderlineInputBorder(),
                           labelText: 'CVV',
                         ),
-                        onSaved: (String value) => _cvv = value,
+                        onSaved: (String? value) => _cvv = value,
                       ),
                     ),
                     _horizontalSizeBox,
@@ -128,8 +129,8 @@ class _HomePageState extends State<HomePage> {
                           border: const UnderlineInputBorder(),
                           labelText: 'Expiry Month',
                         ),
-                        onSaved: (String value) =>
-                            _expiryMonth = int.tryParse(value),
+                        onSaved: (String? value) =>
+                            _expiryMonth = int.tryParse(value ?? ""),
                       ),
                     ),
                     _horizontalSizeBox,
@@ -139,8 +140,8 @@ class _HomePageState extends State<HomePage> {
                           border: const UnderlineInputBorder(),
                           labelText: 'Expiry Year',
                         ),
-                        onSaved: (String value) =>
-                            _expiryYear = int.tryParse(value),
+                        onSaved: (String? value) =>
+                            _expiryYear = int.tryParse(value ?? ""),
                       ),
                     )
                   ],
@@ -191,15 +192,14 @@ class _HomePageState extends State<HomePage> {
                                             isDense: true,
                                             hintText: 'Checkout method',
                                           ),
-                                          isEmpty: _method == null,
                                           child: new DropdownButton<
                                               CheckoutMethod>(
                                             value: _method,
                                             isDense: true,
-                                            onChanged: (CheckoutMethod value) {
-                                              setState(() {
-                                                _method = value;
-                                              });
+                                            onChanged: (CheckoutMethod? value) {
+                                              if (value != null) {
+                                                setState(() => _method = value);
+                                              }
                                             },
                                             items: banks.map((String value) {
                                               return new DropdownMenuItem<
@@ -239,21 +239,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _handleRadioValueChanged(int value) =>
-      setState(() => _radioValue = value);
+  void _handleRadioValueChanged(int? value) {
+    if (value != null) setState(() => _radioValue = value);
+  }
 
   _handleCheckout(BuildContext context) async {
-    if (_method == null) {
-      _showMessage('Select checkout method first');
-      return;
-    }
-
     if (_method != CheckoutMethod.card && _isLocal) {
       _showMessage('Select server initialization method at the top');
       return;
     }
     setState(() => _inProgress = true);
-    _formKey.currentState.save();
+    _formKey.currentState?.save();
     Charge charge = Charge()
       ..amount = 10000 // In base currency
       ..email = 'customer@email.com'
@@ -267,7 +263,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     try {
-      CheckoutResponse response = await PaystackPlugin.checkout(
+      CheckoutResponse response = await plugin.checkout(
         context,
         method: _method,
         charge: charge,
@@ -285,7 +281,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _startAfreshCharge() async {
-    _formKey.currentState.save();
+    _formKey.currentState?.save();
 
     Charge charge = Charge();
     charge.card = _getCardFromUI();
@@ -312,7 +308,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _chargeCard(Charge charge) async {
-    final response = await PaystackPlugin.chargeCard(context, charge: charge);
+    final response = await plugin.chargeCard(context, charge: charge);
 
     final reference = response.reference;
 
@@ -388,11 +384,8 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     } else {
-      widget = new RaisedButton(
+      widget = new ElevatedButton(
         onPressed: function,
-        color: Colors.blueAccent,
-        textColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 13.0, horizontal: 10.0),
         child: new Text(
           string.toUpperCase(),
           style: const TextStyle(fontSize: 17.0),
@@ -402,12 +395,12 @@ class _HomePageState extends State<HomePage> {
     return widget;
   }
 
-  Future<String> _fetchAccessCodeFrmServer(String reference) async {
+  Future<String?> _fetchAccessCodeFrmServer(String reference) async {
     String url = '$backendUrl/new-access-code';
-    String accessCode;
+    String? accessCode;
     try {
       print("Access code url = $url");
-      http.Response response = await http.get(url);
+      http.Response response = await http.get(Uri.parse(url));
       accessCode = response.body;
       print('Response for access code = $accessCode');
     } catch (e) {
@@ -421,11 +414,11 @@ class _HomePageState extends State<HomePage> {
     return accessCode;
   }
 
-  void _verifyOnServer(String reference) async {
+  void _verifyOnServer(String? reference) async {
     _updateStatus(reference, 'Verifying...');
     String url = '$backendUrl/verify/$reference';
     try {
-      http.Response response = await http.get(url);
+      http.Response response = await http.get(Uri.parse(url));
       var body = response.body;
       _updateStatus(reference, body);
     } catch (e) {
@@ -437,19 +430,20 @@ class _HomePageState extends State<HomePage> {
     setState(() => _inProgress = false);
   }
 
-  _updateStatus(String reference, String message) {
+  _updateStatus(String? reference, String message) {
     _showMessage('Reference: $reference \n\ Response: $message',
         const Duration(seconds: 7));
   }
 
   _showMessage(String message,
       [Duration duration = const Duration(seconds: 4)]) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
       content: new Text(message),
       duration: duration,
       action: new SnackBarAction(
           label: 'CLOSE',
-          onPressed: () => _scaffoldKey.currentState.removeCurrentSnackBar()),
+          onPressed: () =>
+              ScaffoldMessenger.of(context).removeCurrentSnackBar()),
     ));
   }
 

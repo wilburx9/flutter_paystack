@@ -20,17 +20,19 @@ class CheckoutWidget extends StatefulWidget {
   final CheckoutMethod method;
   final Charge charge;
   final bool fullscreen;
-  final Widget logo;
+  final Widget? logo;
   final bool hideEmail;
   final bool hideAmount;
   final BankServiceContract bankService;
   final CardServiceContract cardsService;
+  final String publicKey;
 
   CheckoutWidget({
-    @required this.method,
-    @required this.charge,
-    @required this.bankService,
-    @required this.cardsService,
+    required this.method,
+    required this.charge,
+    required this.bankService,
+    required this.cardsService,
+    required this.publicKey,
     this.fullscreen = false,
     this.logo,
     this.hideEmail = false,
@@ -45,15 +47,15 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     with TickerProviderStateMixin {
   static const tabBorderRadius = BorderRadius.all(Radius.circular(4.0));
   final Charge _charge;
-  var _currentIndex = 0;
+  int? _currentIndex = 0;
   var _showTabs = true;
-  String _paymentError;
+  String? _paymentError;
   bool _paymentSuccessful = false;
-  TabController _tabController;
-  List<MethodItem> _methodWidgets;
+  TabController? _tabController;
+  late List<MethodItem> _methodWidgets;
   double _tabHeight = kFullTabHeight;
-  AnimationController _animationController;
-  CheckoutResponse _response;
+  late AnimationController _animationController;
+  CheckoutResponse? _response;
 
   _CheckoutWidgetState(this._charge);
 
@@ -67,8 +69,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     _tabController = new TabController(
         vsync: this,
         length: _methodWidgets.length,
-        initialIndex: _currentIndex);
-    _tabController.addListener(_indexChange);
+        initialIndex: _currentIndex!);
+    _tabController!.addListener(_indexChange);
     _animationController = new AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -80,7 +82,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController!.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -139,20 +141,24 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
       title: _buildTitle(),
       content: new Container(
         child: new SingleChildScrollView(
-          child: new Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-              child: Column(
-                children: <Widget>[
-                  _showProcessingError()
-                      ? _buildErrorWidget()
-                      : _paymentSuccessful
-                          ? _buildSuccessfulWidget()
-                          : _methodWidgets[_currentIndex].child,
-                  SizedBox(height: 20),
-                  securedWidget
-                ],
-              )),
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            behavior: HitTestBehavior.translucent,
+            child: new Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 10.0),
+                child: Column(
+                  children: <Widget>[
+                    _showProcessingError()
+                        ? _buildErrorWidget()
+                        : _paymentSuccessful
+                            ? _buildSuccessfulWidget()
+                            : _methodWidgets[_currentIndex!].child,
+                    SizedBox(height: 20),
+                    securedWidget
+                  ],
+                )),
+          ),
         ),
       ),
     );
@@ -165,14 +171,13 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
       children: <Widget>[
         if (!widget.hideEmail && _charge.email != null)
           Text(
-            _charge.email,
+            _charge.email!,
             key: Key("ChargeEmail"),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(color: Colors.grey, fontSize: 12.0),
           ),
-        if (!widget.hideAmount &&
-            (_charge.amount != null || !_charge.amount.isNegative))
+        if (!widget.hideAmount && !_charge.amount.isNegative)
           Row(
             key: Key("DisplayAmount"),
             mainAxisAlignment: MainAxisAlignment.end,
@@ -189,7 +194,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                   child: Text(Utils.formatAmount(_charge.amount),
                       style: TextStyle(
                           fontSize: 15.0,
-                          color: Theme.of(context).textTheme.bodyText1.color,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
                           fontWeight: FontWeight.w500)))
             ],
           )
@@ -277,7 +282,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   void _indexChange() {
     setState(() {
-      _currentIndex = _tabController.index;
+      _currentIndex = _tabController!.index;
       // Update the checkout here just in case the user terminates the transaction
       // forcefully by tapping the close icon
     });
@@ -290,22 +295,25 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           icon: Icons.credit_card,
           child: new CardCheckout(
             key: Key("CardCheckout"),
+            publicKey: widget.publicKey,
             service: widget.cardsService,
             charge: _charge,
             onProcessingChange: _onProcessingChange,
             onResponse: _onPaymentResponse,
             hideAmount: widget.hideAmount,
-            onCardChange: (PaymentCard card) {
-              _charge.card.number = card.number;
-              _charge.card.cvc = card.cvc;
-              _charge.card.expiryMonth = card.expiryMonth;
-              _charge.card.expiryYear = card.expiryYear;
+            onCardChange: (PaymentCard? card) {
+              if (card == null) return;
+              _charge.card!.number = card.number;
+              _charge.card!.cvc = card.cvc;
+              _charge.card!.expiryMonth = card.expiryMonth;
+              _charge.card!.expiryYear = card.expiryYear;
             },
           )),
       new MethodItem(
         text: 'Bank',
         icon: Icons.account_balance,
         child: new BankCheckout(
+          publicKey: widget.publicKey,
           charge: _charge,
           service: widget.bankService,
           onResponse: _onPaymentResponse,
@@ -325,11 +333,12 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   }
 
   _showProcessingError() {
-    return !(_paymentError == null || _paymentError.isEmpty);
+    return !(_paymentError == null || _paymentError!.isEmpty);
   }
 
   void _onPaymentResponse(CheckoutResponse response) {
     _response = response;
+    if (!mounted) return;
     if (response.status == true) {
       _onPaymentSuccess();
     } else {
@@ -345,7 +354,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     });
   }
 
-  void _onPaymentError(String value) {
+  void _onPaymentError(String? value) {
     setState(() {
       _paymentError = value;
       _paymentSuccessful = false;
@@ -353,8 +362,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     });
   }
 
-  int _getCurrentTab() {
-    int checkedTab;
+  int? _getCurrentTab() {
+    int? checkedTab;
     switch (widget.method) {
       case CheckoutMethod.selectable:
       case CheckoutMethod.card:
@@ -377,14 +386,14 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     return new ErrorWidget(
       text: _paymentError,
       method: widget.method,
-      isCardPayment: _charge.card.isValid(),
+      isCardPayment: _charge.card!.isValid(),
       vSync: this,
       payWithBank: () {
         setState(() {
           _resetShowTabs();
           _onPaymentError(null);
           _charge.card = new PaymentCard.empty();
-          _tabController.index = 1;
+          _tabController!.index = 1;
           _paymentError = null;
         });
       },
@@ -393,13 +402,13 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           _resetShowTabs();
           _onPaymentError(null);
           _charge.card = new PaymentCard.empty();
-          _tabController.index = 0;
+          _tabController!.index = 0;
         });
       },
       startOverWithCard: () {
         _resetShowTabs();
         _onPaymentError(null);
-        _tabController.index = 0;
+        _tabController!.index = 0;
       },
     );
   }
@@ -407,8 +416,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   Widget _buildSuccessfulWidget() => new SuccessfulWidget(
         amount: _charge.amount,
         onCountdownComplete: () {
-          if (_response.card != null) {
-            _response.card.nullifyNumber();
+          if (_response!.card != null) {
+            _response!.card!.nullifyNumber();
           }
           Navigator.of(context).pop(_response);
         },
@@ -420,14 +429,15 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   }
 
   CheckoutResponse _getResponse() {
-    CheckoutResponse response = _response;
+    CheckoutResponse? response = _response;
     if (response == null) {
       response = CheckoutResponse.defaults();
-      response.method =
-          _tabController.index == 0 ? CheckoutMethod.card : CheckoutMethod.bank;
+      response.method = _tabController!.index == 0
+          ? CheckoutMethod.card
+          : CheckoutMethod.bank;
     }
     if (response.card != null) {
-      response.card.nullifyNumber();
+      response.card!.nullifyNumber();
     }
     return response;
   }

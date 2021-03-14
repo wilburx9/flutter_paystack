@@ -1,9 +1,9 @@
 import 'package:flutter_paystack/src/api/model/transaction_api_response.dart';
 
 class Transaction {
-  String _id;
-  String _reference;
-  String _message;
+  String? _id;
+  String? _reference;
+  String? _message;
 
   loadFromResponse(TransactionApiResponse t) {
     if (t.hasValidReferenceAndTrans()) {
@@ -13,11 +13,11 @@ class Transaction {
     }
   }
 
-  String get reference => _reference;
+  String? get reference => _reference;
 
-  String get id => _id;
+  String? get id => _id;
 
-  String get message => _message;
+  String get message => _message ?? "";
 
   bool hasStartedOnServer() {
     return (reference != null) && (id != null);

@@ -1,11 +1,11 @@
 import 'package:flutter_paystack/src/api/model/api_response.dart';
 
 class TransactionApiResponse extends ApiResponse {
-  String reference;
-  String trans;
-  String auth;
-  String otpMessage;
-  String displayText;
+  String? reference;
+  String? trans;
+  String? auth;
+  String? otpMessage;
+  String? displayText;
 
   TransactionApiResponse.unknownServerResponse() {
     status = '0';
@@ -27,11 +27,11 @@ class TransactionApiResponse extends ApiResponse {
         !map.containsKey('display_text') ? message : map['display_text'];
 
     if (status != null) {
-      status = status.toLowerCase();
+      status = status!.toLowerCase();
     }
 
     if (auth != null) {
-      auth = auth.toLowerCase();
+      auth = auth!.toLowerCase();
     }
   }
 
@@ -47,11 +47,11 @@ class TransactionApiResponse extends ApiResponse {
   }
 
   bool hasValidUrl() {
-    if (otpMessage == null || otpMessage.length == 0) {
+    if (otpMessage == null || otpMessage!.length == 0) {
       return false;
     }
 
-    return RegExp(r'^https?://', caseSensitive: false).hasMatch(otpMessage);
+    return RegExp(r'^https?://', caseSensitive: false).hasMatch(otpMessage!);
   }
 
   bool hasValidOtpMessage() {

@@ -5,5 +5,5 @@ class MethodItem {
   final IconData icon;
   final Widget child;
 
-  MethodItem({@required this.text, @required this.icon, @required this.child});
+  MethodItem({required this.text, required this.icon, required this.child});
 }

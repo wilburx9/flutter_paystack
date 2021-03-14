@@ -9,171 +9,164 @@ import 'package:flutter_paystack/src/common/exceptions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/models/charge.dart';
-import 'package:flutter_paystack/src/models/transaction.dart';
+import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/transaction/base_transaction_manager.dart';
 
 class CardTransactionManager extends BaseTransactionManager {
-  ValidateRequestBody validateRequestBody;
-  CardRequestBody chargeRequestBody;
+  late ValidateRequestBody validateRequestBody;
+  late CardRequestBody chargeRequestBody;
   final CardServiceContract service;
   var _invalidDataSentRetries = 0;
 
-  CardTransactionManager({
-    @required Charge charge,
-    @required this.service,
-    @required BuildContext context,
-    @required OnTransactionChange<Transaction> onSuccess,
-    @required OnTransactionError<Object, Transaction> onError,
-    @required OnTransactionChange<Transaction> beforeValidate,
-  }) : super(
-            charge: charge,
-            context: context,
-            onSuccess: onSuccess,
-            onError: onError,
-            beforeValidate: beforeValidate);
+  CardTransactionManager(
+      {required Charge charge,
+      required this.service,
+      required BuildContext context,
+      required String publicKey})
+      : assert(charge.card != null,
+            'please add a card to the charge before ' 'calling chargeCard'),
+        super(charge: charge, context: context, publicKey: publicKey);
 
   @override
   postInitiate() async {
-    chargeRequestBody = await CardRequestBody.getChargeRequestBody(charge);
+    chargeRequestBody =
+        await CardRequestBody.getChargeRequestBody(publicKey, charge);
     validateRequestBody = ValidateRequestBody();
   }
 
-  chargeCard() async {
+  Future<CheckoutResponse> chargeCard() async {
     try {
-      if (charge.card == null || !charge.card.isValid()) {
-        getCardInfoFrmUI(charge.card);
+      if (charge.card == null || !charge.card!.isValid()) {
+        return getCardInfoFrmUI(charge.card);
       } else {
         await initiate();
-        sendCharge();
+        return sendCharge();
       }
     } catch (e) {
       if (!(e is ProcessingException)) {
         setProcessingOff();
       }
-      onError(e, transaction);
+      return CheckoutResponse(
+          message: e.toString(),
+          reference: transaction.reference,
+          status: false,
+          card: charge.card?..nullifyNumber(),
+          method: CheckoutMethod.card,
+          verify: !(e is PaystackException));
     }
   }
 
-  _validate() {
+  Future<CheckoutResponse> _validate() async {
     try {
-      _validateChargeOnServer();
+      return _validateChargeOnServer();
     } catch (e) {
-      notifyProcessingError(e);
+      return notifyProcessingError(e);
     }
   }
 
-  _reQuery() {
+  Future<CheckoutResponse> _reQuery() async {
     try {
-      _reQueryChargeOnServer();
+      return _reQueryChargeOnServer();
     } catch (e) {
-      notifyProcessingError(e);
+      return notifyProcessingError(e);
     }
   }
 
-  _validateChargeOnServer() {
-    Map<String, String> params = validateRequestBody.paramsMap();
+  Future<CheckoutResponse> _validateChargeOnServer() {
+    Map<String, String?> params = validateRequestBody.paramsMap();
     Future<TransactionApiResponse> future = service.validateCharge(params);
-    handleServerResponse(future);
+    return handleServerResponse(future);
   }
 
-  _reQueryChargeOnServer() {
+  Future<CheckoutResponse> _reQueryChargeOnServer() {
     Future<TransactionApiResponse> future =
         service.reQueryTransaction(transaction.id);
-    handleServerResponse(future);
+    return handleServerResponse(future);
   }
 
   @override
-  sendChargeOnServer() {
+  Future<CheckoutResponse> sendChargeOnServer() {
     Future<TransactionApiResponse> future =
         service.chargeCard(chargeRequestBody.paramsMap());
-    handleServerResponse(future);
+    return handleServerResponse(future);
   }
 
   @override
-  handleApiResponse(TransactionApiResponse apiResponse) {
+  Future<CheckoutResponse> handleApiResponse(
+      TransactionApiResponse apiResponse) async {
     var status = apiResponse.status;
     if (status == '1' || status == 'success') {
       setProcessingOff();
-      onSuccess(transaction);
-      return;
+      return onSuccess(transaction);
     }
 
     if (status == '2') {
-      getPinFrmUI();
-      return;
+      return getPinFrmUI();
     }
 
     if (status == '3' && apiResponse.hasValidReferenceAndTrans()) {
-      notifyBeforeValidate();
       validateRequestBody.trans = apiResponse.trans;
-      getOtpFrmUI(message: apiResponse.message);
-      return;
+      return getOtpFrmUI(message: apiResponse.message);
     }
 
     if (transaction.hasStartedOnServer()) {
       if (status == 'requery') {
-        notifyBeforeValidate();
-        new Timer(const Duration(seconds: 5), () {
-          _reQuery();
-        });
-        return;
+        await Future.delayed(const Duration(seconds: 5));
+        return _reQuery();
       }
 
       if (apiResponse.hasValidAuth() &&
-          apiResponse.auth.toLowerCase() == '3DS'.toLowerCase() &&
+          apiResponse.auth!.toLowerCase() == '3DS'.toLowerCase() &&
           apiResponse.hasValidUrl()) {
-        notifyBeforeValidate();
-        getAuthFrmUI(apiResponse.otpMessage);
-        return;
+        return getAuthFrmUI(apiResponse.otpMessage);
       }
 
       if (apiResponse.hasValidAuth() &&
-          (apiResponse.auth.toLowerCase() == 'otp' ||
-              apiResponse.auth.toLowerCase() == 'phone') &&
+          (apiResponse.auth!.toLowerCase() == 'otp' ||
+              apiResponse.auth!.toLowerCase() == 'phone') &&
           apiResponse.hasValidOtpMessage()) {
-        notifyBeforeValidate();
         validateRequestBody.trans = transaction.id;
-        getOtpFrmUI(message: apiResponse.otpMessage);
-        return;
+        return getOtpFrmUI(message: apiResponse.otpMessage);
       }
     }
 
     if (status == '0'.toLowerCase() || status == 'error') {
-      if (apiResponse.message.toLowerCase() ==
+      if (apiResponse.message!.toLowerCase() ==
               'Invalid Data Sent'.toLowerCase() &&
           _invalidDataSentRetries < 0) {
         _invalidDataSentRetries++;
-        sendCharge();
-        return;
+        return chargeCard();
       }
 
-      if (apiResponse.message.toLowerCase() ==
+      if (apiResponse.message!.toLowerCase() ==
           'Access code has expired'.toLowerCase()) {
-        notifyProcessingError(ExpiredAccessCodeException(apiResponse.message));
-        return;
+        return sendCharge();
       }
 
-      notifyProcessingError(ChargeException(apiResponse.message));
-      return;
+      return notifyProcessingError(ChargeException(apiResponse.message));
     }
 
-    notifyProcessingError(PaystackException(Strings.unKnownResponse));
+    return notifyProcessingError(PaystackException(Strings.unKnownResponse));
   }
 
   @override
-  void handleCardInput() {
-    chargeCard();
+  Future<CheckoutResponse> handleCardInput() {
+    return chargeCard();
   }
 
   @override
-  void handleOtpInput(String otp, TransactionApiResponse response) {
+  Future<CheckoutResponse> handleOtpInput(
+      String otp, TransactionApiResponse? response) {
     validateRequestBody.token = otp;
-    _validate();
+    return _validate();
   }
 
   @override
-  void handlePinInput(String pin) async {
+  Future<CheckoutResponse> handlePinInput(String pin) async {
     await chargeRequestBody.addPin(pin);
-    sendCharge();
+    return sendCharge();
   }
+
+  @override
+  CheckoutMethod checkoutMethod() => CheckoutMethod.card;
 }

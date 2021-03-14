@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class PinField extends StatefulWidget {
-  final ValueChanged<String> onSaved;
+  final ValueChanged<String>? onSaved;
   final int pinLength;
 
   PinField({this.onSaved, this.pinLength = 4});
@@ -27,7 +27,7 @@ class _PinFieldState extends State<PinField> {
         ),
         autofocus: true,
         inputFormatters: [
-          WhitelistingTextInputFormatter.digitsOnly,
+          FilteringTextInputFormatter.digitsOnly,
           new LengthLimitingTextInputFormatter(widget.pinLength),
         ],
         obscureText: true,
@@ -49,7 +49,7 @@ class _PinFieldState extends State<PinField> {
         ),
         onChanged: (String value) {
           if (value.length == widget.pinLength) {
-            widget.onSaved(value);
+            widget.onSaved!(value);
           }
         },
       ),

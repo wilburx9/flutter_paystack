@@ -1,6 +1,5 @@
 import 'package:flutter_paystack/src/common/card_utils.dart';
 import 'package:flutter_paystack/src/common/string_utils.dart';
-import 'package:meta/meta.dart';
 
 /// The class for the Payment Card model. Has utility methods for validating
 /// the card.
@@ -17,52 +16,52 @@ class PaymentCard {
   ];
 
   /// Name on card
-  String name;
+  String? name;
 
   /// Card number
-  String _number;
+  String? _number;
 
   /// Card CVV or CVC
-  String _cvc;
+  String? _cvc;
 
   /// Expiry month
-  int expiryMonth = 0;
+  int? expiryMonth = 0;
 
   /// Expiry year
-  int expiryYear = 0;
+  int? expiryYear = 0;
 
   /// Bank Address line 1
-  String addressLine1;
+  String? addressLine1;
 
   /// Bank Address line 2
-  String addressLine2;
+  String? addressLine2;
 
   /// Bank Address line 3
-  String addressLine3;
+  String? addressLine3;
 
   /// Bank Address line 4
-  String addressLine4;
+  String? addressLine4;
 
   /// Postal code of the bank address
-  String addressPostalCode;
+  String? addressPostalCode;
 
   /// Country of the bank
-  String addressCountry;
+  String? addressCountry;
 
-  String country;
+  String? country;
 
   /// Type of card
-  String _type;
+  String? _type;
 
-  String _last4Digits;
+  String? _last4Digits;
 
-  set type(String value) => _type = value;
+  set type(String? value) => _type = value;
 
-  String get number => _number;
+  String? get number => _number;
 
-  String get last4Digits => _last4Digits;
+  String? get last4Digits => _last4Digits;
 
-  String get type {
+  String? get type {
     // If type is empty and the number isn't empty
     if (StringUtils.isEmpty(_type)) {
       if (!StringUtils.isEmpty(number)) {
@@ -79,7 +78,7 @@ class PaymentCard {
 
   // Get the card type by matching the starting characters against the Issuer
   // Identification Number (IIN)
-  String getTypeForIIN(String cardNumber) {
+  String getTypeForIIN(String? cardNumber) {
     // If type is empty and the number isn't empty
     if (!StringUtils.isEmpty(cardNumber)) {
       for (var cardType in cardTypes) {
@@ -92,12 +91,12 @@ class PaymentCard {
     return CardType.unknown;
   }
 
-  set number(String value) {
+  set number(String? value) {
     _number = CardUtils.getCleanedNumber(value);
-    if (number.length == 4) {
+    if (number!.length == 4) {
       _last4Digits = number;
-    } else if (number.length > 4) {
-      _last4Digits = number.substring(number.length - 4);
+    } else if (number!.length > 4) {
+      _last4Digits = number!.substring(number!.length - 4);
     } else {
       // whatever is appropriate in this case
       _last4Digits = number;
@@ -108,25 +107,25 @@ class PaymentCard {
     _number = null;
   }
 
-  String get cvc => _cvc;
+  String? get cvc => _cvc;
 
-  set cvc(String value) {
+  set cvc(String? value) {
     _cvc = CardUtils.getCleanedNumber(value);
   }
 
   PaymentCard(
-      {@required String number,
-      @required String cvc,
-      @required this.expiryMonth,
-      @required this.expiryYear,
-      String name,
-      String addressLine1,
-      String addressLine2,
-      String addressLine3,
-      String addressLine4,
-      String addressPostCode,
-      String addressCountry,
-      String country}) {
+      {required String? number,
+      required String? cvc,
+      required this.expiryMonth,
+      required this.expiryYear,
+      String? name,
+      String? addressLine1,
+      String? addressLine2,
+      String? addressLine3,
+      String? addressLine4,
+      String? addressPostCode,
+      String? addressCountry,
+      String? country}) {
     this.number = number;
     this.cvc = cvc;
     this.name = StringUtils.nullify(name);
@@ -162,7 +161,7 @@ class PaymentCard {
 
   /// Validates the CVC or CVV of a card.
   /// Returns true if CVC is valid and false otherwise
-  bool validCVC(String cardCvc) {
+  bool validCVC(String? cardCvc) {
     cardCvc ??= this.cvc;
 
     if (cardCvc == null || cardCvc.trim().isEmpty) return false;
@@ -177,7 +176,7 @@ class PaymentCard {
 
   /// Validates the number of the card
   /// Returns true if the number is valid. Returns false otherwise
-  bool validNumber(String cardNumber) {
+  bool validNumber(String? cardNumber) {
     if (cardNumber == null) {
       cardNumber = this.number;
     }
@@ -185,7 +184,7 @@ class PaymentCard {
 
     // Remove all non digits
     var formattedNumber =
-        cardNumber.trim().replaceAll(new RegExp(r'[^0-9]'), '');
+        cardNumber!.trim().replaceAll(new RegExp(r'[^0-9]'), '');
 
     // Verve card needs no other validation except it matched pattern
     if (CardType.fullPatternVerve.hasMatch(formattedNumber)) {
@@ -285,9 +284,9 @@ abstract class CardType {
   static final startingPatternVerve = RegExp(r'((506(0|1))|(507(8|9))|(6500))');
   static final startingPatternDiscover = RegExp(r'((6[45])|(6011))');
 
-  bool hasFullMatch(String cardNumber);
+  bool hasFullMatch(String? cardNumber);
 
-  bool hasStartingMatch(String cardNumber);
+  bool hasStartingMatch(String? cardNumber);
 
   @override
   String toString();
@@ -295,13 +294,13 @@ abstract class CardType {
 
 class _Visa extends CardType {
   @override
-  bool hasFullMatch(String cardNumber) {
-    return CardType.fullPatternVisa.hasMatch(cardNumber);
+  bool hasFullMatch(String? cardNumber) {
+    return CardType.fullPatternVisa.hasMatch(cardNumber!);
   }
 
   @override
-  bool hasStartingMatch(String cardNumber) {
-    return cardNumber.startsWith(CardType.startingPatternVisa);
+  bool hasStartingMatch(String? cardNumber) {
+    return cardNumber!.startsWith(CardType.startingPatternVisa);
   }
 
   @override
@@ -312,13 +311,13 @@ class _Visa extends CardType {
 
 class _MasterCard extends CardType {
   @override
-  bool hasFullMatch(String cardNumber) {
-    return CardType.fullPatternMasterCard.hasMatch(cardNumber);
+  bool hasFullMatch(String? cardNumber) {
+    return CardType.fullPatternMasterCard.hasMatch(cardNumber!);
   }
 
   @override
-  bool hasStartingMatch(String cardNumber) {
-    return cardNumber.startsWith(CardType.startingPatternMasterCard);
+  bool hasStartingMatch(String? cardNumber) {
+    return cardNumber!.startsWith(CardType.startingPatternMasterCard);
   }
 
   @override
@@ -329,13 +328,13 @@ class _MasterCard extends CardType {
 
 class _AmericanExpress extends CardType {
   @override
-  bool hasFullMatch(String cardNumber) {
-    return CardType.fullPatternAmericanExpress.hasMatch(cardNumber);
+  bool hasFullMatch(String? cardNumber) {
+    return CardType.fullPatternAmericanExpress.hasMatch(cardNumber!);
   }
 
   @override
-  bool hasStartingMatch(String cardNumber) {
-    return cardNumber.startsWith(CardType.startingPatternAmericanExpress);
+  bool hasStartingMatch(String? cardNumber) {
+    return cardNumber!.startsWith(CardType.startingPatternAmericanExpress);
   }
 
   @override
@@ -346,13 +345,13 @@ class _AmericanExpress extends CardType {
 
 class _DinersClub extends CardType {
   @override
-  bool hasFullMatch(String cardNumber) {
-    return CardType.fullPatternDinersClub.hasMatch(cardNumber);
+  bool hasFullMatch(String? cardNumber) {
+    return CardType.fullPatternDinersClub.hasMatch(cardNumber!);
   }
 
   @override
-  bool hasStartingMatch(String cardNumber) {
-    return cardNumber.startsWith(CardType.startingPatternDinersClub);
+  bool hasStartingMatch(String? cardNumber) {
+    return cardNumber!.startsWith(CardType.startingPatternDinersClub);
   }
 
   @override
@@ -363,13 +362,13 @@ class _DinersClub extends CardType {
 
 class _Discover extends CardType {
   @override
-  bool hasFullMatch(String cardNumber) {
-    return CardType.fullPatternDiscover.hasMatch(cardNumber);
+  bool hasFullMatch(String? cardNumber) {
+    return CardType.fullPatternDiscover.hasMatch(cardNumber!);
   }
 
   @override
-  bool hasStartingMatch(String cardNumber) {
-    return cardNumber.startsWith(CardType.startingPatternDiscover);
+  bool hasStartingMatch(String? cardNumber) {
+    return cardNumber!.startsWith(CardType.startingPatternDiscover);
   }
 
   @override
@@ -380,13 +379,13 @@ class _Discover extends CardType {
 
 class _Jcb extends CardType {
   @override
-  bool hasFullMatch(String cardNumber) {
-    return CardType.fullPatternJCB.hasMatch(cardNumber);
+  bool hasFullMatch(String? cardNumber) {
+    return CardType.fullPatternJCB.hasMatch(cardNumber!);
   }
 
   @override
-  bool hasStartingMatch(String cardNumber) {
-    return cardNumber.startsWith(CardType.startingPatternJCB);
+  bool hasStartingMatch(String? cardNumber) {
+    return cardNumber!.startsWith(CardType.startingPatternJCB);
   }
 
   @override
@@ -397,13 +396,13 @@ class _Jcb extends CardType {
 
 class _Verve extends CardType {
   @override
-  bool hasFullMatch(String cardNumber) {
-    return CardType.fullPatternVerve.hasMatch(cardNumber);
+  bool hasFullMatch(String? cardNumber) {
+    return CardType.fullPatternVerve.hasMatch(cardNumber!);
   }
 
   @override
-  bool hasStartingMatch(String cardNumber) {
-    return cardNumber.startsWith(CardType.startingPatternVerve);
+  bool hasStartingMatch(String? cardNumber) {
+    return cardNumber!.startsWith(CardType.startingPatternVerve);
   }
 
   @override

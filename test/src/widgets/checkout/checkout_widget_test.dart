@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutter_paystack/src/api/service/contracts/banks_service_contract.dart';
@@ -13,6 +15,11 @@ class MockedCardService extends Mock implements CardServiceContract {}
 class MockedBankService extends Mock implements BankServiceContract {}
 
 void main() {
+  late String publicKey;
+
+  setUp(() {
+    publicKey = Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "";
+  });
   group("$CheckoutWidget", () {
     var charge = Charge()
       ..amount = 20000
@@ -23,6 +30,7 @@ void main() {
       testWidgets("is supplied", (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.card,
@@ -47,6 +55,7 @@ void main() {
       testWidgets("is not passed", (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.bank,
@@ -74,6 +83,7 @@ void main() {
           (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.selectable,
@@ -91,6 +101,7 @@ void main() {
       testWidgets("card checkout is displayed for card method", (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.selectable,
@@ -114,6 +125,7 @@ void main() {
 
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: bankService,
             cardsService: MockedCardService(),
             method: CheckoutMethod.bank,
@@ -133,6 +145,7 @@ void main() {
       testWidgets("is displayed when `hideEmail` is false", (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.selectable,
@@ -151,6 +164,7 @@ void main() {
       testWidgets("is not displayed when `hideEmail` is true", (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.selectable,
@@ -169,6 +183,7 @@ void main() {
       testWidgets("is not displayed when no email is passed", (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.selectable,
@@ -189,6 +204,7 @@ void main() {
       testWidgets("is displayed when `hideAmount` is false", (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.selectable,
@@ -207,6 +223,7 @@ void main() {
       testWidgets("is not displayed when `hideAmount` is true", (tester) async {
         final checkoutWidget = buildTestWidget(
           CheckoutWidget(
+            publicKey: publicKey,
             bankService: MockedBankService(),
             cardsService: MockedCardService(),
             method: CheckoutMethod.selectable,

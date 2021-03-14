@@ -7,7 +7,6 @@ import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:flutter_paystack/src/models/card.dart';
 import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:flutter_paystack/src/models/checkout_response.dart';
-import 'package:flutter_paystack/src/models/transaction.dart';
 import 'package:flutter_paystack/src/transaction/card_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/checkout/base_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
@@ -17,17 +16,19 @@ class CardCheckout extends StatefulWidget {
   final Charge charge;
   final OnResponse<CheckoutResponse> onResponse;
   final ValueChanged<bool> onProcessingChange;
-  final ValueChanged<PaymentCard> onCardChange;
+  final ValueChanged<PaymentCard?> onCardChange;
   final bool hideAmount;
   final CardServiceContract service;
+  final String publicKey;
 
   CardCheckout({
-    Key key,
-    @required this.charge,
-    @required this.onResponse,
-    @required this.onProcessingChange,
-    @required this.onCardChange,
-    @required this.service,
+    Key? key,
+    required this.charge,
+    required this.onResponse,
+    required this.onProcessingChange,
+    required this.onCardChange,
+    required this.service,
+    required this.publicKey,
     this.hideAmount = false,
   }) : super(key: key);
 
@@ -43,9 +44,8 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
 
   @override
   Widget buildAnimatedChild() {
-    var amountText = _charge.amount == null || _charge.amount.isNegative
-        ? ''
-        : Utils.formatAmount(_charge.amount);
+    var amountText =
+        _charge.amount.isNegative ? '' : Utils.formatAmount(_charge.amount);
 
     return new Container(
       alignment: Alignment.center,
@@ -70,13 +70,14 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
     );
   }
 
-  void _onCardValidated(PaymentCard card) {
+  void _onCardValidated(PaymentCard? card) {
+    if (card == null) return;
     _charge.card = card;
     widget.onCardChange(_charge.card);
     widget.onProcessingChange(true);
 
-    if ((_charge.accessCode != null && _charge.accessCode.isNotEmpty) ||
-        _charge.reference != null && _charge.reference.isNotEmpty) {
+    if ((_charge.accessCode != null && _charge.accessCode!.isNotEmpty) ||
+        _charge.reference != null && _charge.reference!.isNotEmpty) {
       _chargeCard(_charge);
     } else {
       // This should never happen. Validation has already been done in [PaystackPlugin .checkout]
@@ -84,53 +85,13 @@ class _CardCheckoutState extends BaseCheckoutMethodState<CardCheckout> {
     }
   }
 
-  void _chargeCard(Charge charge) {
-    handleBeforeValidate(Transaction transaction) {
-      // Do nothing
-    }
-
-    handleOnError(Object e, Transaction transaction) {
-      if (!mounted) {
-        return;
-      }
-      if (e is ExpiredAccessCodeException) {
-        _chargeCard(charge);
-        return;
-      }
-
-      String message = e.toString();
-      if (transaction.reference != null && !(e is PaystackException)) {
-        handleError(message, transaction.reference, true);
-      } else {
-        handleError(message, transaction.reference, false);
-      }
-    }
-
-    handleOnSuccess(Transaction transaction) {
-      if (!mounted) {
-        return;
-      }
-      onResponse(new CheckoutResponse(
-        message: transaction.message,
-        reference: transaction.reference,
-        status: true,
-        method: method,
-        card: _charge.card,
-        verify: true,
-      ));
-    }
-
-    new CardTransactionManager(
-            charge: charge,
-            context: context,
-            service: widget.service,
-            beforeValidate: (transaction) => handleBeforeValidate(transaction),
-            onSuccess: (transaction) => handleOnSuccess(transaction),
-            onError: (error, transaction) => handleOnError(error, transaction))
-        .chargeCard();
-  }
-
-  void handleError(String message, String reference, bool verify) {
-    handleAllError(message, reference, verify, card: _charge.card);
+  void _chargeCard(Charge charge) async {
+    final response = await CardTransactionManager(
+      charge: charge,
+      context: context,
+      service: widget.service,
+      publicKey: widget.publicKey,
+    ).chargeCard();
+    onResponse(response);
   }
 }
