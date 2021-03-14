@@ -21,7 +21,7 @@ class AuthDelegate(private val activity: Activity) {
             return
         }
         AuthAsyncTask(WeakReference(activity), WeakReference(onAuthCompleteListener))
-                .execute(methodCall.argument<String>("authUrl"))
+                .execute(methodCall.argument("authUrl"))
     }
 
     private val onAuthCompleteListener = object : OnAuthCompleteListener {

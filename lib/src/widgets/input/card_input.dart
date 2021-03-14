@@ -9,14 +9,14 @@ import 'package:flutter_paystack/src/widgets/input/number_field.dart';
 
 class CardInput extends StatefulWidget {
   final String buttonText;
-  final PaymentCard card;
-  final ValueChanged<PaymentCard> onValidated;
+  final PaymentCard? card;
+  final ValueChanged<PaymentCard?> onValidated;
 
   CardInput({
-    Key key,
-    @required this.buttonText,
-    @required this.card,
-    @required this.onValidated,
+    Key? key,
+    required this.buttonText,
+    required this.card,
+    required this.onValidated,
   }) : super(key: key);
 
   @override
@@ -25,9 +25,9 @@ class CardInput extends StatefulWidget {
 
 class _CardInputState extends State<CardInput> {
   var _formKey = new GlobalKey<FormState>();
-  final PaymentCard _card;
-  var _autoValidate = false;
-  TextEditingController numberController;
+  final PaymentCard? _card;
+  var _autoValidate = AutovalidateMode.disabled;
+  late TextEditingController numberController;
   bool _validated = false;
 
   _CardInputState(this._card);
@@ -38,7 +38,7 @@ class _CardInputState extends State<CardInput> {
     numberController = new TextEditingController();
     numberController.addListener(_getCardTypeFrmNumber);
     if (_card?.number != null) {
-      numberController.text = Utils.addSpaces(_card.number);
+      numberController.text = Utils.addSpaces(_card!.number!);
     }
   }
 
@@ -52,7 +52,7 @@ class _CardInputState extends State<CardInput> {
   @override
   Widget build(BuildContext context) {
     return new Form(
-      autovalidate: _autoValidate,
+      autovalidateMode: _autoValidate,
       key: _formKey,
       child: new Column(
         children: <Widget>[
@@ -60,8 +60,8 @@ class _CardInputState extends State<CardInput> {
             key: Key("CardNumberKey"),
             controller: numberController,
             card: _card,
-            onSaved: (String value) =>
-                _card.number = CardUtils.getCleanedNumber(value),
+            onSaved: (String? value) =>
+                _card!.number = CardUtils.getCleanedNumber(value),
             suffix: getCardIcon(),
           ),
           new SizedBox(
@@ -77,8 +77,8 @@ class _CardInputState extends State<CardInput> {
                   card: _card,
                   onSaved: (value) {
                     List<int> expiryDate = CardUtils.getExpiryDate(value);
-                    _card.expiryMonth = expiryDate[0];
-                    _card.expiryYear = expiryDate[1];
+                    _card!.expiryMonth = expiryDate[0];
+                    _card!.expiryYear = expiryDate[1];
                   },
                 ),
               ),
@@ -88,7 +88,7 @@ class _CardInputState extends State<CardInput> {
                 key: Key("CVVKey"),
                 card: _card,
                 onSaved: (value) {
-                  _card.cvc = CardUtils.getCleanedNumber(value);
+                  _card!.cvc = CardUtils.getCleanedNumber(value);
                 },
               )),
             ],
@@ -108,15 +108,15 @@ class _CardInputState extends State<CardInput> {
 
   void _getCardTypeFrmNumber() {
     String input = CardUtils.getCleanedNumber(numberController.text);
-    String cardType = _card.getTypeForIIN(input);
+    String cardType = _card!.getTypeForIIN(input);
     setState(() {
-      this._card.type = cardType;
+      this._card!.type = cardType;
     });
   }
 
   void _validateInputs() {
     FocusScope.of(context).requestFocus(new FocusNode());
-    final FormState form = _formKey.currentState;
+    final FormState form = _formKey.currentState!;
     if (form.validate()) {
       form.save();
       widget.onValidated(_card);
@@ -124,7 +124,7 @@ class _CardInputState extends State<CardInput> {
         setState(() => _validated = true);
       }
     } else {
-      setState(() => _autoValidate = true);
+      setState(() => _autoValidate = AutovalidateMode.always);
     }
   }
 
@@ -137,7 +137,7 @@ class _CardInputState extends State<CardInput> {
       color: Colors.grey[600],
     );
     if (_card != null) {
-      switch (_card.type) {
+      switch (_card!.type) {
         case CardType.masterCard:
           img = 'mastercard.png';
           break;

@@ -5,7 +5,8 @@ import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('plugins.wilburt/flutter_paystack');
+  const MethodChannel channel = MethodChannel(
+      'plugins.wilburt/flutter_paystack');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -21,9 +22,10 @@ void main() {
 
   group("$PaystackPlugin", () {
     test('is properly initialized with passed key', () async {
-      var publicKey = Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"];
-      await PaystackPlugin.initialize(publicKey: publicKey);
-      expect(publicKey, PaystackPlugin.publicKey);
+      var publicKey = Platform.environment["PAYSTACK_TEST_PUBLIC_KEY"] ?? "";
+      final plugin = PaystackPlugin();
+      await plugin.initialize(publicKey: publicKey);
+      expect(publicKey, plugin.publicKey);
     });
   });
 }

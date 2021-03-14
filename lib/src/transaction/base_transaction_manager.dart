@@ -9,6 +9,7 @@ import 'package:flutter_paystack/src/common/paystack.dart';
 import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:flutter_paystack/src/models/card.dart';
 import 'package:flutter_paystack/src/models/charge.dart';
+import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/models/transaction.dart';
 import 'package:flutter_paystack/src/widgets/birthday_widget.dart';
 import 'package:flutter_paystack/src/widgets/card_widget.dart';
@@ -16,167 +17,195 @@ import 'package:flutter_paystack/src/widgets/otp_widget.dart';
 import 'package:flutter_paystack/src/widgets/pin_widget.dart';
 
 abstract class BaseTransactionManager {
-  static bool processing = false;
+  bool processing = false;
   final Charge charge;
   final BuildContext context;
   final Transaction transaction = Transaction();
-  final OnTransactionChange<Transaction> onSuccess;
-  final OnTransactionChange<Transaction> beforeValidate;
-  final OnTransactionError<Object, Transaction> onError;
+  final String publicKey;
 
-  BaseTransactionManager(
-      {@required this.charge,
-      @required this.context,
-      @required this.onSuccess,
-      @required this.beforeValidate,
-      @required this.onError})
-      : assert(context != null, 'context must not be null'),
-        assert(charge != null, 'charge must not be null'),
-        assert(charge.card != null,
-            'please add a card to the charge before ' 'calling chargeCard'),
-        assert(beforeValidate != null, 'beforeValidate must not be null'),
-        assert(onSuccess != null, 'onSuccess must not be null'),
-        assert(onError != null, 'onError must not be null');
+  BaseTransactionManager({
+    required this.charge,
+    required this.context,
+    required this.publicKey,
+  });
 
   initiate() async {
-    if (BaseTransactionManager.processing) {
-      throw ProcessingException();
-    }
+    if (processing) throw ProcessingException();
+
     setProcessingOn();
     await postInitiate();
   }
 
-  sendCharge() {
+  Future<CheckoutResponse> sendCharge() async {
     try {
-      sendChargeOnServer();
+      return sendChargeOnServer();
     } catch (e) {
-      notifyProcessingError(e);
+      return notifyProcessingError(e);
     }
   }
 
-  handleApiResponse(TransactionApiResponse apiResponse);
+  Future<CheckoutResponse> handleApiResponse(
+      TransactionApiResponse apiResponse);
 
-  _initApiResponse(TransactionApiResponse apiResponse) {
+  Future<CheckoutResponse> _initApiResponse(
+      TransactionApiResponse? apiResponse) {
     if (apiResponse == null) {
       apiResponse = TransactionApiResponse.unknownServerResponse();
     }
 
     transaction.loadFromResponse(apiResponse);
 
-    handleApiResponse(apiResponse);
+    return handleApiResponse(apiResponse);
   }
 
-  handleServerResponse(Future<TransactionApiResponse> future) {
-    future
-        .then((TransactionApiResponse apiResponse) =>
-            _initApiResponse(apiResponse))
-        .catchError((e) => notifyProcessingError(e));
+  Future<CheckoutResponse> handleServerResponse(
+      Future<TransactionApiResponse> future) async {
+    try {
+      final apiResponse = await future;
+      return _initApiResponse(apiResponse);
+    } catch (e) {
+      return notifyProcessingError(e);
+    }
   }
 
-  notifyProcessingError(Object e) {
+  CheckoutResponse notifyProcessingError(Object e) {
     setProcessingOff();
 
     if (e is TimeoutException || e is SocketException) {
       e = 'Please  check your internet connection or try again later';
     }
-    onError(e, transaction);
-  }
-
-  notifyBeforeValidate() {
-    if (beforeValidate != null) {
-      beforeValidate(transaction);
-    }
+    return CheckoutResponse(
+        message: e.toString(),
+        reference: transaction.reference,
+        status: false,
+        card: charge.card?..nullifyNumber(),
+        account: charge.account,
+        method: checkoutMethod(),
+        verify: !(e is PaystackException));
   }
 
   setProcessingOff() => processing = false;
 
   setProcessingOn() => processing = true;
 
-  getCardInfoFrmUI(PaymentCard currentCard) async {
-    PaymentCard newCard = await showDialog<PaymentCard>(
+  Future<CheckoutResponse> getCardInfoFrmUI(PaymentCard? currentCard) async {
+    PaymentCard? newCard = await showDialog<PaymentCard>(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) => CardInputWidget(currentCard));
 
     if (newCard == null || !newCard.isValid()) {
-      notifyProcessingError(CardException('Invalid card parameters'));
+      return notifyProcessingError(CardException('Invalid card parameters'));
     } else {
       charge.card = newCard;
-      handleCardInput();
+      return handleCardInput();
     }
   }
 
-  getOtpFrmUI({String message, TransactionApiResponse response}) async {
+  Future<CheckoutResponse> getOtpFrmUI(
+      {String? message, TransactionApiResponse? response}) async {
     assert(message != null || response != null);
-    String otp = await showDialog<String>(
+    String? otp = await showDialog<String>(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) => new OtpWidget(
             message: message != null
                 ? message
-                : response.displayText == null || response.displayText.isEmpty
+                : response!.displayText == null || response.displayText!.isEmpty
                     ? response.message
                     : response.displayText));
 
     if (otp != null && otp.isNotEmpty) {
-      handleOtpInput(otp, response);
+      return handleOtpInput(otp, response);
     } else {
-      notifyProcessingError(PaystackException("You did not provide an OTP"));
+      return notifyProcessingError(
+          PaystackException("You did not provide an OTP"));
     }
   }
 
-  getAuthFrmUI(String url) async {
-    String result =
-        await Utils.channel.invokeMethod('getAuthorization', {"authUrl": url});
-    TransactionApiResponse apiResponse;
-    try {
-      Map<String, dynamic> responseMap = json.decode(result);
-      apiResponse = TransactionApiResponse.fromMap(responseMap);
-    } catch (e) {
-      apiResponse = TransactionApiResponse.unknownServerResponse();
+  Future<CheckoutResponse> getAuthFrmUI(String? url) async {
+    TransactionApiResponse apiResponse =
+        TransactionApiResponse.unknownServerResponse();
+
+    String? result = await Utils.methodChannel
+        .invokeMethod<String>('getAuthorization', {"authUrl": url});
+
+    if (result != null) {
+      try {
+        Map<String, dynamic> responseMap = json.decode(result);
+        apiResponse = TransactionApiResponse.fromMap(responseMap);
+      } catch (e) {}
     }
-    _initApiResponse(apiResponse);
+    return _initApiResponse(apiResponse);
   }
 
-  getPinFrmUI() async {
-    String pin = await showDialog<String>(
+  Future<CheckoutResponse> getPinFrmUI() async {
+    String? pin = await showDialog<String>(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) => new PinWidget());
 
     if (pin != null && pin.length == 4) {
-      handlePinInput(pin);
+      return handlePinInput(pin);
     } else {
-      notifyProcessingError(PaystackException("PIN must be exactly 4 digits"));
+      return notifyProcessingError(
+          PaystackException("PIN must be exactly 4 digits"));
     }
   }
 
-  getBirthdayFrmUI(TransactionApiResponse response) async {
-    String birthday = await showDialog<String>(
+  Future<CheckoutResponse> getBirthdayFrmUI(
+      TransactionApiResponse response) async {
+    String? birthday = await showDialog<String>(
         barrierDismissible: false,
         context: context,
-        builder: (BuildContext context) => new BirthdayWidget(
-            message:
-                response.displayText == null || response.displayText.isEmpty
-                    ? response.message
-                    : response.displayText));
+        builder: (BuildContext context) {
+          var messageText =
+              response.displayText == null || response.displayText!.isEmpty
+                  ? response.message!
+                  : response.displayText!;
+          return new BirthdayWidget(message: messageText);
+        });
 
     if (birthday != null && birthday.isNotEmpty) {
-      handleBirthdayInput(birthday, response);
+      return handleBirthdayInput(birthday, response);
     } else {
-      notifyProcessingError(PaystackException("Date of birth not supplied"));
+      return notifyProcessingError(
+          PaystackException("Date of birth not supplied"));
     }
   }
 
-  void handleCardInput() {}
+  CheckoutResponse onSuccess(Transaction transaction) {
+    return CheckoutResponse(
+        message: transaction.message,
+        reference: transaction.reference,
+        status: true,
+        card: charge.card?..nullifyNumber(),
+        account: charge.account,
+        method: checkoutMethod(),
+        verify: true);
+  }
 
-  void handleOtpInput(String otp, TransactionApiResponse response);
+  Future<CheckoutResponse> handleCardInput() {
+    throw UnsupportedError(
+        "Handling of card input not supported for Bank payment method");
+  }
 
-  void handlePinInput(String pin) {}
+  Future<CheckoutResponse> handleOtpInput(
+      String otp, TransactionApiResponse? response);
+
+  Future<CheckoutResponse> handlePinInput(String pin) {
+    throw UnsupportedError("Pin Input not supported for ${checkoutMethod()}");
+  }
 
   postInitiate();
 
-  void handleBirthdayInput(String birthday, TransactionApiResponse response) {}
+  Future<CheckoutResponse> handleBirthdayInput(
+      String birthday, TransactionApiResponse response) {
+    throw UnsupportedError(
+        "Birthday Input not supported for ${checkoutMethod()}");
+  }
 
-  void sendChargeOnServer();
+  CheckoutMethod checkoutMethod();
+
+  Future<CheckoutResponse> sendChargeOnServer();
 }

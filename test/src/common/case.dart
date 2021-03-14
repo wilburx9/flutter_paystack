@@ -1,9 +1,7 @@
-import 'package:meta/meta.dart';
-
 class Case {
   dynamic inp;
   dynamic out;
-  String desc;
+  String? desc;
 
-  Case({@required this.inp, @required this.out, this.desc});
+  Case({required this.inp, required this.out, this.desc});
 }

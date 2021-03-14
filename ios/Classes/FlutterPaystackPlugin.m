@@ -29,11 +29,6 @@
   if ([@"getDeviceId" isEqualToString:call.method]) {
     result([@"iossdk_" stringByAppendingString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]);
       
-  } else if([@"getUserAgent" isEqualToString:call.method]) {
-      result([self.class paystackUserAgentDetails]);
-      
-  } else if([@"getVersionCode" isEqualToString:call.method]) {
-      result(PSTCKSDKBuild);
   } else if([@"getAuthorization" isEqualToString:call.method]) {
       NSDictionary *arguments = [call arguments];
       NSString *url = arguments[@"authUrl"];
@@ -64,36 +59,6 @@
     }
     
     [self->_viewController presentViewController:nc animated:YES completion:nil];
-}
-
-+ (NSString *)paystackUserAgentDetails {
-    NSMutableDictionary *details = [@{
-                                      @"lang": @"objective-c",
-                                      @"bindings_version": PSTCKSDKVersion,
-                                      } mutableCopy];
-#if TARGET_OS_IPHONE
-    NSString *version = [UIDevice currentDevice].systemVersion;
-    if (version) {
-        details[@"os_version"] = version;
-    }
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSString *deviceType = @(systemInfo.machine);
-    if (deviceType) {
-        details[@"type"] = deviceType;
-    }
-    NSString *model = [UIDevice currentDevice].localizedModel;
-    if (model) {
-        details[@"model"] = model;
-    }
-    if ([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)]) {
-        NSString *vendorIdentifier = [[[UIDevice currentDevice] performSelector:@selector(identifierForVendor)] performSelector:@selector(UUIDString)];
-        if (vendorIdentifier) {
-            details[@"vendor_identifier"] = vendorIdentifier;
-        }
-    }
-#endif
-    return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:[details copy] options:0 error:NULL] encoding:NSUTF8StringEncoding];
 }
 
 @end

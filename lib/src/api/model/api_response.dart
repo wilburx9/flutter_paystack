@@ -1,4 +1,4 @@
 class ApiResponse {
-  String status;
-  String message;
+  String? status;
+  String? message;
 }

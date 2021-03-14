@@ -1,14 +1,14 @@
 import 'package:flutter_paystack/src/common/my_strings.dart';
 
 class PaystackException implements Exception {
-  String message;
+  String? message;
 
   PaystackException(this.message);
 
   @override
   String toString() {
     if (message == null) return Strings.unKnownError;
-    return message;
+    return message!;
   }
 }
 
@@ -21,11 +21,7 @@ class CardException extends PaystackException {
 }
 
 class ChargeException extends PaystackException {
-  ChargeException(String message) : super(message);
-}
-
-class ExpiredAccessCodeException extends PaystackException {
-  ExpiredAccessCodeException(String message) : super(message);
+  ChargeException(String? message) : super(message);
 }
 
 class InvalidAmountException extends PaystackException {
@@ -37,7 +33,7 @@ class InvalidAmountException extends PaystackException {
 }
 
 class InvalidEmailException extends PaystackException {
-  String email;
+  String? email;
 
   InvalidEmailException(this.email) : super('$email  is not a valid email');
 }

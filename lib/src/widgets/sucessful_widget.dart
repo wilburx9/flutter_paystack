@@ -6,7 +6,7 @@ class SuccessfulWidget extends StatefulWidget {
   final int amount;
   final VoidCallback onCountdownComplete;
 
-  SuccessfulWidget({@required this.amount, @required this.onCountdownComplete});
+  SuccessfulWidget({required this.amount, required this.onCountdownComplete});
 
   @override
   _SuccessfulWidgetState createState() {
@@ -17,13 +17,13 @@ class SuccessfulWidget extends StatefulWidget {
 class _SuccessfulWidgetState extends State<SuccessfulWidget>
     with TickerProviderStateMixin {
   final sizedBox = const SizedBox(height: 20.0);
-  AnimationController _mainController;
-  AnimationController _opacityController;
-  Animation<double> _opacity;
+  late AnimationController _mainController;
+  late AnimationController _opacityController;
+  late Animation<double> _opacity;
 
   static const int kStartValue = 4;
-  AnimationController _countdownController;
-  Animation _countdownAnim;
+  late AnimationController _countdownController;
+  late Animation _countdownAnim;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _SuccessfulWidgetState extends State<SuccessfulWidget>
             }
           });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _startCountdown());
+    WidgetsBinding.instance!.addPostFrameCallback((_) => _startCountdown());
   }
 
   @override
@@ -93,7 +93,7 @@ class _SuccessfulWidgetState extends State<SuccessfulWidget>
             new SizedBox(
               height: 5.0,
             ),
-            widget.amount == null || widget.amount.isNegative
+            widget.amount.isNegative
                 ? new Container()
                 : new Text('You paid ${Utils.formatAmount(widget.amount)}',
                     style: const TextStyle(

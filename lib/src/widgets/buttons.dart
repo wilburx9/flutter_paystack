@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class WhiteButton extends _BaseButton {
   final bool flat;
-  final IconData iconData;
+  final IconData? iconData;
   final bool bold;
 
   WhiteButton({
-    @required VoidCallback onPressed,
-    String text,
-    Widget child,
+    required VoidCallback? onPressed,
+    String? text,
+    Widget? child,
     this.flat = false,
     this.bold = true,
     this.iconData,
@@ -35,9 +35,9 @@ class AccentButton extends StatelessWidget {
   final bool showProgress;
 
   AccentButton({
-    Key key,
-    @required this.onPressed,
-    @required this.text,
+    Key? key,
+    required this.onPressed,
+    required this.text,
     this.showProgress = false,
   }) : super(key: key);
 
@@ -56,22 +56,22 @@ class AccentButton extends StatelessWidget {
 }
 
 class _BaseButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final String text;
+  final VoidCallback? onPressed;
+  final String? text;
   final bool showProgress;
   final TextStyle textStyle;
   final Color color;
   final BorderSide borderSide;
-  final IconData iconData;
-  final Widget child;
+  final IconData? iconData;
+  final Widget? child;
 
   _BaseButton({
-    @required this.onPressed,
-    @required this.showProgress,
-    @required this.text,
-    @required this.textStyle,
-    @required this.color,
-    @required this.borderSide,
+    required this.onPressed,
+    required this.showProgress,
+    required this.text,
+    required this.textStyle,
+    required this.color,
+    required this.borderSide,
     this.iconData,
     this.child,
   });
@@ -82,7 +82,7 @@ class _BaseButton extends StatelessWidget {
     var textWidget;
     if (text != null) {
       textWidget = new Text(
-        text,
+        text!,
         textAlign: TextAlign.center,
         style: textStyle,
       );
@@ -98,10 +98,8 @@ class _BaseButton extends StatelessWidget {
         child: new Container(
           width: double.infinity,
           height: double.infinity,
-          child: new FlatButton(
+          child: new TextButton(
               onPressed: showProgress ? null : onPressed,
-              shape: new RoundedRectangleBorder(
-                  borderRadius: borderRadius, side: borderSide),
               child: showProgress
                   ? new Container(
                       width: 20.0,
@@ -114,13 +112,13 @@ class _BaseButton extends StatelessWidget {
                           )),
                     )
                   : iconData == null
-                      ? child == null ? textWidget : child
+                      ? child == null ? textWidget : child!
                       : new Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             new Icon(
                               iconData,
-                              color: textStyle.color.withOpacity(0.5),
+                              color: textStyle.color!.withOpacity(0.5),
                             ),
                             const SizedBox(width: 2.0),
                             textWidget,

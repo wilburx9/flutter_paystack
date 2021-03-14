@@ -6,7 +6,7 @@ import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
 import 'package:flutter_paystack/src/widgets/input/card_input.dart';
 
 class CardInputWidget extends StatefulWidget {
-  final PaymentCard card;
+  final PaymentCard? card;
 
   CardInputWidget(this.card);
 
@@ -64,7 +64,7 @@ class _CardInputWidgetState extends BaseState<CardInputWidget> {
     );
   }
 
-  void _onCardValidated(PaymentCard card) {
+  void _onCardValidated(PaymentCard? card) {
     Navigator.pop(context, card);
   }
 }

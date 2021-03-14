@@ -1,44 +1,35 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+
 /// Holds data that's different on Android and iOS
 class PlatformInfo {
-  static String _userAgent;
-  static String _paystackBuild;
-  static String _deviceId;
+  final String userAgent;
+  final String paystackBuild;
+  final String deviceId;
 
-  static final PlatformInfo _platformSpecificInfo =
-      new PlatformInfo._internal();
+  static Future<PlatformInfo> fromMethodChannel(MethodChannel channel) async {
+    // TODO: Update for every new versions.
+    //  And there should a better way to fucking do this
+    final pluginVersion = "1.0.5";
 
-  factory PlatformInfo() {
-    return _platformSpecificInfo;
+    final platform = Platform.operatingSystem;
+    String userAgent = "${platform}_Paystack_$pluginVersion";
+    String deviceId = await channel.invokeMethod('getDeviceId') ?? "";
+    return PlatformInfo._(
+      userAgent: userAgent,
+      paystackBuild: pluginVersion,
+      deviceId: deviceId,
+    );
   }
 
-  PlatformInfo._internal();
-
-  set userAgent(String value) => _userAgent = value;
-
-  set paystackBuild(String value) => _paystackBuild = value;
-
-  set deviceId(String value) => _deviceId = value;
-
-  String get userAgent {
-    _validateValue(_userAgent);
-    return _userAgent;
-  }
-
-  String get paystackBuild {
-    _validateValue(_paystackBuild);
-    return _paystackBuild;
-  }
-
-  String get deviceId {
-    _validateValue(_deviceId);
-    return _deviceId;
-  }
-
-  _validateValue(String value) {
-    if (value == null || value.isEmpty) {
-      throw Exception('Has you initialized Paystack SDK?');
-    }
-  }
+  const PlatformInfo._({
+    required String userAgent,
+    required String paystackBuild,
+    required String deviceId,
+  })   : userAgent = userAgent,
+        paystackBuild = paystackBuild,
+        deviceId = deviceId;
 
   @override
   String toString() {

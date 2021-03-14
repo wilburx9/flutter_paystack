@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class BaseTextField extends StatelessWidget {
-  final Widget suffix;
-  final String labelText;
-  final String hintText;
-  final List<TextInputFormatter> inputFormatters;
-  final FormFieldSetter<String> onSaved;
-  final FormFieldValidator<String> validator;
-  final TextEditingController controller;
-  final String initialValue;
+  final Widget? suffix;
+  final String? labelText;
+  final String? hintText;
+  final List<TextInputFormatter>? inputFormatters;
+  final FormFieldSetter<String>? onSaved;
+  final FormFieldValidator<String>? validator;
+  final TextEditingController? controller;
+  final String? initialValue;
 
   BaseTextField({
-    Key key,
+    Key? key,
     this.suffix,
     this.labelText,
     this.hintText,
