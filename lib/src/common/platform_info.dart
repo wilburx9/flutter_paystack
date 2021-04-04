@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// Holds data that's different on Android and iOS
@@ -13,9 +14,19 @@ class PlatformInfo {
     //  And there should a better way to fucking do this
     final pluginVersion = "1.0.5";
 
-    final platform = Platform.operatingSystem;
+    /// Fixing This
+    // final platform = Platform.operatingSystem;
+    String platform() {
+      if (kIsWeb) {
+        return "Web";
+      } else {
+        return Platform.operatingSystem;
+      }
+    }
+
     String userAgent = "${platform}_Paystack_$pluginVersion";
-    String deviceId = await channel.invokeMethod('getDeviceId') ?? "";
+    String deviceId =
+        kIsWeb ? platform() : await channel.invokeMethod('getDeviceId') ?? "";
     return PlatformInfo._(
       userAgent: userAgent,
       paystackBuild: pluginVersion,
