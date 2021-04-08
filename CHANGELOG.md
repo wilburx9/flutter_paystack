@@ -1,3 +1,7 @@
+## 1.0.5+1
+* Updated dependencies
+* Updated ReadMe
+
 ## 1.0.5 (Breaking change)
 * Supported sound null-safety
 * Resolved build failure due to unresolved VERSION_NAME and VERSION_CODE

@@ -112,7 +112,9 @@ class _BaseButton extends StatelessWidget {
                           )),
                     )
                   : iconData == null
-                      ? child == null ? textWidget : child!
+                      ? child == null
+                          ? textWidget
+                          : child!
                       : new Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[

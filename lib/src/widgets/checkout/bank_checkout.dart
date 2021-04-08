@@ -215,11 +215,11 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
 
   void _chargeAccount() async {
     final response = await BankTransactionManager(
-      charge: widget.charge,
-      service: widget.service,
-      context: context,
-      publicKey: widget.publicKey
-    ).chargeBank();
+            charge: widget.charge,
+            service: widget.service,
+            context: context,
+            publicKey: widget.publicKey)
+        .chargeBank();
 
     if (!mounted) return;
 

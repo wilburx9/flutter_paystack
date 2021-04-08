@@ -5,7 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:matcher/matcher.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('plugins.wilburt/flutter_paystack');
+  const MethodChannel channel =
+      MethodChannel('plugins.wilburt/flutter_paystack');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 

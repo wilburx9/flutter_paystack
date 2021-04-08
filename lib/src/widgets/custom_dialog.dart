@@ -15,7 +15,7 @@ class CustomAlertDialog extends StatelessWidget {
     this.expanded = false,
     this.fullscreen = false,
     required this.content,
-  })  : super(key: key);
+  }) : super(key: key);
 
   final Widget? title;
   final EdgeInsetsGeometry? titlePadding;

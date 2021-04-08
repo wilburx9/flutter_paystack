@@ -15,12 +15,12 @@ class BankTransactionManager extends BaseTransactionManager {
   BankChargeRequestBody? chargeRequestBody;
   final BankServiceContract service;
 
-  BankTransactionManager({
-    required this.service,
-    required Charge charge,
-    required BuildContext context,
-    required String publicKey
-  }) : super(charge: charge, context: context, publicKey: publicKey);
+  BankTransactionManager(
+      {required this.service,
+      required Charge charge,
+      required BuildContext context,
+      required String publicKey})
+      : super(charge: charge, context: context, publicKey: publicKey);
 
   Future<CheckoutResponse> chargeBank() async {
     await initiate();

@@ -42,7 +42,6 @@ class PaystackPlugin {
 
     // Using cascade notation to build the platform specific info
     try {
-
       platformInfo = await PlatformInfo.fromMethodChannel(Utils.methodChannel);
       _sdkInitialized = true;
     } on PlatformException {

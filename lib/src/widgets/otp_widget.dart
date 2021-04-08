@@ -20,7 +20,6 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
   String? _otp;
   var heightBox = const SizedBox(height: 20.0);
 
-
   @override
   Widget buildChild(BuildContext context) {
     return new CustomAlertDialog(
