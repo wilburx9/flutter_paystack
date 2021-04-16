@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,12 +14,14 @@ import 'package:flutter_paystack/src/models/card.dart';
 import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/transaction/card_transaction_manager.dart';
+import 'package:flutter_paystack/src/web/paystack_web.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 
 class PaystackPlugin {
   bool _sdkInitialized = false;
   String _publicKey = "";
   static late PlatformInfo platformInfo;
+  static var _web = PaystackWeb();
 
   /// Initialize the Paystack object. It should be called as early as possible
   /// (preferably in initState() of the Widget.
@@ -127,6 +130,8 @@ class PaystackPlugin {
     bool hideEmail = false,
     bool hideAmount = false,
   }) async {
+    if (kIsWeb) return _web.checkout(charge, _publicKey);
+
     return _Paystack(publicKey).checkout(
       context,
       charge: charge,
