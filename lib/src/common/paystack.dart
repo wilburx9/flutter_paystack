@@ -14,6 +14,7 @@ import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:flutter_paystack/src/models/checkout_response.dart';
 import 'package:flutter_paystack/src/transaction/card_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class PaystackPlugin {
   bool _sdkInitialized = false;
@@ -189,23 +190,42 @@ class _Paystack {
       return true;
     }());
 
-    CheckoutResponse? response = await showDialog(
-      barrierDismissible: false,
-            barrierColor: fullscreen ? Colors.white : null,
-
-      context: context,
-      builder: (BuildContext context) => new CheckoutWidget(
-        publicKey: publicKey,
-        bankService: BankService(),
-        cardsService: CardService(),
-        method: method,
-        charge: charge,
-        fullscreen: fullscreen,
-        logo: logo,
-        hideAmount: hideAmount,
-        hideEmail: hideEmail,
-      ),
-    );
+  CheckoutResponse? response = fullscreen
+        ? await showCupertinoModalBottomSheet(
+            // barrierDismissible: false,
+            isDismissible: false,
+            elevation: 20,
+            enableDrag: false,
+            topRadius: Radius.circular(20),
+//             barrierColor: fullscreen ? Colors.white : null,
+            context: context,
+            builder: (BuildContext context) => new CheckoutWidget(
+              publicKey: publicKey,
+              bankService: BankService(),
+              cardsService: CardService(),
+              method: method,
+              charge: charge,
+              fullscreen: fullscreen,
+              logo: logo,
+              hideAmount: hideAmount,
+              hideEmail: hideEmail,
+            ),
+          )
+        : await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) => new CheckoutWidget(
+              publicKey: publicKey,
+              bankService: BankService(),
+              cardsService: CardService(),
+              method: method,
+              charge: charge,
+              fullscreen: fullscreen,
+              logo: logo,
+              hideAmount: hideAmount,
+              hideEmail: hideEmail,
+            ),
+          );
     return response == null ? CheckoutResponse.defaults() : response;
   }
 
