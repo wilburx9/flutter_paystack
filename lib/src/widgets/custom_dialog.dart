@@ -58,7 +58,7 @@ class CustomAlertDialog extends StatelessWidget {
       widget = new Material(
         color: Theme.of(context).brightness == Brightness.light
             ? Colors.white
-            : Colors.grey,
+            : Colors.white,
         child: new Container(
             child: onCancelPress == null
                 ? new Padding(
