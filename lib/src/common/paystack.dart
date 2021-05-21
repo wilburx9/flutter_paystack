@@ -191,6 +191,8 @@ class _Paystack {
 
     CheckoutResponse? response = await showDialog(
       barrierDismissible: false,
+            barrierColor: fullscreen ? Colors.white : null,
+
       context: context,
       builder: (BuildContext context) => new CheckoutWidget(
         publicKey: publicKey,
