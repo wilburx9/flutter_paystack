@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_paystack/src/models/checkout_response.dart';
 
 abstract class BaseState<T extends StatefulWidget> extends State<T> {
@@ -29,7 +30,9 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
     if (alwaysPop ||
         (returnValue != null &&
             (returnValue is CheckoutResponse && returnValue.status == true))) {
-      Navigator.of(context).pop(returnValue);
+      SchedulerBinding.instance!.addPostFrameCallback((_) {
+        Navigator.of(context).pop(returnValue);
+      });
       return false;
     }
 
