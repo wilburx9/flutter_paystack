@@ -30,7 +30,7 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
     if (alwaysPop ||
         (returnValue != null &&
             (returnValue is CheckoutResponse && returnValue.status == true))) {
-      SchedulerBinding.instance!.addPostFrameCallback((_) {
+      Future.delayed(Duration.zero, (){
         Navigator.of(context).pop(returnValue);
       });
       return false;
