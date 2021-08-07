@@ -19,6 +19,7 @@ class Cryptom {
   String encrypt(String plaintext, String publicKey) {
     /// After a lot of research on how to convert the public key [String] to [RSA PUBLIC KEY]
     /// We would have to use PEM Cert Type and the convert it from a PEM to an RSA PUBLIC KEY through basic_utils
+    ///
     var pem =
         '-----BEGIN RSA PUBLIC KEY-----\n$publickey\n-----END RSA PUBLIC KEY-----';
     var public = CryptoUtils.rsaPublicKeyFromPem(pem);
