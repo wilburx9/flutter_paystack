@@ -45,7 +45,7 @@ class FlutterPaystackPlugin : FlutterPlugin, ActivityAware {
         @JvmStatic
         fun registerWith(registrar: PluginRegistry.Registrar) {
             val plugin = FlutterPaystackPlugin()
-            plugin.setupMethodHandler(registrar.messenger(), registrar.activity())
+            registrar.activity()?.let { plugin.setupMethodHandler(registrar.messenger(), it) }
         }
     }
 
