@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class OtpField extends TextFormField {
   OtpField({FormFieldSetter<String>? onSaved, required Color borderColor})
       : super(
-          keyboardType: TextInputType.text,
+          keyboardType: TextInputType.number,
           textCapitalization: TextCapitalization.none,
           textAlign: TextAlign.center,
           style: TextStyle(
