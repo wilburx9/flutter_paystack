@@ -16,7 +16,7 @@ class MethodCallHandlerImpl(messenger: BinaryMessenger?, private val activity: A
     init {
         activity!!.let {
             authDelegate = AuthDelegate(it)
-            channel = MethodChannel(messenger, channelName)
+            channel = MethodChannel(messenger!!, channelName)
             channel?.setMethodCallHandler(this)
         }
     }

@@ -33,7 +33,7 @@ class FlutterPaystackPlugin : FlutterPlugin, ActivityAware {
 
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        setupMethodHandler(pluginBinding?.binaryMessenger, binding.activity)
+        setupMethodHandler(pluginBinding!!.binaryMessenger, binding.activity)
     }
 
     override fun onDetachedFromActivityForConfigChanges() = onDetachedFromActivity()
@@ -45,7 +45,7 @@ class FlutterPaystackPlugin : FlutterPlugin, ActivityAware {
         @JvmStatic
         fun registerWith(registrar: PluginRegistry.Registrar) {
             val plugin = FlutterPaystackPlugin()
-            plugin.setupMethodHandler(registrar.messenger(), registrar.activity())
+            plugin.setupMethodHandler(registrar.messenger(), registrar.activity()!!)
         }
     }
 
