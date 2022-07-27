@@ -40,7 +40,12 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
             content: text,
             actions: <Widget>[
               new CupertinoDialogAction(
-                child: const Text('Yes'),
+                child: Text(
+                  'Yes',
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
                 isDestructiveAction: true,
                 onPressed: () {
                   Navigator.pop(context, true); // Returning true to
@@ -48,7 +53,12 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
                 },
               ),
               new CupertinoDialogAction(
-                child: const Text('No'),
+                child: Text(
+                  'No',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
                 isDefaultAction: true,
                 onPressed: () {
                   Navigator.pop(context,
@@ -61,13 +71,23 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
             content: text,
             actions: <Widget>[
               new TextButton(
-                  child: const Text('NO'),
+                  child: Text(
+                    'NO',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
                   onPressed: () {
                     Navigator.of(context).pop(
                         false); // Pops the confirmation dialog but not the page.
                   }),
               new TextButton(
-                  child: const Text('YES'),
+                  child: Text(
+                    'YES',
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
                   onPressed: () {
                     Navigator.of(context).pop(
                         true); // Returning true to _onWillPop will pop again.
