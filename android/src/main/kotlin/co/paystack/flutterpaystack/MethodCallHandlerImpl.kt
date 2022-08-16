@@ -9,7 +9,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 
-class MethodCallHandlerImpl(messenger: BinaryMessenger?, private val activity: Activity?) : MethodCallHandler {
+class MethodCallHandlerImpl(messenger: BinaryMessenger, private val activity: Activity?) : MethodCallHandler {
     private var channel: MethodChannel? = null
     private var authDelegate: AuthDelegate? = null
 

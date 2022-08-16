@@ -21,8 +21,10 @@ class FlutterPaystackPlugin : FlutterPlugin, ActivityAware {
         pluginBinding = null
     }
 
-    private fun setupMethodHandler(messenger: BinaryMessenger?, activity: Activity) {
-        methodCallHandler = MethodCallHandlerImpl(messenger, activity)
+    private fun setupMethodHandler(messenger: BinaryMessenger?, activity: Activity?) {
+        if(messenger != null && activity != null){
+            methodCallHandler = MethodCallHandlerImpl(messenger, activity)
+        }        
     }
 
 
