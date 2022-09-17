@@ -8,9 +8,9 @@ import 'package:flutter_paystack/src/api/request/bank_charge_request_body.dart';
 import 'package:flutter_paystack/src/api/service/base_service.dart';
 import 'package:flutter_paystack/src/api/service/contracts/banks_service_contract.dart';
 import 'package:flutter_paystack/src/common/exceptions.dart';
+import 'package:flutter_paystack/src/common/extensions.dart';
 import 'package:flutter_paystack/src/common/my_strings.dart';
 import 'package:flutter_paystack/src/models/bank.dart';
-import 'package:flutter_paystack/src/common/extensions.dart';
 import 'package:http/http.dart' as http;
 
 class BankService with BaseApiService implements BankServiceContract {
@@ -85,6 +85,27 @@ class BankService with BaseApiService implements BankServiceContract {
         banks.add(new Bank(bank['name'], bank['id']));
       }
       return banks;
+    } catch (e) {}
+    return null;
+  }
+
+  @override
+  Future<dynamic> verifyPayment(String reference, String apikey) async {
+    var url = 'https://api.paystack.co/transaction/verify/$reference';
+    Map<String, String> myHeaders = {};
+    myHeaders.addAll(headers);
+    myHeaders.putIfAbsent("Authorization", () => 'Bearer $apikey');
+    try {
+      http.Response response = await http.get(url.toUri(), headers: myHeaders);
+      Map responseBody = jsonDecode(response.body);
+
+      bool? status = responseBody['status'];
+
+      if (response.statusCode == HttpStatus.ok && status!) {
+        return responseBody['data'];
+      } else {
+        return responseBody['message'] ?? "";
+      }
     } catch (e) {}
     return null;
   }

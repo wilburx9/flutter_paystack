@@ -16,6 +16,9 @@ import 'package:http/http.dart' as http;
 String backendUrl = '{YOUR_BACKEND_URL}';
 // Set this to a public key that matches the secret key you supplied while creating the heroku instance
 String paystackPublicKey = '{YOUR_PAYSTACK_PUBLIC_KEY}';
+// Set this to a private key that matches the secret key you supplied while creating the heroku instance
+String paystackPrivateKey = '{YOUR_PAYSTACK_PRIVATE_KEY}';
+
 const String appName = 'Paystack Example';
 
 void main() => runApp(new MyApp());
@@ -38,6 +41,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _referenceController = TextEditingController();
   final _verticalSizeBox = const SizedBox(height: 20.0);
   final _horizontalSizeBox = const SizedBox(width: 10.0);
   final plugin = PaystackPlugin();
@@ -56,7 +60,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    plugin.initialize(publicKey: paystackPublicKey);
+    plugin.initialize(
+        publicKey: paystackPublicKey, privateKey: paystackPrivateKey);
     super.initState();
   }
 
@@ -230,7 +235,30 @@ class _HomePageState extends State<HomePage> {
                             );
                     },
                   ),
-                )
+                ),
+                _verticalSizeBox,
+                _border,
+                _verticalSizeBox,
+                TextFormField(
+                  controller: _referenceController,
+                  decoration: const InputDecoration(
+                    border: const UnderlineInputBorder(),
+                    labelText: 'Transaction Reference',
+                  ),
+                ),
+                _verticalSizeBox,
+                Container(
+                  width: double.infinity,
+                  child: _getPlatformButton(
+                    'Verify',
+                    () async {
+                      var a = await plugin.verifyTransaction(
+                          VerifyTransactionRequest(
+                              reference: _referenceController.text));
+                      print(a);
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -270,7 +298,7 @@ class _HomePageState extends State<HomePage> {
         fullscreen: false,
         logo: MyLogo(),
       );
-      print('Response = $response');
+
       setState(() => _inProgress = false);
       _updateStatus(response.reference, '$response');
     } catch (e) {
@@ -399,10 +427,8 @@ class _HomePageState extends State<HomePage> {
     String url = '$backendUrl/new-access-code';
     String? accessCode;
     try {
-      print("Access code url = $url");
       http.Response response = await http.get(Uri.parse(url));
       accessCode = response.body;
-      print('Response for access code = $accessCode');
     } catch (e) {
       setState(() => _inProgress = false);
       _updateStatus(

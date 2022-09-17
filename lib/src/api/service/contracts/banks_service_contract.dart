@@ -11,4 +11,5 @@ abstract class BankServiceContract {
       BankChargeRequestBody? requestBody, Map<String, String?> fields);
 
   Future<List<Bank>?>? fetchSupportedBanks();
+  Future<dynamic> verifyPayment(String reference, String apikey);
 }

@@ -15,6 +15,8 @@ class Strings {
       'Pass either an access code or transaction '
       'reference';
   static const String sthWentWrong = 'Something went wrong.';
+  static const String noPrivateKey = 'Invalid Private Key';
+  static const String noReference = 'Invalid Reference';
   static const String userTerminated = 'Transaction terminated';
   static const String unKnownResponse = 'Unknown server response';
   static const String cardInputInstruction = 'Enter your card details to pay';

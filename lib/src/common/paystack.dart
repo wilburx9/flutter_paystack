@@ -12,12 +12,15 @@ import 'package:flutter_paystack/src/common/utils.dart';
 import 'package:flutter_paystack/src/models/card.dart';
 import 'package:flutter_paystack/src/models/charge.dart';
 import 'package:flutter_paystack/src/models/checkout_response.dart';
+import 'package:flutter_paystack/src/models/verify_transaction_request.dart';
+import 'package:flutter_paystack/src/models/verify_transaction_response.dart';
 import 'package:flutter_paystack/src/transaction/card_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
 
 class PaystackPlugin {
   bool _sdkInitialized = false;
   String _publicKey = "";
+  String _privateKey = "";
   static late PlatformInfo platformInfo;
 
   /// Initialize the Paystack object. It should be called as early as possible
@@ -25,10 +28,12 @@ class PaystackPlugin {
   ///
   /// [publicKey] - your paystack public key. This is mandatory
   ///
+  /// [privateKey] - your paystack private key. This is mandatory if you want to verify a transaction
+  ///
   /// use [checkout] and you want this plugin to initialize the transaction for you.
   /// Please check [checkout] for more information
   ///
-  initialize({required String publicKey}) async {
+  initialize({required String publicKey, String privateKey = ''}) async {
     assert(() {
       if (publicKey.isEmpty) {
         throw new PaystackException('publicKey cannot be null or empty');
@@ -39,6 +44,7 @@ class PaystackPlugin {
     if (sdkInitialized) return;
 
     this._publicKey = publicKey;
+    this._privateKey = privateKey;
 
     // Using cascade notation to build the platform specific info
     try {
@@ -52,6 +58,7 @@ class PaystackPlugin {
   dispose() {
     _publicKey = "";
     _sdkInitialized = false;
+    _privateKey = '';
   }
 
   bool get sdkInitialized => _sdkInitialized;
@@ -60,6 +67,12 @@ class PaystackPlugin {
     // Validate that the sdk has been initialized
     _validateSdkInitialized();
     return _publicKey;
+  }
+
+  String get privateKey {
+    // Validate that the sdk has been initialized
+    _validateSdkInitialized();
+    return _privateKey;
   }
 
   void _performChecks() {
@@ -138,11 +151,45 @@ class PaystackPlugin {
     );
   }
 
+  /// Verify details for a single transaction
+  ///
+  /// [VerifyTransactionRequest] - this takes the reference of the transaction
+  /// you want to verify and it must not be null or empty and the referenfce must
+  /// be valid
+  ///
+  Future<TransactionData?> verifyTransaction(
+      VerifyTransactionRequest request) async {
+    return await _verifyTransaction(request);
+  }
+
   _validateSdkInitialized() {
     if (!sdkInitialized) {
       throw new PaystackSdkNotInitializedException(
           'Paystack SDK has not been initialized. The SDK has'
           ' to be initialized before use');
+    }
+  }
+
+  Future<TransactionData?> _verifyTransaction(
+      VerifyTransactionRequest request) async {
+    _validateVerifyTransaction(request);
+    var _apiRequest =
+        await BankService().verifyPayment(request.reference, privateKey);
+    _validateResponse(_apiRequest);
+    return TransactionData.fromJson(_apiRequest);
+  }
+
+  _validateResponse(dynamic a) {
+    if (a is String) {
+      throw new VerifyTransactionException(a);
+    }
+  }
+
+  _validateVerifyTransaction(VerifyTransactionRequest request) {
+    if (_privateKey.isEmpty || !_privateKey.startsWith("sk_")) {
+      throw new PaystackException(Utils.getKeyErrorMsg('private'));
+    } else if (request.reference.isEmpty) {
+      throw new VerifyTransactionException(Strings.noReference);
     }
   }
 }
