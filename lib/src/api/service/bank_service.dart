@@ -25,9 +25,7 @@ class BankService with BaseApiService implements BankServiceContract {
       if (response.statusCode == HttpStatus.ok && status!) {
         return responseBody['data']['id'].toString();
       }
-    } catch (e, s) {
-      print("$e :: $s");
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -87,9 +85,7 @@ class BankService with BaseApiService implements BankServiceContract {
         banks.add(new Bank(bank['name'], bank['id']));
       }
       return banks;
-    } catch (e, s) {
-      print("$e :: $s");
-    }
+    } catch (e) {}
     return null;
   }
 }

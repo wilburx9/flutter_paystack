@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/src/widgets/common/extensions.dart';
 
 class WhiteButton extends _BaseButton {
   final bool flat;
@@ -46,7 +47,7 @@ class AccentButton extends StatelessWidget {
     return _BaseButton(
       onPressed: onPressed,
       showProgress: showProgress,
-      color: Theme.of(context).colorScheme.secondary,
+      color: context.colorScheme().secondary,
       borderSide: BorderSide.none,
       textStyle: const TextStyle(
           fontSize: 14.0, color: Colors.white, fontWeight: FontWeight.bold),
