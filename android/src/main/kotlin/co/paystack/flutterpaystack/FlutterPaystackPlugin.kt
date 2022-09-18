@@ -5,7 +5,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.PluginRegistry
 
 
 class FlutterPaystackPlugin : FlutterPlugin, ActivityAware {
@@ -21,7 +20,7 @@ class FlutterPaystackPlugin : FlutterPlugin, ActivityAware {
         pluginBinding = null
     }
 
-    private fun setupMethodHandler(messenger: BinaryMessenger?, activity: Activity) {
+    private fun setupMethodHandler(messenger: BinaryMessenger, activity: Activity) {
         methodCallHandler = MethodCallHandlerImpl(messenger, activity)
     }
 
@@ -33,20 +32,11 @@ class FlutterPaystackPlugin : FlutterPlugin, ActivityAware {
 
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        setupMethodHandler(pluginBinding?.binaryMessenger, binding.activity)
+        pluginBinding?.let { setupMethodHandler(it.binaryMessenger, binding.activity) }
     }
 
     override fun onDetachedFromActivityForConfigChanges() = onDetachedFromActivity()
 
-    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) = onAttachedToActivity(binding)
-
-    companion object {
-
-        @JvmStatic
-        fun registerWith(registrar: PluginRegistry.Registrar) {
-            val plugin = FlutterPaystackPlugin()
-            plugin.setupMethodHandler(registrar.messenger(), registrar.activity())
-        }
-    }
-
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) =
+        onAttachedToActivity(binding)
 }
