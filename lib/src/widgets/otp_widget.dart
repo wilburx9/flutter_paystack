@@ -50,7 +50,7 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: new OtpField(
                     onSaved: (String? value) => _otp = value,
-                    borderColor: Theme.of(context).accentColor,
+                    borderColor: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
                 heightBox,

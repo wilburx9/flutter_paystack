@@ -50,7 +50,7 @@ class BaseTextField extends StatelessWidget {
             borderSide: const BorderSide(color: Colors.grey, width: 0.5)),
         focusedBorder: OutlineInputBorder(
             borderSide:
-                BorderSide(color: Theme.of(context).accentColor, width: 1.0)),
+                BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1.0)),
         hintText: hintText,
       ),
     );
