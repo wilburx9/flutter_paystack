@@ -8,7 +8,6 @@ class OtpField extends TextFormField {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
             fontSize: 25.0,
           ),
           autofocus: true,

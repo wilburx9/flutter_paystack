@@ -21,7 +21,6 @@ class _PinFieldState extends State<PinField> {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
           fontSize: 25.0,
           letterSpacing: 15.0,
         ),
