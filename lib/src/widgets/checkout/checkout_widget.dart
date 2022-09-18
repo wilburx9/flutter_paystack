@@ -10,6 +10,7 @@ import 'package:flutter_paystack/src/widgets/base_widget.dart';
 import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/card_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_method.dart';
+import 'package:flutter_paystack/src/widgets/common/extensions.dart';
 import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
 import 'package:flutter_paystack/src/widgets/error_widget.dart';
 import 'package:flutter_paystack/src/widgets/sucessful_widget.dart';
@@ -165,7 +166,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   }
 
   Widget _buildTitle() {
-    final accentColor = Theme.of(context).accentColor;
+    final accentColor = context.colorScheme().secondary;
     var emailAndAmount = Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
@@ -175,7 +176,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             key: Key("ChargeEmail"),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.grey, fontSize: 12.0),
+            style: TextStyle(
+                color: context.textTheme().bodySmall?.color, fontSize: 12.0),
           ),
         if (!widget.hideAmount && !_charge.amount.isNegative)
           Row(
@@ -183,9 +185,10 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Text(
+              Text(
                 'Pay',
-                style: const TextStyle(fontSize: 14.0, color: Colors.black54),
+                style: TextStyle(
+                    fontSize: 14.0, color: context.textTheme().headline1?.color),
               ),
               SizedBox(
                 width: 5.0,
@@ -194,8 +197,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                   child: Text(Utils.formatAmount(_charge.amount),
                       style: TextStyle(
                           fontSize: 15.0,
-                          color: Theme.of(context).textTheme.bodyText1!.color,
-                          fontWeight: FontWeight.w500)))
+                          color: context.textTheme().headline6?.color,
+                          fontWeight: FontWeight.bold)))
             ],
           )
       ],
@@ -237,16 +240,15 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   Widget buildCheckoutMethods(Color accentColor) {
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
-      vsync: this,
       curve: Curves.fastOutSlowIn,
       child: new Container(
-        color: Colors.grey.withOpacity(0.1),
+        color: context.colorScheme().background.withOpacity(0.5),
         height: _tabHeight,
         alignment: Alignment.center,
         child: new TabBar(
           controller: _tabController,
           isScrollable: true,
-          unselectedLabelColor: Colors.black54,
+          unselectedLabelColor: context.colorScheme().onBackground,
           labelColor: accentColor,
           labelStyle:
               new TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
@@ -419,7 +421,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           if (_response!.card != null) {
             _response!.card!.nullifyNumber();
           }
-          Navigator.of(context).pop(_response);
+         Navigator.of(context).pop(_response);
         },
       );
 

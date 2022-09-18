@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_paystack/src/widgets/base_widget.dart';
+import 'package:flutter_paystack/src/widgets/common/extensions.dart';
 import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
 import 'package:flutter_paystack/src/widgets/input/pin_field.dart';
 
@@ -31,13 +32,13 @@ class _PinWidgetState extends BaseState<PinWidget> {
             children: <Widget>[
               buildStar(),
               heightBox,
-              const Text(
+              Text(
                 'To confirm you\'re the owner of this card, please '
                 'enter your card pin.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: context.textTheme().headline6?.color,
                   fontSize: 15.0,
                 ),
               ),
@@ -76,7 +77,7 @@ class _PinWidgetState extends BaseState<PinWidget> {
         children: List.generate(
             _startCount,
             (i) => star(i == (_startCount - 1)
-                ? Theme.of(context).accentColor
+                ? context.colorScheme().secondary
                 : Theme.of(context).primaryColorLight)),
       ),
     );

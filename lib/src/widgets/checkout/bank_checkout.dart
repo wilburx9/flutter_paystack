@@ -12,6 +12,7 @@ import 'package:flutter_paystack/src/transaction/bank_transaction_manager.dart';
 import 'package:flutter_paystack/src/widgets/buttons.dart';
 import 'package:flutter_paystack/src/widgets/checkout/base_checkout.dart';
 import 'package:flutter_paystack/src/widgets/checkout/checkout_widget.dart';
+import 'package:flutter_paystack/src/widgets/common/extensions.dart';
 import 'package:flutter_paystack/src/widgets/input/account_field.dart';
 
 class BankCheckout extends StatefulWidget {
@@ -118,7 +119,6 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
             _currentBank == null
                 ? new Icon(
                     Icons.account_balance,
-                    color: Colors.black,
                     size: 35.0,
                   )
                 : container,
@@ -133,8 +133,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
                   : 'Enter your acccount number',
               style: const TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontSize: 14.0,
-                  color: Colors.black),
+                  fontSize: 14.0),
             ),
             new SizedBox(
               height: 20.0,
@@ -149,7 +148,7 @@ class _BankCheckoutState extends BaseCheckoutMethodState<BankCheckout> {
                         const BorderSide(color: Colors.grey, width: 0.5)),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        color: Theme.of(context).accentColor, width: 1.0)),
+                        color: context.colorScheme().secondary, width: 1.0)),
                 hintText: 'Tap here to choose',
               ),
               isEmpty: _currentBank == null,

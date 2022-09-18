@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class OtpField extends TextFormField {
   OtpField({FormFieldSetter<String>? onSaved, required Color borderColor})
@@ -9,7 +8,6 @@ class OtpField extends TextFormField {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
             fontSize: 25.0,
           ),
           autofocus: true,

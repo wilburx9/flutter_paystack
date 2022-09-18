@@ -1,3 +1,9 @@
+## 1.0.6
+* Completed migration for Android v2 embedding.
+* Fixed colour issues in dark mode
+* Upgrades Kotlin and AGP versions.
+* Fixed build issues for Flutter 3
+
 ## 1.0.5+1
 * Updated dependencies
 * Updated ReadMe

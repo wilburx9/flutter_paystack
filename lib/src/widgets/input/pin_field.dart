@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_paystack/src/widgets/common/extensions.dart';
 
 class PinField extends StatefulWidget {
   final ValueChanged<String>? onSaved;
@@ -21,7 +22,6 @@ class _PinFieldState extends State<PinField> {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
           fontSize: 25.0,
           letterSpacing: 15.0,
         ),
@@ -45,7 +45,7 @@ class _PinFieldState extends State<PinField> {
               borderSide: const BorderSide(color: Colors.grey, width: 0.5)),
           focusedBorder: OutlineInputBorder(
               borderSide:
-                  BorderSide(color: Theme.of(context).accentColor, width: 1.0)),
+                  BorderSide(color: context.colorScheme().secondary, width: 1.0)),
         ),
         onChanged: (String value) {
           if (value.length == widget.pinLength) {

@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: appName,
+      darkTheme: ThemeData.dark(),
       home: new HomePage(),
     );
   }
@@ -149,7 +150,9 @@ class _HomePageState extends State<HomePage> {
                 _verticalSizeBox,
                 Theme(
                   data: Theme.of(context).copyWith(
-                    accentColor: green,
+                    colorScheme: Theme.of(context)
+                        .colorScheme
+                        .copyWith(secondary: green),
                     primaryColorLight: Colors.white,
                     primaryColorDark: navyBlue,
                     textTheme: Theme.of(context).textTheme.copyWith(
