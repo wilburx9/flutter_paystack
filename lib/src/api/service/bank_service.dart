@@ -74,8 +74,7 @@ class BankService with BaseApiService implements BankServiceContract {
   }
 
   Future<List<Bank>?> _fetchSupportedBanks() async {
-    const url =
-        'https://api.paystack.co/bank?gateway=emandate&pay_with_bank=true';
+    const url = 'https://api.paystack.co/bank?pay_with_bank=true';
     try {
       http.Response response = await http.get(url.toUri());
       Map<String, dynamic> body = json.decode(response.body);
