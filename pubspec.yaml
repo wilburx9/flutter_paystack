@@ -11,6 +11,9 @@ dependencies:
   meta: ^1.8.0
   async: ^2.9.0
 
+  # Required for Dart Encryption
+  basic_utils:
+  pointycastle:
 dev_dependencies:
   flutter_test:
     sdk: flutter
