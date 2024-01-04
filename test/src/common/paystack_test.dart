@@ -10,14 +10,15 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '';
+setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      return ''; 
     });
   });
 
-  tearDown(() {
-    channel.setMockMethodCallHandler(null);
+ tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler (channel, null);
   });
 
   group("$PaystackPlugin", () {

@@ -16,6 +16,18 @@ class Charge {
   int amount = 0;
   Map<String, dynamic>? _metadata;
   List<Map<String, dynamic>>? _customFields;
+
+  String? get metadata {
+    if (!_hasMeta) {
+      return null;
+    }
+
+    print('this is metadata info');
+    print(_hasMeta);
+    print(jsonEncode(_metadata));
+    return jsonEncode(_metadata);
+  }
+
   bool _hasMeta = false;
   Map<String, String?>? _additionalParameters;
 
@@ -76,14 +88,6 @@ class Charge {
     };
     this._customFields!.add(customMap);
     this._hasMeta = true;
-  }
-
-  String? get metadata {
-    if (!_hasMeta) {
-      return null;
-    }
-
-    return jsonEncode(_metadata);
   }
 }
 
