@@ -121,6 +121,7 @@ class PaystackPlugin {
   Future<CheckoutResponse> checkout(
     BuildContext context, {
     required Charge charge,
+    required dynamic uploadInformation,
     CheckoutMethod method = CheckoutMethod.selectable,
     bool fullscreen = false,
     Widget? logo,
@@ -135,6 +136,7 @@ class PaystackPlugin {
       logo: logo,
       hideAmount: hideAmount,
       hideEmail: hideEmail,
+      uploadInformation: uploadInformation,
     );
   }
 
@@ -167,6 +169,7 @@ class _Paystack {
     required Charge charge,
     required CheckoutMethod method,
     required bool fullscreen,
+    required dynamic uploadInformation,
     bool hideEmail = false,
     bool hideAmount = false,
     Widget? logo,
@@ -202,6 +205,7 @@ class _Paystack {
         logo: logo,
         hideAmount: hideAmount,
         hideEmail: hideEmail,
+        uploadInformation: uploadInformation,
       ),
     );
     return response == null ? CheckoutResponse.defaults() : response;

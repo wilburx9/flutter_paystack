@@ -272,6 +272,7 @@ class _HomePageState extends State<HomePage> {
         charge: charge,
         fullscreen: false,
         logo: MyLogo(),
+        uploadInformation: null,
       );
       print('Response = $response');
       setState(() => _inProgress = false);

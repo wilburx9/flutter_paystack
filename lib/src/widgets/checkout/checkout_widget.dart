@@ -27,6 +27,7 @@ class CheckoutWidget extends StatefulWidget {
   final BankServiceContract bankService;
   final CardServiceContract cardsService;
   final String publicKey;
+  final dynamic uploadInformation;
 
   CheckoutWidget({
     required this.method,
@@ -34,6 +35,7 @@ class CheckoutWidget extends StatefulWidget {
     required this.bankService,
     required this.cardsService,
     required this.publicKey,
+    required this.uploadInformation,
     this.fullscreen = false,
     this.logo,
     this.hideEmail = false,
@@ -188,7 +190,8 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
               Text(
                 'Pay',
                 style: TextStyle(
-                    fontSize: 14.0, color: context.textTheme().headline1?.color),
+                    fontSize: 14.0,
+                    color: context.textTheme().headline1?.color),
               ),
               SizedBox(
                 width: 5.0,
@@ -353,6 +356,9 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
       _paymentSuccessful = true;
       _paymentError = null;
       _onProcessingChange(false);
+
+      // Upload information to database
+      widget.uploadInformation();
     });
   }
 
@@ -421,7 +427,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           if (_response!.card != null) {
             _response!.card!.nullifyNumber();
           }
-         Navigator.of(context).pop(_response);
+          Navigator.of(context).pop(_response);
         },
       );
 

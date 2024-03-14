@@ -37,6 +37,7 @@ void main() {
             charge: charge,
             fullscreen: false,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
@@ -62,6 +63,7 @@ void main() {
             charge: charge,
             fullscreen: false,
             logo: null,
+            uploadInformation: null,
           ),
         );
 
@@ -90,6 +92,7 @@ void main() {
             charge: charge,
             fullscreen: false,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
@@ -108,6 +111,7 @@ void main() {
             charge: charge,
             fullscreen: false,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
@@ -132,6 +136,7 @@ void main() {
             charge: charge,
             fullscreen: false,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
@@ -153,6 +158,7 @@ void main() {
             fullscreen: false,
             hideEmail: false,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
@@ -172,6 +178,7 @@ void main() {
             fullscreen: false,
             hideEmail: true,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
@@ -191,6 +198,7 @@ void main() {
             fullscreen: false,
             hideEmail: true,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
@@ -212,6 +220,7 @@ void main() {
             fullscreen: false,
             hideAmount: false,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
@@ -231,6 +240,7 @@ void main() {
             fullscreen: false,
             hideAmount: true,
             logo: Container(),
+            uploadInformation: null,
           ),
         );
 
