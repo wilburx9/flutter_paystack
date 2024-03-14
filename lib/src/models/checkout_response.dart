@@ -48,6 +48,18 @@ class CheckoutResponse {
       this.account})
       : assert(card != null || account != null);
 
+  Map<String, dynamic> toMap() {
+    return {
+      'message': message.toString(),
+      'card': card.toString(),
+      'account': account.toString(),
+      'reference': reference.toString(),
+      'status': status.toString(),
+      'method': method.toString(),
+      'verify': verify.toString(),
+    };
+  }
+
   @override
   String toString() {
     return 'CheckoutResponse{message: $message, card: $card, account: $account, reference: $reference, status: $status, method: $method, verify: $verify}';
