@@ -50,13 +50,13 @@ class CheckoutResponse {
 
   Map<String, dynamic> toMap() {
     return {
-      'message': message,
-      'card': card,
-      'account': account,
-      'reference': reference,
-      'status': status,
+      'message': message.toString(),
+      'card': card.toString(),
+      'account': account.toString(),
+      'reference': reference.toString(),
+      'status': status.toString(),
       'method': method.toString(),
-      'verify': verify,
+      'verify': verify.toString(),
     };
   }
 
