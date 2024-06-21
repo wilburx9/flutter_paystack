@@ -40,9 +40,9 @@ class _OtpWidgetState extends BaseState<OtpWidget> {
                 new Text(
                   widget.message!,
                   textAlign: TextAlign.center,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    color: context.textTheme().headline6?.color,
+                    color: context.textTheme().titleLarge?.color,
                     fontSize: 15.0,
                   ),
                 ),
