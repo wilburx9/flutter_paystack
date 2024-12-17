@@ -2,14 +2,14 @@ group 'co.paystack.flutterpaystack'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.20'
+    ext.kotlin_version = '1.8.22'
     repositories {
         mavenCentral()
         google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.0-rc02'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,7 +25,19 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 32
+    namespace "co.paystack.flutterpaystack"
+    compileSdkVersion 34
+    ndkVersion "27.0.12077973"
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -35,6 +47,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         versionCode 21
         versionName "3.0.10"
+        multiDexEnabled true
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -43,4 +56,5 @@ android {
 
 dependencies {
     implementation 'com.google.android.material:material:1.7.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 }

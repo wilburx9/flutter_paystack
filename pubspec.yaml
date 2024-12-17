@@ -17,21 +17,18 @@ dev_dependencies:
   matcher: ^0.12.12
   mockito: ^5.3.1
 
-
 flutter:
   plugin:
     platforms:
       android:
         package: co.paystack.flutterpaystack
-        pluginClass:  FlutterPaystackPlugin
+        pluginClass: FlutterPaystackPlugin
       ios:
-        pluginClass:  FlutterPaystackPlugin
+        pluginClass: FlutterPaystackPlugin
 
   assets:
-   - assets/images/
-
-
+    - assets/images/
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=3.5.4 <4.0.0"
   flutter: ">=2.0.0"

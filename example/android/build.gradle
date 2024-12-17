@@ -16,6 +16,10 @@ allprojects {
         google()
         jcenter()
     }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << '-Xlint:-options'
+    }
 }
 
 rootProject.buildDir = '../build'
