@@ -188,7 +188,11 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
               Text(
                 'Pay',
                 style: TextStyle(
-                    fontSize: 14.0, color: context.textTheme().headline1?.color),
+                  fontSize: 14.0,
+                  // color: context.textTheme().headline1?.color,
+
+                  color: Theme.of(context).textTheme.headlineLarge?.color,
+                ),
               ),
               SizedBox(
                 width: 5.0,
@@ -197,7 +201,9 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                   child: Text(Utils.formatAmount(_charge.amount),
                       style: TextStyle(
                           fontSize: 15.0,
-                          color: context.textTheme().headline6?.color,
+                          // color: context.textTheme().headline6?.color,
+                          color:
+                              Theme.of(context).textTheme.headlineSmall?.color,
                           fontWeight: FontWeight.bold)))
             ],
           )
@@ -421,7 +427,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           if (_response!.card != null) {
             _response!.card!.nullifyNumber();
           }
-         Navigator.of(context).pop(_response);
+          Navigator.of(context).pop(_response);
         },
       );
 
